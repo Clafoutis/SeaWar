@@ -13,6 +13,8 @@ import utility.FileUtility;
 public class Navire extends Animation {
 	public static final String FICHIER_SPRITE_SHEET_NAVIRE = "boat.png";
 	public static final int LONGUEUR_COTE_TUILE = 64;
+	private int pv, nbDeplacements, dmgCannonPrincipal, dmgCanonSecondaire,
+            nbTourRechargeCanonPrincipal, nbTourRechargeCanonSecondaire;
 	
 	private SpriteSheet spriteSheet;
 	
@@ -23,6 +25,30 @@ public class Navire extends Animation {
 		origine = _origine;
 		spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_NAVIRE, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 		addFrame(spriteSheet.getSprite(0, 0), 100);
+	}
+	
+	public void setPv(int pv) {
+		this.pv = pv;
+	}
+
+	public void setNbDeplacements(int nbDeplacements) {
+		this.nbDeplacements = nbDeplacements;
+	}
+
+	public void setDmgCannonPrincipal(int dmgCannonPrincipal) {
+		this.dmgCannonPrincipal = dmgCannonPrincipal;
+	}
+
+	public void setDmgCanonSecondaire(int dmgCanonSecondaire) {
+		this.dmgCanonSecondaire = dmgCanonSecondaire;
+ 	}
+
+	public void setNbTourRechargeCanonPrincipal(int nbTourRechargeCanonPrincipal) {
+		this.nbTourRechargeCanonPrincipal = nbTourRechargeCanonPrincipal;
+	}
+
+	public void setNbTourRechargeCanonSecondaire(int nbTourRechargeCanonSecondaire) {
+		this.nbTourRechargeCanonSecondaire = nbTourRechargeCanonSecondaire;
 	}
 	
 	public Point getPosition() {
