@@ -30,7 +30,7 @@ public class EditeurMap extends BasicGameState {
 
 	@Override
 	public void init(GameContainer container, StateBasedGame _game) throws SlickException {
-		SpriteSheet spriteSheet = new SpriteSheet("resources/background/backgroundEditeurMap.png", 1080, 810);
+		SpriteSheet spriteSheet = new SpriteSheet("resources/images/backgroundEditeurMap.png", 1080, 810);
 		this.game = _game;
 
 	    this.background = new Animation();
