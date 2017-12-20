@@ -1,0 +1,491 @@
+package map;
+
+import java.awt.Point;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.Vector;
+
+import joueur.Navire;
+
+import org.newdawn.slick.Animation;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
+
+import utility.FileUtility;
+
+public class Map implements Serializable {
+	private static Map INSTANCE;
+	public static final String FICHIER_SPRITE_SHEET_MAP = "spriteSheetMap.png";
+	
+	// Constantes pour la construction d'un maillage d'hexagones
+	private static final int LONGUEUR_COTE_TUILE = 64;
+	private static final int DECALAGE_X = (int) ((float) LONGUEUR_COTE_TUILE * 3f / 4f);
+	private static final int DENIVELE_Y = (int) (Math.sin(1) * (float) LONGUEUR_COTE_TUILE / 2f);//60 deg = 1.0472 rad
+	private static final int DECALAGE_Y = (int) 2 * DENIVELE_Y;
+	private static final int MARGE_ORIGINE_Y = - (int) (LONGUEUR_COTE_TUILE / 2f - DENIVELE_Y);
+
+	private Class<?> typeDeCaseParId[] = {
+		Ocean.class, 
+		Terre.class,
+		Phare.class,
+	};
+		/*PhareJ1.class,
+		PhareJ2.class,
+	};*/
+	private Vector< Vector<Case> > grille;
+	private java.util.Map<Navire, Point> navires = new HashMap<Navire, Point>();
+	private SpriteSheet spriteSheet;
+	private int sensPremierDenivele = -1;
+	
+	private Point position = new Point();
+	private SelecteurCase selecteurCase;
+	
+	private Map() throws SlickException {
+		init();
+	}
+	
+	public static Map getInstance() {
+		return INSTANCE;
+	}
+	
+	public static void initInstance() throws SlickException {
+		INSTANCE = new Map();
+	}
+
+	public void init() throws SlickException {
+		
+		selecteurCase = new SelecteurCase(typeDeCaseParId.length);
+
+		spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_MAP, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
+	}
+	
+	//////////////////
+	/// ACCESSEURS ///
+	//////////////////
+	public void addNavire(Navire navire, int coordTabX, int coordTabY) {
+		Point coordTab = new Point(coordTabX, coordTabY);
+		navire.setPosition(coordTabToMaillage(coordTab));
+		navires.put(navire, coordTab);
+	}
+	
+	public SpriteSheet getSpriteSheet() {
+		return spriteSheet;
+	}
+	
+	public Point getPosition() {
+		return position;
+	}
+	
+	public void setPosition(int x, int y) {
+		position.x = x;
+		position.y = y + MARGE_ORIGINE_Y;
+	}
+	
+	public Point getNbCases() {
+		Point nbCases = new Point();
+		
+		if (grille.size() > 0) {
+			nbCases.x = grille.get(0).size();
+		} else {
+			nbCases.x = 0;
+		}
+		nbCases.y = grille.size();
+		
+		return nbCases;
+	}
+	
+	public void setNbCases(int x, int y) {
+		int oldX;
+		int oldY;
+		Point coordTab;
+		
+		if (x < 0) x = 0;
+		if (y < 0) y = 0;
+		if (grille.size() > 0) {
+			oldX = grille.get(0).size();
+		} else {
+			oldX = 0;
+		}
+		oldY = grille.size();
+
+		//redimensionnement sur x
+		for (int j = 0; j < grille.size(); j++) {
+			grille.get(j).setSize(x);
+			for (int i = oldX; i < grille.get(j).size(); i++) {
+				coordTab = new Point(i, j);
+				grille.get(j).set(i, new Ocean(coordTabToMaillage(coordTab)));
+			}
+		}
+		
+		//redimensionnement sur y
+		grille.setSize(y);
+		for (int j = oldY; j < grille.size(); j++) {
+			grille.set(j, new Vector<Case>());
+			for (int i = 0; i < x; i++) {
+				coordTab = new Point(i, j);
+				grille.get(j).add(new Ocean(coordTabToMaillage(coordTab)));
+			}
+		}
+	}
+	
+	public Point getTaille() {
+		Point taille = new Point();
+		Point nbCases = getNbCases();
+
+		taille.x = DECALAGE_X * (nbCases.x - 1) + LONGUEUR_COTE_TUILE;
+		taille.y = DECALAGE_Y * nbCases.y + DENIVELE_Y;
+		
+		return taille;
+	}
+	
+	public boolean isAgencementMaillageHaut() {
+		return (sensPremierDenivele == -1);
+	}
+	
+	public boolean isAgencementMaillageBas() {
+		return (sensPremierDenivele == 1);
+	}
+	
+	public void setAgencementMaillageHaut() {
+		reagencerMaillage(-1);
+	}
+	
+	public void setAgencementMaillageBas() {
+		reagencerMaillage(1);
+	}
+	
+	public void changerAgencementMaillage() {
+		reagencerMaillage(-sensPremierDenivele);
+	}
+	
+	///////////////
+	/// ACTIONS ///
+	///////////////
+	public void centrerDansFenetre(GameContainer container) {
+		Point tailleMap = this.getTaille();
+		this.setPosition((container.getWidth() - tailleMap.x) / 2, (container.getHeight() - tailleMap.y) / 2);
+	}
+	
+	public Point coordTabToMaillage(Point coordTab) {
+		Point coordMaillage = new Point();
+
+		coordMaillage.x = coordTab.x * DECALAGE_X;
+		coordMaillage.y = coordTab.y * DECALAGE_Y;
+
+		if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 || 
+			sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
+			coordMaillage.y += DENIVELE_Y;
+		}
+		
+		return coordMaillage;
+	}
+	
+	public Point coordMaillageToTab(Point coordMaillage) {
+		Point coordTab = new Point();
+		Point coordMaillageClone = new Point(coordMaillage);
+
+		if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 || 
+			sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
+			coordMaillageClone.y -= DENIVELE_Y;
+		}
+		
+		coordTab.x = coordMaillageClone.x / DECALAGE_X;
+		coordTab.y = coordMaillageClone.y / DECALAGE_Y;
+		
+		return coordTab;
+	}
+	
+	public void load(String nomMap) {
+		Vector < Vector<Integer> > tabMap = FileUtility.getInstance().loadMap(nomMap);
+		int sensDenivele = sensPremierDenivele;
+		int x = 0;
+		int y = 0;
+		
+		if (sensDenivele == -1) {
+			y = DENIVELE_Y;
+		}
+		
+		FileUtility.getInstance().printTabMap(tabMap);
+
+		setPosition(0, 0);
+		grille = new Vector< Vector<Case> >();
+		navires = new HashMap<Navire, Point>();
+
+		for (int j = 0; j < tabMap.size(); j++) {
+			
+			x = 0;
+			grille.add(new Vector<Case>());
+			for (int i = 0; i < tabMap.get(j).size(); i++) {
+				Case caseCourante;
+				try {
+					if (tabMap.get(j).get(i) < typeDeCaseParId.length) {
+						caseCourante = (Case) (typeDeCaseParId[ tabMap.get(j).get(i) ])
+								.getConstructor(Point.class)
+								.newInstance(new Point(x, y));
+					} else {
+						throw new ArrayIndexOutOfBoundsException();
+					}
+					
+				} catch (InstantiationException e1) {
+					caseCourante = new Ocean(new Point(x, y));
+				} catch (IllegalAccessException e1) {
+					caseCourante = new Ocean(new Point(x, y));
+				} catch (IllegalArgumentException e1) {
+					caseCourante = new Ocean(new Point(x, y));
+				} catch (InvocationTargetException e1) {
+					caseCourante = new Ocean(new Point(x, y));
+				} catch (NoSuchMethodException e1) {
+					caseCourante = new Ocean(new Point(x, y));
+				} catch (SecurityException e1) {
+					caseCourante = new Ocean(new Point(x, y));
+				} catch (ArrayIndexOutOfBoundsException e1) {
+					caseCourante = new Ocean(new Point(x, y));
+				}
+				
+				grille.lastElement().add(caseCourante);
+				x += DECALAGE_X;
+				y += DENIVELE_Y * sensDenivele;
+				sensDenivele = -sensDenivele;
+			}
+
+			if (sensDenivele != sensPremierDenivele) {
+				sensDenivele = sensPremierDenivele;
+				y += DENIVELE_Y;
+			}
+			y += DECALAGE_Y;
+		}
+	}
+	
+	public void save(String nomMap) {
+		Vector< Vector<Integer> > tabMap = new Vector< Vector<Integer> >();
+		for (int j = 0; j < grille.size(); j++) {
+			tabMap.add(new Vector<Integer>());
+			for (int i = 0; i < grille.get(j).size(); i++) {
+				tabMap.get(j).add(grille.get(j).get(i).getId());
+			}
+		}
+		FileUtility.getInstance().saveMap(nomMap, tabMap);
+	}
+	
+	public void selectionnerCase(int idCase, Point coordTab) {
+		boolean bordsTabAtteint = true;
+		selecteurCase.setIdCaseSelectionnee(idCase);
+		
+		bordsTabAtteint = checkBordsTabEtAjusterCoord(coordTab);
+
+		if (!bordsTabAtteint) {
+			selecteurCase.setSelecteurVisible(true);
+			selecteurCase.setPosition(grille.get(coordTab.y).get(coordTab.x).getPosition());
+		} else {
+			selecteurCase.setSelecteurVisible(false);
+		}
+	}
+	
+	//TODO : factoriser avec selectionnerCase la gestion du risque outOfBounds
+	public void mettreCase(int idCase, Point coordTab) {
+		if (coordTab.y < grille.size()) {
+			if (coordTab.x < grille.get(coordTab.y).size()) {
+				Point posCase = grille.get(coordTab.y).get(coordTab.x).getPosition();
+				
+				try {
+					if (idCase < typeDeCaseParId.length) {
+						grille.get(coordTab.y).set(coordTab.x, (Case)(typeDeCaseParId[idCase])
+								.getConstructor(Point.class)
+								.newInstance(posCase));
+					} else {
+						throw new ArrayIndexOutOfBoundsException();
+					}
+					
+				} catch (InstantiationException e) {
+					grille.get(coordTab.y).set(coordTab.x, new Ocean(posCase));
+				} catch (IllegalAccessException e) {
+					grille.get(coordTab.y).set(coordTab.x, new Ocean(posCase));
+				} catch (IllegalArgumentException e) {
+					grille.get(coordTab.y).set(coordTab.x, new Ocean(posCase));
+				} catch (InvocationTargetException e) {
+					grille.get(coordTab.y).set(coordTab.x, new Ocean(posCase));
+				} catch (NoSuchMethodException e) {
+					grille.get(coordTab.y).set(coordTab.x, new Ocean(posCase));
+				} catch (SecurityException e) {
+					grille.get(coordTab.y).set(coordTab.x, new Ocean(posCase));
+				} catch (ArrayIndexOutOfBoundsException e1) {
+					grille.get(coordTab.y).set(coordTab.x, new Ocean(posCase));
+				}
+			}
+		}
+	}
+
+	//TODO : factoriser avec selectionnerCase la gestion du risque outOfBounds
+	public void deplacer(Navire navire, Direction direction) {
+		Point coordTab = navires.get(navire);
+		Point coordCible = new Point(coordTab);
+		
+		if (coordTab != null) {
+			switch (direction) {
+			case HAUT:
+				coordCible.y--;
+				break;
+			case HAUT_DROITE:
+				coordCible.x++;
+				if (sensPremierDenivele == -1 && Math.abs(coordTab.x % 2) == 1 || 
+					sensPremierDenivele ==  1 && coordTab.x % 2 == 0) {
+					coordCible.y--;
+				}
+				break;
+			case BAS_DROITE:
+				coordCible.x++;
+				if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 || 
+					sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
+					coordCible.y++;
+				}
+				break;
+			case BAS:
+				coordCible.y++;
+				break;
+			case BAS_GAUCHE:
+				coordCible.x--;
+				if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 || 
+					sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
+					coordCible.y++;
+				}
+				break;
+			case HAUT_GAUCHE:
+				coordCible.x--;
+				if (sensPremierDenivele == -1 && Math.abs(coordTab.x % 2) == 1 || 
+					sensPremierDenivele ==  1 && coordTab.x % 2 == 0) {
+					coordCible.y--;
+				}
+				break;
+			default:
+				break;
+			}
+			
+			// GESTION DES ERREURS DE COLLISIONS :
+			// bords de la map
+			if (checkBordsTab(coordCible)) {
+				System.out.println("Throw : Collision avec les bords de la map");
+				return;
+			}
+			
+			// case interdite (terre)
+			/*if (true) {//grid[][]
+				System.out.println("Throw : Collision avec une case interdite : "+null);
+			}*/
+			
+			// navire sur la case
+			//checkCollisions(coordCible);
+			Set<Entry<Navire, Point>> set = navires.entrySet();
+			Iterator<Entry<Navire, Point>> it = set.iterator();
+			while(it.hasNext()){
+				Entry<Navire, Point> e = it.next();
+				if (e.getKey() != navire && coordCible.equals(e.getValue())) {
+					System.out.println("Throw : Collision avec navire : "+e.getKey());
+					return;
+				}
+			}
+			
+			// le deplacement s'effectue si il n'y a pas d'erreur
+			coordTab.setLocation(coordCible);
+			navire.setPosition(coordTabToMaillage(coordTab));
+			
+		} else {
+			System.out.println("Erreur : Deplacement d'un navire qui n'a pas ete ajoute dans la map");
+		}
+	}
+	
+	public void draw() {
+		for (Vector <Case> ligne : grille) {
+			for (Case caseCourante : ligne) {
+				caseCourante.draw();
+			}
+		}
+		selecteurCase.draw();
+
+		for (Navire navire : navires.keySet()) {
+			navire.draw();
+		}
+    }
+	
+	//////////////////////////
+	/// FONCTIONS INTERNES ///
+	//////////////////////////
+	private boolean checkCollisions(Point coordTab) {
+		return false;
+	}
+
+	private boolean checkBordsTab(Point coordTab) {
+		boolean coordHorsBordsTab = true;
+		
+		if (coordTab.x < 0) coordTab.x = 0;
+		if (coordTab.y < 0) coordTab.y = 0;
+		
+		if (grille.size() > 0) {
+			if (coordTab.y < grille.size()) {
+				if (coordTab.x < grille.get(coordTab.y).size()) {
+					coordHorsBordsTab = false;
+				} else {
+					coordHorsBordsTab = true;
+				}
+			} else {
+				coordHorsBordsTab = true;
+			}
+		} else {
+			coordHorsBordsTab = true;
+		}
+		return coordHorsBordsTab;
+	}
+	
+	private boolean checkBordsTabEtAjusterCoord(Point coordTab) {
+		boolean coordHorsBordsTab = true;
+		
+		if (coordTab.x < 0) coordTab.x = 0;
+		if (coordTab.y < 0) coordTab.y = 0;
+		
+		if (grille.size() > 0) {
+			if (coordTab.y < grille.size()) {
+				coordHorsBordsTab = false;
+			} else {
+				coordTab.y = grille.size() - 1;
+			}
+			if (coordTab.x < grille.get(coordTab.y).size()) {
+				coordHorsBordsTab =  false;
+			} else if (grille.get(coordTab.y).size() > 0) {
+				coordTab.x = grille.get(coordTab.y).size() - 1;
+			} else {
+				coordTab.x = 0;
+				coordHorsBordsTab = true;
+			}
+		} else {
+			coordTab.y = 0;
+			coordHorsBordsTab = true;
+		}
+		return coordHorsBordsTab;
+	}
+	
+	private void reagencerMaillage(int _sensPremierDenivele) {
+		int sensDenivele;
+		
+		if (sensPremierDenivele != _sensPremierDenivele) {
+			sensPremierDenivele = _sensPremierDenivele;
+			sensDenivele = -sensPremierDenivele;
+			selecteurCase.setSelecteurVisible(false);
+			
+			for (Vector <Case> ligne : grille) {
+				for (Case caseCourante : ligne) {
+					caseCourante.move(0, DENIVELE_Y * sensDenivele);
+					sensDenivele = -sensDenivele;
+				}
+				if (sensDenivele == sensPremierDenivele) {
+					sensDenivele = -sensPremierDenivele;
+				}
+			}
+		}
+	}
+}

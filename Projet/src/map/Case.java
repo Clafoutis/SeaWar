@@ -7,16 +7,14 @@ import org.newdawn.slick.SpriteSheet;
 
 public abstract class Case extends Animation {
 	private int id;
-	private Point origine;
 	private Point position;
 	
-	public Case(SpriteSheet spriteSheet, int idCase, int nbFrames, int dureeFrame, Point _origine, Point _position) {
-		origine = _origine;
+	public Case(int idCase, int nbFrames, int dureeFrame, Point _position) {
 		position = _position;
 		id = idCase;
 
 		for (int i = 0; i < nbFrames; i++) {
-            this.addFrame(spriteSheet.getSprite(i, idCase), dureeFrame);
+            this.addFrame(Map.getInstance().getSpriteSheet().getSprite(i, idCase), dureeFrame);
         }
 		this.setCurrentFrame((int)(Math.random() * nbFrames));
 	}
@@ -40,6 +38,6 @@ public abstract class Case extends Animation {
 	
 	@Override
 	public void draw() {
-		this.draw(origine.x + position.x, origine.y + position.y);
+		this.draw(Map.getInstance().getPosition().x + position.x, Map.getInstance().getPosition().y + position.y);
 	}
 }

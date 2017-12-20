@@ -2,6 +2,8 @@ package map;
 
 import java.awt.Point;
 
+import joueur.Navire;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
@@ -17,12 +19,11 @@ public class SelecteurCase {
 	private Animation selecteurs[];
 	private boolean visible = false;
 	private int idCaseSelectionnee = 0;
-	private Point origine;
 	private Point position = new Point(0, 0);
 	
-	public SelecteurCase(Point _origine, int nbTypesCases) throws SlickException {
-		origine = _origine;
-		
+	
+	
+	public SelecteurCase(int nbTypesCases) throws SlickException {
 		selecteurs = new Animation[nbTypesCases];
 		spriteSheetSelecteur = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_SELECTEUR, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 		for (int i = 0; i < selecteurs.length; i++) {
@@ -57,7 +58,7 @@ public class SelecteurCase {
 	
 	public void draw() {
 		if (isSelecteurVisible()) {
-			selecteurs[idCaseSelectionnee].draw(origine.x + position.x, origine.y + position.y);
+			selecteurs[idCaseSelectionnee].draw(Map.getInstance().getPosition().x + position.x, Map.getInstance().getPosition().y + position.y);
 		}
 	}
 }
