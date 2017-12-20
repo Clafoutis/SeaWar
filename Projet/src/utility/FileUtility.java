@@ -70,7 +70,7 @@ public class FileUtility implements Serializable {
 
 	    return tabMap;
 	}
-	
+
 	public Vector< Vector<Integer> > loadMapFromJar(String nomMap) {
 		Vector < Vector<Integer> > tabMap = new Vector < Vector<Integer> >();
 	    BufferedInputStream bis;
