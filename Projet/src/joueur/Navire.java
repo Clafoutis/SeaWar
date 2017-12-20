@@ -19,7 +19,6 @@ public class Navire extends Animation {
 	
 	private SpriteSheet spriteSheet;
 	
-	private Point origine;
 	private Point position = new Point();
 	
 	public Navire() throws SlickException {
