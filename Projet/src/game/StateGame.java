@@ -17,7 +17,8 @@ public class StateGame extends StateBasedGame {
 	
 	public static void main(String[] args) throws SlickException {
 	    AppGameContainer app = new AppGameContainer(new StateGame(), 1080, 810, false);
-		Music.init();
+	    Music.init();
+	    app.setTargetFrameRate(60);
 	    app.start();
 	}
 
