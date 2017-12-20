@@ -12,7 +12,6 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-import joueur.Boat;
 import map.Map;
 
 public class EditeurMap extends BasicGameState {
