@@ -38,7 +38,8 @@ public class FileUtility implements Serializable {
 	    BufferedInputStream bis;
 	    
 	    try {
-	    	bis = new BufferedInputStream(new FileInputStream(new File(DOSSIER_MAP + nomMap)));
+	    	InputStream in = this.getClass().getClassLoader().getResourceAsStream(DOSSIER_MAP + nomMap);
+		bis = new BufferedInputStream(in);
 	    	byte[] buf = new byte[8];
 
 	    	tabMap.add(new Vector<Integer>());
@@ -151,8 +152,8 @@ public class FileUtility implements Serializable {
 	    int nbCasesLigneMax = 0;
 	    
 	    try {
-			InputStream in = this.getClass().getClassLoader().getResourceAsStream(DOSSIER_MAP + nomMap);
-			bis = new BufferedInputStream(in);
+		InputStream in = this.getClass().getClassLoader().getResourceAsStream(DOSSIER_MAP + nomMap);
+		bis = new BufferedInputStream(in);
 	    	byte[] buf = new byte[8];
 
 	    	while(bis.read(buf) != -1) {
