@@ -2,6 +2,7 @@ package joueur;
 
 import java.awt.Point;
 
+import map.Direction;
 import map.Map;
 
 import org.newdawn.slick.Animation;
@@ -21,8 +22,7 @@ public class Navire extends Animation {
 	private Point origine;
 	private Point position = new Point();
 	
-	public Navire(Point _origine) throws SlickException {
-		origine = _origine;
+	public Navire() throws SlickException {
 		spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_NAVIRE, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 		addFrame(spriteSheet.getSprite(0, 0), 100);
 	}
@@ -59,12 +59,12 @@ public class Navire extends Animation {
 		position = _position;
 	}
 	
-	public void allerHaut() {
-		Map.getInstance().allerHaut(this);
+	public void deplacer(Direction direction) {
+		Map.getInstance().deplacer(this, direction);
 	}
 	
 	@Override
 	public void draw() {
-		this.draw(origine.x + position.x, origine.y + position.y);
+		this.draw(Map.getInstance().getPosition().x + position.x, Map.getInstance().getPosition().y + position.y);
 	}
 }

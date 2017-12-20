@@ -6,8 +6,7 @@ import org.newdawn.slick.SlickException;
 
 public class NavireAmiral extends Navire {
 
-	public NavireAmiral(Point _origine) throws SlickException {
-		super(_origine);
+	public NavireAmiral() throws SlickException {
 		setNbDeplacements(3);
        	 	setPv(100);
         	setDmgCannonPrincipal(50);
