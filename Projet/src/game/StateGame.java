@@ -8,6 +8,8 @@ import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.state.StateBasedGame;
 import utility.Music;
 
+import map.Map;
+
 public class StateGame extends StateBasedGame {
 	public StateGame() {
 		super("Sea War");
