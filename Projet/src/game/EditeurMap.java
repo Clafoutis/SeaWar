@@ -19,8 +19,7 @@ public class EditeurMap extends BasicGameState {
 	public static final int ID = 3;
 	private GameContainer container;
 	private StateBasedGame game;
-	
-	private Map map;
+
 	private Animation background;
 	private int idCour = 0;
 	//private Integer coordTab.x = 0;
@@ -32,12 +31,8 @@ public class EditeurMap extends BasicGameState {
 
 	@Override
 	public void init(GameContainer container, StateBasedGame _game) throws SlickException {
-		SpriteSheet spriteSheet = new SpriteSheet("resources/images/backgroundEditeurMap.png", 1080, 810);
+		SpriteSheet spriteSheet = new SpriteSheet("resources/background/backgroundEditeurMap.png", 1080, 810);
 		this.game = _game;
-		this.map = new Map();
-		this.map.load("test.txt");
-		this.map.centrerDansFenetre(container);
-		this.map.selectionnerCase(idCour, coordTab);
 
 	    this.background = new Animation();
 	    for (int x = 0; x < 1; x++) {
@@ -53,7 +48,7 @@ public class EditeurMap extends BasicGameState {
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics graphics) throws SlickException {
 		graphics.drawAnimation(background, 0, 0);
-		map.draw();
+		Map.getInstance().draw();
 	}
 	
 	@Override
@@ -71,7 +66,7 @@ public class EditeurMap extends BasicGameState {
 				break;
 				
 			case Input.KEY_DOWN:
-				if (coordTab.y < map.getNbCases().y - 1) {
+				if (coordTab.y < Map.getInstance().getNbCases().y - 1) {
 					coordTab.y++;
 				}
 				break;
@@ -83,25 +78,25 @@ public class EditeurMap extends BasicGameState {
 				break;
 				
 			case Input.KEY_RIGHT:
-				if (coordTab.x < map.getNbCases().x - 1) {
+				if (coordTab.x < Map.getInstance().getNbCases().x - 1) {
 					coordTab.x++;
 				}
 				break;
 				
 			case Input.KEY_Z:
-				map.setNbCases(map.getNbCases().x, map.getNbCases().y - 1);
+				Map.getInstance().setNbCases(Map.getInstance().getNbCases().x, Map.getInstance().getNbCases().y - 1);
 				break;
 				
 			case Input.KEY_S:
-				map.setNbCases(map.getNbCases().x, map.getNbCases().y + 1);
+				Map.getInstance().setNbCases(Map.getInstance().getNbCases().x, Map.getInstance().getNbCases().y + 1);
 				break;
 				
 			case Input.KEY_Q:
-				map.setNbCases(map.getNbCases().x - 1, map.getNbCases().y);
+				Map.getInstance().setNbCases(Map.getInstance().getNbCases().x - 1, Map.getInstance().getNbCases().y);
 				break;
 				
 			case Input.KEY_D:
-				map.setNbCases(map.getNbCases().x + 1, map.getNbCases().y);
+				Map.getInstance().setNbCases(Map.getInstance().getNbCases().x + 1, Map.getInstance().getNbCases().y);
 				break;
 				
 			case Input.KEY_1:
@@ -117,20 +112,19 @@ public class EditeurMap extends BasicGameState {
 				break;
 				
 			case Input.KEY_TAB:
-				map.changerAgencementMaillage();
+				Map.getInstance().changerAgencementMaillage();
 				break;
 				
 			case Input.KEY_SPACE:
-				map.mettreCase(idCour, coordTab);
+				Map.getInstance().mettreCase(idCour, coordTab);
 				break;
 			
 			case Input.KEY_RETURN:
-				map.save("test.txt");
+				Map.getInstance().save("test.txt");
 				System.out.println("Map enregistr� dans test.txt !!");
-				game.enterState(Game.ID);
 				break;
     	}
-    	map.selectionnerCase(idCour, coordTab);
+    	Map.getInstance().selectionnerCase(idCour, coordTab);
     }
 
 	@Override
