@@ -32,7 +32,7 @@ public class Game extends BasicGameState {
 
 	@Override
 	public void init(GameContainer _container, StateBasedGame _game) throws SlickException {
-		SpriteSheet spriteSheet = new SpriteSheet("resources/background/seaAnimation.png", 1080, 810);
+		SpriteSheet spriteSheet = new SpriteSheet("resources/images/seaAnimation.png", 1080, 810);
 		this.game = _game;
 		this.container = _container;
 
