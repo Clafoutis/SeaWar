@@ -38,6 +38,44 @@ public class FileUtility implements Serializable {
 	    BufferedInputStream bis;
 	    
 	    try {
+	    	bis = new BufferedInputStream(new FileInputStream(new File(DOSSIER_MAP + nomMap)));
+	    	byte[] buf = new byte[8];
+
+	    	tabMap.add(new Vector<Integer>());
+	    	while(bis.read(buf) != -1) {
+		    	for (byte bit : buf) {
+		    		if (bit == '\r' || bit == '\n') {
+		    			if (tabMap.lastElement().size() > 0) {
+		    				tabMap.add(new Vector<Integer>());
+		    			}
+		    		} else if (bit >= '0' && bit <= '9') {
+		    			tabMap.lastElement().add(Character.getNumericValue(bit));
+		    		}
+		    	}
+		    	buf = new byte[8];
+	    	}
+
+	    	if (tabMap.lastElement().size() <= 0) {
+	    		tabMap.removeElementAt(tabMap.size()-1);
+	    	}
+	    	rendreTabMapRectangle(tabMap);
+
+	    	bis.close();
+
+    	} catch (FileNotFoundException e) {
+    		e.printStackTrace();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+
+	    return tabMap;
+	}
+	
+	public Vector< Vector<Integer> > loadMapFromJar(String nomMap) {
+		Vector < Vector<Integer> > tabMap = new Vector < Vector<Integer> >();
+	    BufferedInputStream bis;
+	    
+	    try {
 			InputStream in = this.getClass().getClassLoader().getResourceAsStream(DOSSIER_MAP + nomMap);
 			bis = new BufferedInputStream(in);
 	    	byte[] buf = new byte[8];
