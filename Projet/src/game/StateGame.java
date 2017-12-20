@@ -22,6 +22,7 @@ public class StateGame extends StateBasedGame {
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
+		Map.initInstance();
 		
 		addState(new MainScreen());
 	    addState(new Game());
