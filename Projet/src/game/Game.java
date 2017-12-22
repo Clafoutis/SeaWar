@@ -1,12 +1,17 @@
 package game;
 
 		import java.awt.Color;
+import java.awt.Image;
 		import java.awt.Point;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 		import org.newdawn.slick.Animation;
 		import org.newdawn.slick.GameContainer;
 		import org.newdawn.slick.Graphics;
 		import org.newdawn.slick.Input;
+import org.newdawn.slick.Renderable;
 		import org.newdawn.slick.SlickException;
 		import org.newdawn.slick.SpriteSheet;
 		import org.newdawn.slick.state.BasicGameState;
@@ -15,7 +20,7 @@ package game;
 		import joueur.Joueur;
 		import map.Direction;
 		import map.Map;
-		import utility.Music;
+import utility.Music;
 
 public class Game extends BasicGameState {
 	public static final int ID = 2;
@@ -26,12 +31,19 @@ public class Game extends BasicGameState {
 	private final int NB_JOUEURS = 2;
 	private Joueur[] joueurs = new Joueur[NB_JOUEURS];
 	private Joueur joueurCourant;
+	private Animation AmiralPirate;
+	private SpriteSheet spriteSheetdeNavire;
 
 	public Game() {
 	}
 
 	@Override
 	public void init(GameContainer _container, StateBasedGame _game) throws SlickException {
+
+		spriteSheetdeNavire = new SpriteSheet("resources/images/AmiralPirate.png",200 , 250);
+		AmiralPirate=new Animation(spriteSheetdeNavire,8000);
+		//this.AmiralPirate = ImageIO.read(getClass().getResource("resources/images/AmiralPirate.png"));
+
 		SpriteSheet spriteSheet = new SpriteSheet("resources/images/seaAnimation.png", 1080, 810);
 		this.game = _game;
 		this.container = _container;
@@ -57,6 +69,7 @@ public class Game extends BasicGameState {
 	public void render(GameContainer container, StateBasedGame game, Graphics graphics) throws SlickException {
 		graphics.drawAnimation(background, 0, 0);
 		Map.getInstance().draw();
+		AmiralPirate.draw(56,35);
 		//joueurCourant.getNavireCourant().draw();
 	}
 
