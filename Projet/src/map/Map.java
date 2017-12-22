@@ -326,41 +326,60 @@ public class Map implements Serializable {
 	public void deplacer(Navire navire, Direction direction) {
 		Point coordTab = navires.get(navire);
 		Point coordCible = new Point(coordTab);
+		int directionCible = navire.getDirection();
 		
 		if (coordTab != null) {
 			switch (direction) {
 			case HAUT:
-				coordCible.y--;
+				if(navire.getDirection()==5 || navire.getDirection()==0 || navire.getDirection()==1){
+					coordCible.y--;
+					directionCible = 0;
+				}
 				break;
 			case HAUT_DROITE:
-				coordCible.x++;
-				if (sensPremierDenivele == -1 && Math.abs(coordTab.x % 2) == 1 || 
-					sensPremierDenivele ==  1 && coordTab.x % 2 == 0) {
-					coordCible.y--;
+				if(navire.getDirection()==0 || navire.getDirection()==1 || navire.getDirection()==2){
+					coordCible.x++;
+					if (sensPremierDenivele == -1 && Math.abs(coordTab.x % 2) == 1 ||
+							sensPremierDenivele ==  1 && coordTab.x % 2 == 0) {
+						coordCible.y--;
+					}
+					directionCible = 1;
 				}
 				break;
 			case BAS_DROITE:
-				coordCible.x++;
-				if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 || 
-					sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
-					coordCible.y++;
+				if(navire.getDirection()==1 || navire.getDirection()==2 || navire.getDirection()==3){
+					coordCible.x++;
+					if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 ||
+							sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
+						coordCible.y++;
+					}
+					directionCible = 2;
 				}
 				break;
 			case BAS:
-				coordCible.y++;
+				if(navire.getDirection()==2 || navire.getDirection()==3 || navire.getDirection()==4){
+					coordCible.y++;
+					directionCible = 3;
+				}
 				break;
 			case BAS_GAUCHE:
-				coordCible.x--;
-				if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 || 
-					sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
-					coordCible.y++;
+				if(navire.getDirection()==3 || navire.getDirection()==4 || navire.getDirection()==5){
+					coordCible.x--;
+					if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 ||
+							sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
+						coordCible.y++;
+					}
+					directionCible = 4;
 				}
 				break;
 			case HAUT_GAUCHE:
-				coordCible.x--;
-				if (sensPremierDenivele == -1 && Math.abs(coordTab.x % 2) == 1 || 
-					sensPremierDenivele ==  1 && coordTab.x % 2 == 0) {
-					coordCible.y--;
+				if(navire.getDirection()==4 || navire.getDirection()==5 || navire.getDirection()==0){
+					coordCible.x--;
+					if (sensPremierDenivele == -1 && Math.abs(coordTab.x % 2) == 1 ||
+							sensPremierDenivele ==  1 && coordTab.x % 2 == 0) {
+						coordCible.y--;
+					}
+					directionCible = 5;
 				}
 				break;
 			default:
@@ -375,9 +394,10 @@ public class Map implements Serializable {
 			}
 			
 			// case interdite (terre)
-			/*if (true) {//grid[][]
+			if (grille.get(coordCible.y).get(coordCible.x).getId()==1) {//grid[][]
 				System.out.println("Throw : Collision avec une case interdite : "+null);
-			}*/
+				return;
+			}
 			
 			// navire sur la case
 			//checkCollisions(coordCible);
@@ -394,6 +414,7 @@ public class Map implements Serializable {
 			// le deplacement s'effectue si il n'y a pas d'erreur
 			coordTab.setLocation(coordCible);
 			navire.setPosition(coordTabToMaillage(coordTab));
+			navire.setDirection(directionCible);
 			
 		} else {
 			System.out.println("Erreur : Deplacement d'un navire qui n'a pas ete ajoute dans la map");
@@ -423,21 +444,12 @@ public class Map implements Serializable {
 	private boolean checkBordsTab(Point coordTab) {
 		boolean coordHorsBordsTab = true;
 		
-		if (coordTab.x < 0) coordTab.x = 0;
-		if (coordTab.y < 0) coordTab.y = 0;
-		
 		if (grille.size() > 0) {
-			if (coordTab.y < grille.size()) {
-				if (coordTab.x < grille.get(coordTab.y).size()) {
+			if (coordTab.y >= 0 && coordTab.y < grille.size()) {
+				if (coordTab.x >= 0 && coordTab.x < grille.get(coordTab.y).size()) {
 					coordHorsBordsTab = false;
-				} else {
-					coordHorsBordsTab = true;
 				}
-			} else {
-				coordHorsBordsTab = true;
 			}
-		} else {
-			coordHorsBordsTab = true;
 		}
 		return coordHorsBordsTab;
 	}
