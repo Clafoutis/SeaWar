@@ -46,8 +46,8 @@ public class Game extends BasicGameState {
 
         Map.getInstance().load("test.txt");
         Map.getInstance().centrerDansFenetre(container);
-        joueurs[0] = new Joueur("Joueur 1", Color.RED);
-        joueurs[1] = new Joueur("Joueur 2", Color.BLUE);
+        joueurs[0] = new Joueur("Joueur 1", Color.RED, 1);
+        joueurs[1] = new Joueur("Joueur 2", Color.BLUE, 2);
         joueurCourant = joueurs[0];
 
         this.background = new Animation();
@@ -110,6 +110,14 @@ public class Game extends BasicGameState {
 
             case Input.KEY_NUMPAD7:
                 joueurCourant.getNavireCourant().deplacer(Direction.HAUT_GAUCHE);
+                break;
+
+            case Input.KEY_1:
+                joueurCourant.setNavireCourant(joueurCourant.getNavire(0));
+                break;
+
+            case Input.KEY_2:
+                joueurCourant.setNavireCourant(joueurCourant.getNavire(1));
                 break;
         }
     }
