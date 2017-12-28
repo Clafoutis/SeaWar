@@ -400,7 +400,7 @@ public class Map implements Serializable {
 			
 			// case interdite (terre)
 			if (grille.get(coordCible.y).get(coordCible.x).getId()==1) {//grid[][]
-				System.out.println("Throw : Collision avec une case interdite : "+null);
+				System.out.println("Throw : Collision avec une case interdite");
 				return;
 			}
 			
@@ -418,9 +418,11 @@ public class Map implements Serializable {
 			
 			// le deplacement s'effectue si il n'y a pas d'erreur
 			coordTab.setLocation(coordCible);
-			navire.setPosition(coordTabToMaillage(coordTab));
 			navire.setDirection(directionCible);
-			
+			// tentative d'animation à la place du changement direct des coordonnées
+			// navire.setPosition(coordTabToMaillage(coordTab));
+			navire.initialiserDeplacement(coordTabToMaillage(coordTab));
+
 		} else {
 			System.out.println("Erreur : Deplacement d'un navire qui n'a pas ete ajoute dans la map");
 		}
