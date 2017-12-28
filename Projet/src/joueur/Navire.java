@@ -78,6 +78,57 @@ public class Navire {
         position = _position;
     }
 
+    public void tryAccess(Point coordCibleTab) {
+        Point coordPosTab = Map.getInstance().coordMaillageToTab(position);
+        int difX = (int) (coordCibleTab.getX()-coordPosTab.getX());
+        int difY = (int) (coordCibleTab.getY()-coordPosTab.getY());
+        int sensPremierDenivele = Map.getInstance().getSensPremierDenivele();
+        boolean xPaire = (coordPosTab.getX() % 2) == 0;
+        boolean deniveleInverse = sensPremierDenivele == 1;
+        boolean wtfIsThisShit = xPaire == deniveleInverse;
+        boolean ohMyGodness = xPaire != deniveleInverse;
+        switch(difX){
+            case -1:
+                switch(difY){
+                    case -1:
+                        if(wtfIsThisShit) deplacer(Direction.HAUT_GAUCHE);
+                        break;
+                    case 0:
+                        if(ohMyGodness) deplacer(Direction.HAUT_GAUCHE);
+                        else deplacer(Direction.BAS_GAUCHE);
+                        break;
+                    case 1:
+                        if(ohMyGodness) deplacer(Direction.BAS_GAUCHE);
+                        break;
+                }
+                break;
+            case 0:
+                switch(difY){
+                    case -1:
+                        deplacer(Direction.HAUT);
+                        break;
+                    case 1:
+                        deplacer(Direction.BAS);
+                        break;
+                }
+                break;
+            case 1:
+                switch(difY){
+                    case -1:
+                        if(wtfIsThisShit) deplacer(Direction.HAUT_DROITE);
+                        break;
+                    case 0:
+                        if(ohMyGodness) deplacer(Direction.HAUT_DROITE);
+                        else deplacer(Direction.BAS_DROITE);
+                        break;
+                    case 1:
+                        if(ohMyGodness) deplacer(Direction.BAS_DROITE);
+                        break;
+                }
+                break;
+        }
+    }
+
     public void deplacer(Direction direction) {
         Map.getInstance().deplacer(this, direction);
     }
