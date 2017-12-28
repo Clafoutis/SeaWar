@@ -25,7 +25,7 @@ public class Map implements Serializable {
 	public static final String FICHIER_SPRITE_SHEET_MAP = "spriteSheetMap.png";
 	
 	// Constantes pour la construction d'un maillage d'hexagones
-	private static final int LONGUEUR_COTE_TUILE = 64;
+	public static final int LONGUEUR_COTE_TUILE = 64;
 	private static final int DECALAGE_X = (int) ((float) LONGUEUR_COTE_TUILE * 3f / 4f);
 	private static final int DENIVELE_Y = (int) (Math.sin(1) * (float) LONGUEUR_COTE_TUILE / 2f);//60 deg = 1.0472 rad
 	private static final int DECALAGE_Y = (int) 2 * DENIVELE_Y;
@@ -78,7 +78,11 @@ public class Map implements Serializable {
 	public SpriteSheet getSpriteSheet() {
 		return spriteSheet;
 	}
-	
+
+	public int getSensPremierDenivele() {
+		return sensPremierDenivele;
+	}
+
 	public Point getPosition() {
 		return position;
 	}
@@ -191,12 +195,13 @@ public class Map implements Serializable {
 		Point coordTab = new Point();
 		Point coordMaillageClone = new Point(coordMaillage);
 
-		if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 || 
+		coordTab.x = coordMaillageClone.x / DECALAGE_X;
+
+		if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 ||
 			sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
 			coordMaillageClone.y -= DENIVELE_Y;
 		}
-		
-		coordTab.x = coordMaillageClone.x / DECALAGE_X;
+
 		coordTab.y = coordMaillageClone.y / DECALAGE_Y;
 		
 		return coordTab;
