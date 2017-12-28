@@ -16,8 +16,10 @@ public class MainScreen extends BasicGameState {
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         this.game = game;
         this.container = container;
+        // background et parchemin
         this.background = new Image("resources/images/menu.jpg");
         this.parchemin = new Image("resources/images/parchemin.png");
+        // boutons jouer et quitter
         Image jouer = new Image("resources/images/jouer.png");
         Image jouerHover = new Image("resources/images/jouer-hover.png");
         Image quitter = new Image("resources/images/quitter.png");
@@ -25,7 +27,7 @@ public class MainScreen extends BasicGameState {
         this.jouerArea = new MouseOverArea(container, jouer, 100, 360, 150, 60, new ComponentListener() {
             @Override
             public void componentActivated(AbstractComponent abstractComponent) {
-                changeWindow(Game.ID);
+                startGame();
             }
         });
         jouerArea.setMouseOverImage(jouerHover);
@@ -58,9 +60,9 @@ public class MainScreen extends BasicGameState {
         }
     }
 
-    private void changeWindow(int windowID){
+    private void startGame(){
         Music.playGame();
-        game.enterState(windowID);
+        game.enterState(Game.ID);
     }
 
     private void exit(){

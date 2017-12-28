@@ -24,9 +24,6 @@ public class EditeurMap extends BasicGameState {
 	//private Integer coordTab.x = 0;
 	//private Integer coordTab.y = 0;
 	private Point coordTab = new Point();
-	
-	public EditeurMap() {
-    }
 
 	@Override
 	public void init(GameContainer container, StateBasedGame _game) throws SlickException {
@@ -52,18 +49,13 @@ public class EditeurMap extends BasicGameState {
 	
 	@Override
     public void keyReleased(int key, char c) {
-    }
-    
-    @Override
-    public void keyPressed(int key, char c) {
-    	switch (key) {
-    	
-	    	case Input.KEY_UP:
+		switch (key) {
+			case Input.KEY_UP:
 				if (coordTab.y > 0) {
 					coordTab.y--;
 				}
 				break;
-				
+
 			case Input.KEY_DOWN:
 				if (coordTab.y < Map.getInstance().getNbCases().y - 1) {
 					coordTab.y++;
@@ -75,55 +67,55 @@ public class EditeurMap extends BasicGameState {
 					coordTab.x--;
 				}
 				break;
-				
+
 			case Input.KEY_RIGHT:
 				if (coordTab.x < Map.getInstance().getNbCases().x - 1) {
 					coordTab.x++;
 				}
 				break;
-				
+
 			case Input.KEY_Z:
 				Map.getInstance().setNbCases(Map.getInstance().getNbCases().x, Map.getInstance().getNbCases().y - 1);
 				break;
-				
+
 			case Input.KEY_S:
 				Map.getInstance().setNbCases(Map.getInstance().getNbCases().x, Map.getInstance().getNbCases().y + 1);
 				break;
-				
+
 			case Input.KEY_Q:
 				Map.getInstance().setNbCases(Map.getInstance().getNbCases().x - 1, Map.getInstance().getNbCases().y);
 				break;
-				
+
 			case Input.KEY_D:
 				Map.getInstance().setNbCases(Map.getInstance().getNbCases().x + 1, Map.getInstance().getNbCases().y);
 				break;
-				
+
 			case Input.KEY_1:
 				idCour = 0;
 				break;
-				
+
 			case Input.KEY_2:
 				idCour = 1;
 				break;
-				
+
 			case Input.KEY_3:
 				idCour = 2;
 				break;
-				
+
 			case Input.KEY_TAB:
 				Map.getInstance().changerAgencementMaillage();
 				break;
-				
+
 			case Input.KEY_SPACE:
 				Map.getInstance().mettreCase(idCour, coordTab);
 				break;
-			
+
 			case Input.KEY_RETURN:
 				Map.getInstance().save("test.txt");
 				System.out.println("Map enregistr� dans test.txt !!");
 				break;
-    	}
-    	Map.getInstance().selectionnerCase(idCour, coordTab);
+		}
+		Map.getInstance().selectionnerCase(idCour, coordTab);
     }
 
 	@Override
