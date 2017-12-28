@@ -16,12 +16,13 @@ public class Navire {
     public static final int LONGUEUR_COTE_TUILE = 64;
     private int pv, nbDeplacements, dmgCannonPrincipal, dmgCanonSecondaire,
             nbTourRechargeCanonPrincipal, nbTourRechargeCanonSecondaire;
-    private int direction = 0;
+    private int direction;
     private SpriteSheet spriteSheet;
     private Animation[] animations = new Animation[6];
     private Point position = new Point();
 
-    public Navire() throws SlickException {
+    public Navire(int direction) throws SlickException {
+        this.direction = direction;
         spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_NAVIRE, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
         this.animations[0] = loadAnimation(spriteSheet, 1, 1);
         this.animations[1] = loadAnimation(spriteSheet, 0, 1);

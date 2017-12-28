@@ -6,7 +6,8 @@ import org.newdawn.slick.SlickException;
 
 public class NavireFregate extends Navire {
 
-	public NavireFregate() throws SlickException {
+	public NavireFregate(int direction) throws SlickException {
+		super(direction);
 		setNbDeplacements(7);
 		setPv(50);
 		setDmgCannonPrincipal(30);
