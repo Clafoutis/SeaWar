@@ -51,4 +51,8 @@ public class Joueur {
     public Navire getNavireCourant() {
 		return navireCourant;
 	}
+
+	public boolean deplacementEnCours(){
+        return navireCourant.isDeplacementEnCours();
+    }
 }

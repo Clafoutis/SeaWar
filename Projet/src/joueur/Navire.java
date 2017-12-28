@@ -11,6 +11,8 @@ import org.newdawn.slick.SpriteSheet;
 
 import utility.FileUtility;
 
+import static java.lang.Thread.sleep;
+
 public class Navire {
     public static final String FICHIER_SPRITE_SHEET_NAVIRE = "boat2.png";
     public static final int LONGUEUR_COTE_TUILE = 64;
@@ -20,9 +22,15 @@ public class Navire {
     private SpriteSheet spriteSheet;
     private Animation[] animations = new Animation[6];
     private Point position = new Point();
+    // Pour les déplacements animés
+    private boolean deplacementEnCours;
+    private double tempX, tempY, deltaX, deltaY;
+    private int nbDeplacementsRestants;
+    private Point destination;
 
     public Navire(int direction) throws SlickException {
         this.direction = direction;
+        deplacementEnCours = false;
         spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_NAVIRE, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
         this.animations[0] = loadAnimation(spriteSheet, 1, 1);
         this.animations[1] = loadAnimation(spriteSheet, 0, 1);
@@ -77,6 +85,10 @@ public class Navire {
 
     public void setPosition(Point _position) {
         position = _position;
+    }
+
+    public boolean isDeplacementEnCours() {
+        return deplacementEnCours;
     }
 
     public void tryAccess(Point coordCibleTab) {
@@ -136,5 +148,27 @@ public class Navire {
 
     public void draw() {
         animations[direction].draw(Map.getInstance().getPosition().x + position.x, Map.getInstance().getPosition().y + position.y);
+    }
+
+    public void initialiserDeplacement(Point position){
+        deltaX = (position.getX() - this.position.getX())/60;
+        deltaY = (position.getY() - this.position.getY())/60;
+        tempX = this.position.getX();
+        tempY = this.position.getY();
+        destination = position;
+        nbDeplacementsRestants = 60;
+        deplacementEnCours = true;
+    }
+
+    public void animationDeplacement(){
+        tempX += deltaX;
+        tempY += deltaY;
+        position.x = (int) tempX;
+        position.y = (int) tempY;
+        nbDeplacementsRestants--;
+        if(nbDeplacementsRestants==0){
+            deplacementEnCours = false;
+            position = destination;
+        }
     }
 }
