@@ -31,9 +31,6 @@ public class Game extends BasicGameState {
     //private Animation AmiralPirate;
     //private SpriteSheet spriteSheetdeNavire;
 
-    public Game() {
-    }
-
     @Override
     public void init(GameContainer _container, StateBasedGame _game) throws SlickException {
         //spriteSheetdeNavire = new SpriteSheet("resources/images/AmiralPirate.png",200 , 250);
@@ -59,6 +56,9 @@ public class Game extends BasicGameState {
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         background.update(delta);
+        if(joueurCourant.deplacementEnCours()){
+            joueurCourant.getNavireCourant().animationDeplacement();
+        }
     }
 
     @Override
