@@ -18,7 +18,6 @@ import joueur.Joueur;
 import map.Direction;
 import map.Map;
 import utility.Music;
-import java.util.ArrayList;
 
 public class Game extends BasicGameState {
     public static final int ID = 2;
@@ -29,8 +28,6 @@ public class Game extends BasicGameState {
     private final int NB_JOUEURS = 2;
     private Joueur[] joueurs = new Joueur[NB_JOUEURS];
     private Joueur joueurCourant;
-    private ArrayList<Point> bufferClick; // Changer le type
-    private Point position = new Point();
     //private Animation AmiralPirate;
     //private SpriteSheet spriteSheetdeNavire;
 
@@ -43,7 +40,7 @@ public class Game extends BasicGameState {
         SpriteSheet spriteSheet = new SpriteSheet("resources/images/seaAnimation.png", 1080, 810);
         this.game = _game;
         this.container = _container;
-        bufferClick = new ArrayList<Point>();
+
         Map.getInstance().load("test.txt");
         Map.getInstance().centrerDansFenetre(container);
         joueurs[0] = new Joueur("Joueur 1", Color.RED, 1);
@@ -62,16 +59,22 @@ public class Game extends BasicGameState {
         if(joueurCourant.deplacementEnCours()){
             joueurCourant.getNavireCourant().animationDeplacement();
         }
-        
-        if(!bufferClick.isEmpty() && !joueurCourant.getNavireCourant().isDeplacementEnCours()){
-        	executeClick();
-        }
     }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics graphics) throws SlickException {
         graphics.drawAnimation(background, 0, 0);
         Map.getInstance().draw();
+        graphics.drawString( "Joueur 1 :", 0, 30);
+        graphics.drawString( "Points de vie Amiral :"+joueurs[0].getNavire(0).pv, 0, 50);
+    	graphics.drawString( "Points de vie Frégate :"+joueurs[0].getNavire(1).pv, 0, 70);
+    	graphics.drawString( "nbDeplacements Amiral :"+joueurs[0].getNavire(0).nbDeplacements, 0, 90);
+    	graphics.drawString( "nbDeplacements Frégate :"+joueurs[0].getNavire(1).nbDeplacements, 0, 110);
+    	graphics.drawString( "Joueur 2 :", 800, 30);
+    	 graphics.drawString( "Points de vie Amiral :"+joueurs[1].getNavire(0).pv, 800, 50);
+     	graphics.drawString( "Points de vie Frégate :"+joueurs[1].getNavire(1).pv, 800, 70);
+     	graphics.drawString( "nbDeplacements Amiral :"+joueurs[1].getNavire(0).nbDeplacements, 800, 90);
+     	graphics.drawString( "nbDeplacements Frégate :"+joueurs[1].getNavire(1).nbDeplacements, 800, 110);
         //AmiralPirate.draw(56,35);
         //joueurCourant.getNavireCourant().draw();
     }
@@ -131,19 +134,7 @@ public class Game extends BasicGameState {
 
     public void mouseClicked(int button, int x, int y, int clickCount){
         Point coordMaillage = new Point(x - (int) Map.getInstance().getPosition().getX(), y - (int) Map.getInstance().getPosition().getY());
-        Point coordPosTab = Map.getInstance().coordMaillageToTab(position);
-        
-        
-        if(!bufferClick.contains(Map.getInstance().coordMaillageToTab(coordMaillage))){ // test provisoire
-        	bufferClick.add(Map.getInstance().coordMaillageToTab(coordMaillage));
-        }
-    }
-    
-    public void executeClick(){
-    	joueurCourant.getNavireCourant().tryAccess(bufferClick.get(0));
-    	bufferClick.remove(0);
-    	
-    	System.out.println(bufferClick.isEmpty());
+        joueurCourant.getNavireCourant().tryAccess(Map.getInstance().coordMaillageToTab(coordMaillage));
     }
 
     @Override
