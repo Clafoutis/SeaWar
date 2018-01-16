@@ -418,10 +418,9 @@ public class Map implements Serializable {
 			
 			// le deplacement s'effectue si il n'y a pas d'erreur
 			coordTab.setLocation(coordCible);
-			navire.setDirection(directionCible);
 			// tentative d'animation à la place du changement direct des coordonnées
 			// navire.setPosition(coordTabToMaillage(coordTab));
-			navire.initialiserDeplacement(coordTabToMaillage(coordTab));
+			navire.initialiserDeplacement(coordTabToMaillage(coordTab), directionCible);
 
 		} else {
 			System.out.println("Erreur : Deplacement d'un navire qui n'a pas ete ajoute dans la map");
