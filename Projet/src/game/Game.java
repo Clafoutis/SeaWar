@@ -75,19 +75,21 @@ public class Game extends BasicGameState {
     public void newGame() throws SlickException {
         Map.getInstance().load("test.txt");
         Map.getInstance().centrerDansFenetre(container);
-        joueurs[0] = new Joueur("Joueur 1", Color.RED, 1);
-        joueurs[1] = new Joueur("Joueur 2", Color.BLUE, 2);
+        joueurs[0] = new Joueur(0, "Joueur 1", Color.RED, 1);
+        joueurs[1] = new Joueur(1, "Joueur 2", Color.BLUE, 2);
         joueurCourant = joueurs[0];
+    }
+
+    public void nextTurn() {
+        joueurCourant = joueurs[(joueurCourant.getId() + 1) % 2];
+        joueurCourant.newTurn();
     }
 
     @Override
     public void keyReleased(int key, char c) {
         switch (key) {
             case Input.KEY_SPACE:
-                Map.getInstance().load("test.txt");
-                Map.getInstance().centrerDansFenetre(container);
-                Map.getInstance().selectionnerCase(0, new Point(0, 0));
-                game.enterState(EditeurMap.ID);
+                nextTurn();
                 break;
 
             case Input.KEY_RETURN:
