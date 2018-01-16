@@ -10,7 +10,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
 public class Navire {
-    private int pv, nbDeplacements, dmgCannonPrincipal, dmgCanonSecondaire,
+    private int pv, nbDeplacements, nbDeplacementsRestants, dmgCannonPrincipal, dmgCanonSecondaire,
             nbTourRechargeCanonPrincipal, nbTourRechargeCanonSecondaire;
     private int direction;
     private SpriteSheet spriteSheet;
@@ -18,8 +18,8 @@ public class Navire {
     private Point position = new Point();
     // Pour les déplacements animés
     private boolean deplacementEnCours;
+    private int nbDeplacementsAnimRestants;
     private double tempX, tempY, deltaX, deltaY;
-    private int nbDeplacementsRestants;
     private Point destination;
 
     public Navire(int direction, SpriteSheet spriteSheet) throws SlickException {
@@ -52,6 +52,14 @@ public class Navire {
 
     public void setNbDeplacements(int nbDeplacements) {
         this.nbDeplacements = nbDeplacements;
+    }
+
+    public int getNbDeplacementsRestants() {
+        return nbDeplacementsRestants;
+    }
+
+    public void setNbDeplacementsRestants(int nbDeplacementsRestants) {
+        this.nbDeplacementsRestants = nbDeplacementsRestants;
     }
 
     public void setDmgCannonPrincipal(int dmgCannonPrincipal) {
@@ -157,7 +165,8 @@ public class Navire {
         tempX = this.position.getX();
         tempY = this.position.getY();
         destination = position;
-        nbDeplacementsRestants = 30;
+        nbDeplacementsAnimRestants = 30;
+        nbDeplacementsRestants--;
         deplacementEnCours = true;
     }
 
@@ -166,8 +175,8 @@ public class Navire {
         tempY += deltaY;
         position.x = (int) tempX;
         position.y = (int) tempY;
-        nbDeplacementsRestants--;
-        if(nbDeplacementsRestants==0){
+        nbDeplacementsAnimRestants--;
+        if(nbDeplacementsAnimRestants==0){
             deplacementEnCours = false;
             position = destination;
         }
