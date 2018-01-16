@@ -61,4 +61,9 @@ public class Joueur {
 	public boolean deplacementEnCours(){
         return navireCourant.isDeplacementEnCours();
     }
+
+    public void newTurn(){
+	    navires.get(0).setNbDeplacementsRestants(navires.get(0).getNbDeplacements());
+	    navires.get(1).setNbDeplacementsRestants(navires.get(1).getNbDeplacements());
+    }
 }
