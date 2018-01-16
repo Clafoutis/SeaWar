@@ -1,13 +1,13 @@
 package joueur;
 
-import java.awt.Point;
-
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
+import utility.FileUtility;
 
 public class NavireAmiral extends Navire {
 
 	public NavireAmiral(int direction) throws SlickException {
-		super(direction);
+		super(direction, new SpriteSheet(FileUtility.DOSSIER_SPRITE + "navire_amiral.png", 64, 64));
 		setNbDeplacements(3);
 		setPv(100);
 		setDmgCannonPrincipal(50);

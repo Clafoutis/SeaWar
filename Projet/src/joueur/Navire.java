@@ -14,12 +14,9 @@ import utility.FileUtility;
 import static java.lang.Thread.sleep;
 
 public class Navire {
-    public static final String FICHIER_SPRITE_SHEET_NAVIRE = "boat2.png";
-    public static final int LONGUEUR_COTE_TUILE = 64;
     private int pv, nbDeplacements, dmgCannonPrincipal, dmgCanonSecondaire,
             nbTourRechargeCanonPrincipal, nbTourRechargeCanonSecondaire;
     private int direction;
-    private SpriteSheet spriteSheet;
     private Animation[] animations = new Animation[6];
     private Point position = new Point();
     // Pour les déplacements animés
@@ -28,17 +25,15 @@ public class Navire {
     private int nbDeplacementsRestants;
     private Point destination;
 
-    public Navire(int direction) throws SlickException {
+    public Navire(int direction, SpriteSheet spriteSheet) throws SlickException {
         this.direction = direction;
         deplacementEnCours = false;
-        spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_NAVIRE, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
-        this.animations[0] = loadAnimation(spriteSheet, 1, 1);
+        this.animations[0] = loadAnimation(spriteSheet, 0, 0);
         this.animations[1] = loadAnimation(spriteSheet, 0, 1);
-        this.animations[2] = loadAnimation(spriteSheet, 1, 0);
-        this.animations[3] = loadAnimation(spriteSheet, 0, 0);
-        this.animations[4] = loadAnimation(spriteSheet, 2, 1);
-        this.animations[5] = loadAnimation(spriteSheet, 2, 0);
-        //addFrame(spriteSheet.getSprite(0, 0), 100);
+        this.animations[2] = loadAnimation(spriteSheet, 0, 2);
+        this.animations[3] = loadAnimation(spriteSheet, 0, 3);
+        this.animations[4] = loadAnimation(spriteSheet, 0, 4);
+        this.animations[5] = loadAnimation(spriteSheet, 0, 5);
     }
 
     private Animation loadAnimation(SpriteSheet spriteSheet, int x, int y) {
