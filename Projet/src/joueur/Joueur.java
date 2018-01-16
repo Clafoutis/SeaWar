@@ -8,12 +8,14 @@ import map.Map;
 import org.newdawn.slick.SlickException;
 
 public class Joueur {
+    private int id;
     private String nom;
     private Color couleur;
     private ArrayList<Navire> navires;
 	private Navire navireCourant;
 
-    public Joueur(String nom, Color couleur, int numero) throws SlickException{
+    public Joueur(int id, String nom, Color couleur, int numero) throws SlickException{
+        this.id = id;
         this.nom = nom;
         this.couleur = couleur;
         this.navires = new ArrayList<Navire>();
@@ -30,6 +32,10 @@ public class Joueur {
         }
     	Map.getInstance().addNavire(navires.get(0), xDepart - 1, yDepart);
         Map.getInstance().addNavire(navires.get(1), xDepart, yDepart - 1);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getNom() {
