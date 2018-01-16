@@ -99,7 +99,7 @@ public class Navire {
     }
 
     public void tryAccess(Point coordCibleTab) {
-        if(!deplacementEnCours){
+        if(!deplacementEnCours && nbDeplacementsRestants>0){
             Point coordPosTab = Map.getInstance().coordMaillageToTab(position);
             int difX = (int) (coordCibleTab.getX()-coordPosTab.getX());
             int difY = (int) (coordCibleTab.getY()-coordPosTab.getY());
@@ -160,17 +160,15 @@ public class Navire {
     }
 
     public void initialiserDeplacement(Point position, int direction){
-        if(nbDeplacementsRestants>0){
-            this.setDirection(direction);
-            deltaX = (position.getX() - this.position.getX())/30;
-            deltaY = (position.getY() - this.position.getY())/30;
-            tempX = this.position.getX();
-            tempY = this.position.getY();
-            destination = position;
-            nbDeplacementsAnimRestants = 30;
-            nbDeplacementsRestants--;
-            deplacementEnCours = true;
-        }
+        this.setDirection(direction);
+        deltaX = (position.getX() - this.position.getX())/30;
+        deltaY = (position.getY() - this.position.getY())/30;
+        tempX = this.position.getX();
+        tempY = this.position.getY();
+        destination = position;
+        nbDeplacementsAnimRestants = 30;
+        nbDeplacementsRestants--;
+        deplacementEnCours = true;
     }
 
     public void animationDeplacement(){
