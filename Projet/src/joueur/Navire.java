@@ -159,8 +159,9 @@ public class Navire {
         animations[direction].draw(Map.getInstance().getPosition().x + position.x, Map.getInstance().getPosition().y + position.y);
     }
 
-    public void initialiserDeplacement(Point position){
+    public void initialiserDeplacement(Point position, int direction){
         if(nbDeplacementsRestants>0){
+            this.setDirection(direction);
             deltaX = (position.getX() - this.position.getX())/30;
             deltaY = (position.getY() - this.position.getY())/30;
             tempX = this.position.getX();
