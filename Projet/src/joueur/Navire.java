@@ -160,14 +160,16 @@ public class Navire {
     }
 
     public void initialiserDeplacement(Point position){
-        deltaX = (position.getX() - this.position.getX())/30;
-        deltaY = (position.getY() - this.position.getY())/30;
-        tempX = this.position.getX();
-        tempY = this.position.getY();
-        destination = position;
-        nbDeplacementsAnimRestants = 30;
-        nbDeplacementsRestants--;
-        deplacementEnCours = true;
+        if(nbDeplacementsRestants>0){
+            deltaX = (position.getX() - this.position.getX())/30;
+            deltaY = (position.getY() - this.position.getY())/30;
+            tempX = this.position.getX();
+            tempY = this.position.getY();
+            destination = position;
+            nbDeplacementsAnimRestants = 30;
+            nbDeplacementsRestants--;
+            deplacementEnCours = true;
+        }
     }
 
     public void animationDeplacement(){
