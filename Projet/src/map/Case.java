@@ -28,7 +28,8 @@ public abstract class Case extends Animation {
 	}
 	
 	public void setPosition(Point _position) {
-		position = _position;
+		position.x = _position.x;
+		position.y = _position.y;
 	}
 	
 	public void move(int _x, int _y) {
@@ -38,6 +39,9 @@ public abstract class Case extends Animation {
 	
 	@Override
 	public void draw() {
-		this.draw(Map.getInstance().getPosition().x + position.x, Map.getInstance().getPosition().y + position.y);
+		this.draw(Map.getInstance().getPosition().x + position.x, 
+			Map.getInstance().getPosition().y + position.y,
+			Map.getInstance().getLongueurAbsolueCoteTuile() * Map.getInstance().getScaleX(),
+			Map.getInstance().getLongueurAbsolueCoteTuile() * Map.getInstance().getScaleY());
 	}
 }
