@@ -58,7 +58,10 @@ public class SelecteurCase {
 	
 	public void draw() {
 		if (isSelecteurVisible()) {
-			selecteurs[idCaseSelectionnee].draw(Map.getInstance().getPosition().x + position.x, Map.getInstance().getPosition().y + position.y);
+			selecteurs[idCaseSelectionnee].draw(Map.getInstance().getPosition().x + position.x, 
+					Map.getInstance().getPosition().y + position.y,
+					LONGUEUR_COTE_TUILE * Map.getInstance().getScaleX(),
+					LONGUEUR_COTE_TUILE * Map.getInstance().getScaleY());
 		}
 	}
 }
