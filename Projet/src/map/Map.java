@@ -221,6 +221,19 @@ public class Map implements Serializable {
 		reagencerMaillage();
 	}
 	
+	// retourne null si il n'y a pas de bateau a cette case
+	public Navire getNavireAtCoord(Point coordTab) {
+		Set<Entry<Navire, Point>> set = navires.entrySet();
+		Iterator<Entry<Navire, Point>> it = set.iterator();
+		while(it.hasNext()){
+			Entry<Navire, Point> e = it.next();
+			if (coordTab.equals(e.getValue())) {
+				return e.getKey();
+			}
+		}
+		return null;
+	}
+	
 	///////////////
 	/// ACTIONS ///
 	///////////////
