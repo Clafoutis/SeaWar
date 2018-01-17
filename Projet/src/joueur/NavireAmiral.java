@@ -7,7 +7,7 @@ import utility.FileUtility;
 public class NavireAmiral extends Navire {
 
 	public NavireAmiral(int direction) throws SlickException {
-		super(direction, new SpriteSheet(FileUtility.DOSSIER_SPRITE + "navire_amiral.png", 64, 64));
+		super(direction, FileUtility.DOSSIER_SPRITE + "navire_fregate.png", 64);
 		setNbDeplacements(3);
 		setNbDeplacementsRestants(3);
 		setPv(100);
@@ -15,7 +15,6 @@ public class NavireAmiral extends Navire {
 		setDmgCanonSecondaire(30);
 		setNbTourRechargeCanonPrincipal(3);
 		setNbTourRechargeCanonSecondaire(1);
-		// TODO Auto-generated constructor stub
 	}
 
 }
