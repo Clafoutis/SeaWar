@@ -23,11 +23,11 @@ public class Navire {
     private double tempX, tempY, deltaX, deltaY;
     private Point destination;
 
-    public Navire(int direction, String nomSpriteSheet, int _longueurCoteTuile) throws SlickException {
+    public Navire(int _direction, String _nomSpriteSheet, int _longueurCoteTuile) throws SlickException {
         this.direction = _direction;
         this.deplacementEnCours = false;
         this.longueurCoteTuile = _longueurCoteTuile;
-        this.spriteSheet = new SpriteSheet(nomSpriteSheet, longueurCoteTuile, longueurCoteTuile);
+        this.spriteSheet = new SpriteSheet(_nomSpriteSheet, longueurCoteTuile, longueurCoteTuile);
         
         this.animations[0] = loadAnimation(spriteSheet, 0, 0);
         this.animations[1] = loadAnimation(spriteSheet, 0, 1);
