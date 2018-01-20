@@ -67,6 +67,7 @@ public class Joueur {
     }
 
     public void newTurn(){
+	    Map.getInstance().verifierPriseDePhare(this);
 	    navires.get(0).setNbDeplacementsRestants(navires.get(0).getNbDeplacements());
 	    navires.get(1).setNbDeplacementsRestants(navires.get(1).getNbDeplacements());
     }
