@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
+import joueur.Joueur;
 import joueur.Navire;
 
 import org.newdawn.slick.Animation;
@@ -18,6 +19,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+import game.Game;
 import utility.FileUtility;
 
 public class Map implements Serializable {
@@ -34,12 +36,10 @@ public class Map implements Serializable {
 	private Class<?> typeDeCaseParId[] = {
 		Ocean.class, 
 		Terre.class,
-		Phare.class,
+		Phare.class
 	};
-		/*PhareJ1.class,
-		PhareJ2.class,
-	};*/
 	private Vector< Vector<Case> > grille;
+	private Vector<Phare> phares;
 	private java.util.Map<Navire, Point> navires = new HashMap<Navire, Point>();
 	private SpriteSheet spriteSheet;
 	private int sensPremierDenivele = -1;
@@ -67,6 +67,7 @@ public class Map implements Serializable {
 
 		spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_MAP, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 	}
+	
 	
 	//////////////////
 	/// ACCESSEURS ///
@@ -271,7 +272,7 @@ public class Map implements Serializable {
 		
 		return coordTab;
 	}
-	
+
 	public void load(String nomMap) {
 		Vector < Vector<Integer> > tabMap = FileUtility.getInstance().loadMap(nomMap);
 		int sensDenivele = sensPremierDenivele;
@@ -286,6 +287,7 @@ public class Map implements Serializable {
 
 		setPosition(0, 0);
 		grille = new Vector< Vector<Case> >();
+		phares = new Vector<Phare>();
 		navires = new HashMap<Navire, Point>();
 
 		for (int j = 0; j < tabMap.size(); j++) {
@@ -319,6 +321,9 @@ public class Map implements Serializable {
 					caseCourante = new Ocean(new Point(x, y));
 				}
 				
+				if (caseCourante.getClass() == Phare.class) {
+					phares.add((Phare)caseCourante);
+				}
 				grille.lastElement().add(caseCourante);
 				x += Math.round(DECALAGE_X * scaleX);
 				y += Math.round(DENIVELE_Y * scaleY * sensDenivele);
@@ -346,6 +351,7 @@ public class Map implements Serializable {
 	
 	public void selectionnerCase(int idCase, Point coordTab) {
 		boolean bordsTabAtteint = true;
+
 		selecteurCase.setIdCaseSelectionnee(idCase);
 		
 		bordsTabAtteint = checkBordsTabEtAjusterCoord(coordTab);
@@ -363,7 +369,7 @@ public class Map implements Serializable {
 		if (coordTab.y < grille.size()) {
 			if (coordTab.x < grille.get(coordTab.y).size()) {
 				Point posCase = grille.get(coordTab.y).get(coordTab.x).getPosition();
-				
+				System.out.println("coordTab.x < grille.get(coordTab.y).size()");
 				try {
 					if (idCase < typeDeCaseParId.length) {
 						grille.get(coordTab.y).set(coordTab.x, (Case)(typeDeCaseParId[idCase])
@@ -464,7 +470,7 @@ public class Map implements Serializable {
 			}
 			
 			// case interdite (terre)
-			if (grille.get(coordCible.y).get(coordCible.x).getId()==1) {//grid[][]
+			if (grille.get(coordCible.y).get(coordCible.x).getId()==Terre.ID) {//grid[][]
 				System.out.println("Throw : Collision avec une case interdite");
 				return;
 			}
@@ -492,6 +498,40 @@ public class Map implements Serializable {
 		}
 	}
 	
+	// Le joueur prend le ou les phares sur lequel est son ou ses navires
+	// (si le joueur n'a pas de navire sur un phare, rien ne se passe)
+	public void verifierPriseDePhare(Joueur joueur) {
+		for (int i = 0; i < joueur.getNbNavires(); i++) {
+			Point coordNavire = navires.get(joueur.getNavire(i));
+			Case caseACoordNavire = grille.get(coordNavire.y).get(coordNavire.x);
+			
+			if (caseACoordNavire.getClass() == Phare.class) {
+				((Phare)(caseACoordNavire)).setJoueurPossesseur(joueur.getId());
+			}
+		}
+	}
+	
+	public int nombrePharePossede(int numJoueur) {
+		int nbPharePossede = 0;
+		for (Phare phare : phares) {
+			if (phare.getJoueurPossesseur() == numJoueur) {
+				nbPharePossede++;
+			}
+		}
+		return nbPharePossede;
+	}
+	
+	// Si il y a victoire, renvoie le numero du joueur gagant (1 ou 2)
+	// Renvoie 0 sinon
+	public int victoire() {
+		for (int numJoueur = 1; numJoueur <= Game.NB_JOUEURS; numJoueur++) {
+			if (nombrePharePossede(numJoueur) == phares.size()) {
+				return numJoueur;
+			}
+		}
+		return 0;
+	}
+
 	public void draw() {
 		for (Vector <Case> ligne : grille) {
 			for (Case caseCourante : ligne) {
@@ -560,9 +600,6 @@ public class Map implements Serializable {
 		if (sensDenivele == -1) {
 			y = Math.round(DENIVELE_Y * scaleY);
 		}
-		
-		//setPosition(0, 0);
-
 
 		for (Vector <Case> ligne : grille) {
 			x = 0;
