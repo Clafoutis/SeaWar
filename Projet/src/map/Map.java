@@ -511,25 +511,18 @@ public class Map implements Serializable {
 		}
 	}
 	
-	public int nombrePharePossede(int numJoueur) {
+	public int nombrePharePossede(int idJoueur) {
 		int nbPharePossede = 0;
 		for (Phare phare : phares) {
-			if (phare.getJoueurPossesseur() == numJoueur) {
+			if (phare.getJoueurPossesseur() == idJoueur) {
 				nbPharePossede++;
 			}
 		}
 		return nbPharePossede;
 	}
 	
-	// Si il y a victoire, renvoie le numero du joueur gagant (1 ou 2)
-	// Renvoie 0 sinon
-	public int victoire() {
-		for (int numJoueur = 1; numJoueur <= Game.NB_JOUEURS; numJoueur++) {
-			if (nombrePharePossede(numJoueur) == phares.size()) {
-				return numJoueur;
-			}
-		}
-		return 0;
+	public boolean victoire(int idJoueur) {
+		return nombrePharePossede(idJoueur) == phares.size();
 	}
 
 	public void draw() {
@@ -543,7 +536,7 @@ public class Map implements Serializable {
 		for (Navire navire : navires.keySet()) {
 			navire.draw();
 		}
-    	}
+	}
 	
 	//////////////////////////
 	/// FONCTIONS INTERNES ///
