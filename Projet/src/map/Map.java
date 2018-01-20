@@ -497,40 +497,6 @@ public class Map implements Serializable {
 			System.out.println("Erreur : Deplacement d'un navire qui n'a pas ete ajoute dans la map");
 		}
 	}
-	
-	// Le joueur prend le ou les phares sur lequel est son ou ses navires
-	// (si le joueur n'a pas de navire sur un phare, rien ne se passe)
-	public void verifierPriseDePhare(Joueur joueur) {
-		for (int i = 0; i < joueur.getNbNavires(); i++) {
-			Point coordNavire = navires.get(joueur.getNavire(i));
-			Case caseACoordNavire = grille.get(coordNavire.y).get(coordNavire.x);
-			
-			if (caseACoordNavire.getClass() == Phare.class) {
-				((Phare)(caseACoordNavire)).setJoueurPossesseur(joueur.getId());
-			}
-		}
-	}
-	
-	public int nombrePharePossede(int numJoueur) {
-		int nbPharePossede = 0;
-		for (Phare phare : phares) {
-			if (phare.getJoueurPossesseur() == numJoueur) {
-				nbPharePossede++;
-			}
-		}
-		return nbPharePossede;
-	}
-	
-	// Si il y a victoire, renvoie le numero du joueur gagant (1 ou 2)
-	// Renvoie 0 sinon
-	public int victoire() {
-		for (int numJoueur = 1; numJoueur <= Game.NB_JOUEURS; numJoueur++) {
-			if (nombrePharePossede(numJoueur) == phares.size()) {
-				return numJoueur;
-			}
-		}
-		return 0;
-	}
 
 	public void draw() {
 		for (Vector <Case> ligne : grille) {
@@ -543,7 +509,7 @@ public class Map implements Serializable {
 		for (Navire navire : navires.keySet()) {
 			navire.draw();
 		}
-    }
+    	}
 	
 	//////////////////////////
 	/// FONCTIONS INTERNES ///
