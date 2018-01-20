@@ -43,6 +43,7 @@ public class Game extends BasicGameState {
             background.addFrame(spriteSheet.getSprite(x, 0), 1200);
         }
         bufferClick = new ArrayList<>();
+        newGame();
     }
 
     @Override
