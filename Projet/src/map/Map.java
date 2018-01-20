@@ -369,7 +369,7 @@ public class Map implements Serializable {
 		if (coordTab.y < grille.size()) {
 			if (coordTab.x < grille.get(coordTab.y).size()) {
 				Point posCase = grille.get(coordTab.y).get(coordTab.x).getPosition();
-				System.out.println("coordTab.x < grille.get(coordTab.y).size()");
+
 				try {
 					if (idCase < typeDeCaseParId.length) {
 						grille.get(coordTab.y).set(coordTab.x, (Case)(typeDeCaseParId[idCase])
