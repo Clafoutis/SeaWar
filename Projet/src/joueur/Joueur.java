@@ -50,6 +50,10 @@ public class Joueur {
         return navires.get(id);
     }
 
+    public int getNbNavires() {
+    	return navires.size();
+    }
+
     public void setNavireCourant(Navire navireCourant) {
         this.navireCourant = navireCourant;
     }
