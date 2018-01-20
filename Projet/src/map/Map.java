@@ -39,7 +39,6 @@ public class Map implements Serializable {
 		Phare.class
 	};
 	private Vector< Vector<Case> > grille;
-	private Vector<Phare> phares;
 	private java.util.Map<Navire, Point> navires = new HashMap<Navire, Point>();
 	private SpriteSheet spriteSheet;
 	private int sensPremierDenivele = -1;
