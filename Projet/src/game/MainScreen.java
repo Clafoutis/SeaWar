@@ -60,8 +60,13 @@ public class MainScreen extends BasicGameState {
         }
     }
 
-    private void startGame(){
+    private void startGame() {
         Music.playGame();
+        try {
+            ((Game) game.getState(Game.ID)).newGame();
+        } catch (SlickException e) {
+            e.printStackTrace();
+        }
         game.enterState(Game.ID);
     }
 
