@@ -46,7 +46,7 @@ public class Game extends BasicGameState {
         for (int x = 0; x < 2; x++) {
             background.addFrame(spriteSheet.getSprite(x, 0), 1200);
         }
-        bufferClick = new ArrayList<>();
+        bufferClick = new ArrayList<Point>();
     }
 
     @Override
@@ -169,8 +169,14 @@ public class Game extends BasicGameState {
 
     public void mouseClicked(int button, int x, int y, int clickCount){
         Point coordMaillage = new Point(x - (int) Map.getInstance().getPosition().getX(), y - (int) Map.getInstance().getPosition().getY());
-        if(!bufferClick.contains(Map.getInstance().coordMaillageToTab(coordMaillage))){
-            bufferClick.add(Map.getInstance().coordMaillageToTab(coordMaillage));
+        Point coordPosTab = Map.getInstance().coordMaillageToTab(coordMaillage); // Coordonnées de la case cliquée
+        
+        if(Map.getInstance().getNavires().containsValue(coordPosTab)){ // On selectionne le bateau cliqué
+        	joueurCourant.setNavireCourant(Map.getInstance().getNavireAtCoord(coordPosTab));
+        }else{ // Car on ne veut pas ajouter le clic de selection du bateau comme une action (déplacement ou tir) à effectuer
+        	if(!bufferClick.contains(Map.getInstance().coordMaillageToTab(coordMaillage))){ // On enregistre le clic dans une "liste d'attente d'action"
+        		bufferClick.add(Map.getInstance().coordMaillageToTab(coordMaillage));
+        	}
         }
     }
 
