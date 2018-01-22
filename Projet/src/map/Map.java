@@ -77,6 +77,9 @@ public class Map implements Serializable {
 		navire.setPosition(coordTabToMaillage(coordTab));
 		navires.put(navire, coordTab);
 	}
+	public java.util.Map<Navire, Point> getNavires(){
+		return navires;
+	}
 	
 	public SpriteSheet getSpriteSheet() {
 		return spriteSheet;
