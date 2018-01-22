@@ -20,13 +20,14 @@ import java.util.ArrayList;
 
 public class Game extends BasicGameState {
     public static final int ID = 2;
+    public static final int NB_JOUEURS = 2;
+    
     private GameContainer container;
     private StateBasedGame game;
     private Animation background;
     private ArrayList<Point> bufferClick; // Changer le type
     private Point position = new Point();
     // Déroulement partie
-    private final int NB_JOUEURS = 2;
     private Joueur[] joueurs = new Joueur[NB_JOUEURS];
     private Joueur joueurCourant;
     private SelecteurCase selecteurCaseNavireCourant;
