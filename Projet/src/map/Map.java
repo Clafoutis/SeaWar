@@ -85,6 +85,10 @@ public class Map implements Serializable {
 	public final float getLongueurAbsolueCoteTuile() {
 		return LONGUEUR_COTE_TUILE;
 	}
+	
+	public Vector<Vector<Case>> getGrille() {
+		return grille;
+	}
 
 	public int getSensPremierDenivele() {
 		return sensPremierDenivele;
