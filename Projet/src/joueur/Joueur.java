@@ -19,8 +19,8 @@ public class Joueur {
         this.nom = nom;
         this.couleur = couleur;
         this.navires = new ArrayList<Navire>();
-        this.navires.add(new NavireAmiral(2 * numero + numero - 1));
-        this.navires.add(new NavireFregate(2 * numero + numero - 1));
+        this.navires.add(new NavireAmiral(2 * numero + numero - 1, this.id));
+        this.navires.add(new NavireFregate(2 * numero + numero - 1, this.id));
         this.navireCourant = navires.get(0);
         int xDepart, yDepart;
         if(numero==2){
@@ -49,7 +49,7 @@ public class Joueur {
     public Navire getNavire(int id) {
         return navires.get(id);
     }
-
+    
     public int getNbNavires() {
     	return navires.size();
     }

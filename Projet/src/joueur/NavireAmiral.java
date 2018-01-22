@@ -6,7 +6,7 @@ import utility.FileUtility;
 
 public class NavireAmiral extends Navire {
 
-	public NavireAmiral(int direction) throws SlickException {
+	public NavireAmiral(int direction, int id_proprietaire) throws SlickException {
 		super(direction, FileUtility.DOSSIER_SPRITE + "navire_amiral.png", 64);
 		setNbDeplacements(3);
 		setNbDeplacementsRestants(3);
@@ -15,6 +15,7 @@ public class NavireAmiral extends Navire {
 		setDmgCanonSecondaire(30);
 		setNbTourRechargeCanonPrincipal(3);
 		setNbTourRechargeCanonSecondaire(1);
+		setIdProprietaire(id_proprietaire);
 	}
 
 }

@@ -6,7 +6,7 @@ import utility.FileUtility;
 
 public class NavireFregate extends Navire {
 
-	public NavireFregate(int direction) throws SlickException {
+	public NavireFregate(int direction, int id_proprietaire) throws SlickException {
 		super(direction, FileUtility.DOSSIER_SPRITE + "navire_fregate.png", 64);
 		setNbDeplacements(7);
 		setNbDeplacementsRestants(7);
@@ -15,6 +15,7 @@ public class NavireFregate extends Navire {
 		setDmgCanonSecondaire(10);
 		setNbTourRechargeCanonPrincipal(1);
 		setNbTourRechargeCanonSecondaire(0);
+		setIdProprietaire(id_proprietaire);
 	}
 
 }

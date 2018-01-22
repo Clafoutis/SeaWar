@@ -25,12 +25,14 @@ public class Navire {
     private double tempX, tempY, deltaX, deltaY;
     private Point destination;
     private int longueurCoteTuile = 64;// (par defaut)
+    private int id_proprietaire;
 
     public Navire(int _direction, String _nomSpriteSheet, int _longueurCoteTuile) throws SlickException {
         this.direction = _direction;
         this.deplacementEnCours = false;
         this.longueurCoteTuile = _longueurCoteTuile;
         this.spriteSheet = new SpriteSheet(_nomSpriteSheet, longueurCoteTuile, longueurCoteTuile);
+        this.id_proprietaire = 0;
         
         this.animations[0] = loadAnimation(spriteSheet, 0, 0);
         this.animations[1] = loadAnimation(spriteSheet, 0, 1);
@@ -38,10 +40,19 @@ public class Navire {
         this.animations[3] = loadAnimation(spriteSheet, 0, 3);
         this.animations[4] = loadAnimation(spriteSheet, 0, 4);
         this.animations[5] = loadAnimation(spriteSheet, 0, 5);
+       
     }
 
     public int getPv(){
         return this.pv;
+    }
+    
+    public void setIdProprietaire(int id){
+    	this.id_proprietaire = id;
+    }
+    
+    public int getIdProprietaire(){
+    	return this.id_proprietaire;
     }
 
     private Animation loadAnimation(SpriteSheet spriteSheet, int x, int y) {
