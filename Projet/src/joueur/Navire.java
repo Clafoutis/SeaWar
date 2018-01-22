@@ -11,13 +11,17 @@ import map.Terre;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.Image;
 
 public class Navire {
-    private int pv, nbDeplacements, nbDeplacementsRestants, dmgCannonPrincipal, dmgCanonSecondaire,
+    private int pv, pvMax, nbDeplacements, nbDeplacementsRestants, dmgCannonPrincipal, dmgCanonSecondaire,
             nbTourRechargeCanonPrincipal, nbTourRechargeCanonSecondaire;
     private int direction;
     private SpriteSheet spriteSheet;
+    public SpriteSheet spriteSheetMiniature;
+    
     private Animation[] animations = new Animation[6];
+    
     private Point position = new Point();
     // Pour les déplacements animés
     private boolean deplacementEnCours;
@@ -27,12 +31,13 @@ public class Navire {
     private int longueurCoteTuile = 64;// (par defaut)
     private int id_proprietaire;
 
-    public Navire(int _direction, String _nomSpriteSheet, int _longueurCoteTuile) throws SlickException {
+    public Navire(int _direction, String _nomSpriteSheet, int _longueurCoteTuile, String _spriteSheetMiniature) throws SlickException {
         this.direction = _direction;
         this.deplacementEnCours = false;
         this.longueurCoteTuile = _longueurCoteTuile;
+        
         this.spriteSheet = new SpriteSheet(_nomSpriteSheet, longueurCoteTuile, longueurCoteTuile);
-        this.id_proprietaire = 0;
+        this.spriteSheetMiniature = new SpriteSheet(_spriteSheetMiniature, 1300, 1390);
         
         this.animations[0] = loadAnimation(spriteSheet, 0, 0);
         this.animations[1] = loadAnimation(spriteSheet, 0, 1);
@@ -40,11 +45,18 @@ public class Navire {
         this.animations[3] = loadAnimation(spriteSheet, 0, 3);
         this.animations[4] = loadAnimation(spriteSheet, 0, 4);
         this.animations[5] = loadAnimation(spriteSheet, 0, 5);
-       
     }
 
     public int getPv(){
         return this.pv;
+    }
+    
+    public int getPvMax(){
+    	return this.pvMax;
+    }
+    
+    public void setPvMax(int _pvMax){
+    	this.pvMax = _pvMax;
     }
     
     public void setIdProprietaire(int id){
@@ -275,11 +287,17 @@ public class Navire {
     }
 
     public void draw() {
+    	// draw boat
         animations[direction].draw(Map.getInstance().getPosition().x + position.x, 
         		Map.getInstance().getPosition().y + position.y,
         		longueurCoteTuile * Map.getInstance().getScaleX(),
         		longueurCoteTuile * Map.getInstance().getScaleY());
     }
+    
+    public void drawStatus(){
+    	spriteSheetMiniature.getSprite(0, id_proprietaire).draw(10, 10, 130, 139);
+    }
+    
 
     public void initialiserDeplacement(Point position, int direction){
         if(!position.equals(this.position)){
