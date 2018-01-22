@@ -2,6 +2,8 @@ package game;
 
 import java.awt.Color;
 import java.awt.Point;
+
+import map.SelecteurCase;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -18,16 +20,17 @@ import java.util.ArrayList;
 
 public class Game extends BasicGameState {
     public static final int ID = 2;
-    public static final int NB_JOUEURS = 2;
-    
     private GameContainer container;
     private StateBasedGame game;
     private Animation background;
     private ArrayList<Point> bufferClick; // Changer le type
     private Point position = new Point();
     // Déroulement partie
+    private final int NB_JOUEURS = 2;
     private Joueur[] joueurs = new Joueur[NB_JOUEURS];
     private Joueur joueurCourant;
+    private SelecteurCase selecteurCaseNavireCourant;
+    private SelecteurCase[] selecteurCasesDeplacement;
 
 
     @Override
@@ -43,7 +46,6 @@ public class Game extends BasicGameState {
             background.addFrame(spriteSheet.getSprite(x, 0), 1200);
         }
         bufferClick = new ArrayList<>();
-        newGame();
     }
 
     @Override
@@ -56,12 +58,21 @@ public class Game extends BasicGameState {
         if(!bufferClick.isEmpty() && !joueurCourant.getNavireCourant().isDeplacementEnCours()){
             executeClick();
         }
+        // Selecteurs de case
+        if(joueurCourant.getNavireCourant().isDeplacementEnCours()) {
+            selecteurCaseNavireCourant.setPosition(joueurCourant.getNavireCourant().getDestination());
+        }else{
+            selecteurCaseNavireCourant.setPosition(joueurCourant.getNavireCourant().getPosition());
+        }
+        joueurCourant.getNavireCourant().getPossibleDeplacements(selecteurCasesDeplacement);
     }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics graphics) throws SlickException {
         graphics.drawAnimation(background, 0, 0);
         Map.getInstance().draw();
+        selecteurCaseNavireCourant.draw();
+        for (SelecteurCase selecteur:selecteurCasesDeplacement) selecteur.draw();
         graphics.drawString( "Joueur 1 :", 0, 30);
         graphics.drawString( "Points de vie Amiral :"+joueurs[0].getNavire(0).getPv(), 0, 50);
         graphics.drawString( "Points de vie Frégate :"+joueurs[0].getNavire(1).getPv(), 0, 70);
@@ -80,20 +91,20 @@ public class Game extends BasicGameState {
         joueurs[0] = new Joueur(0, "Joueur 1", Color.RED, 1);
         joueurs[1] = new Joueur(1, "Joueur 2", Color.BLUE, 2);
         joueurCourant = joueurs[0];
+        // Selecteurs de case
+        selecteurCaseNavireCourant = new SelecteurCase(3);
+        selecteurCaseNavireCourant.setIdCaseSelectionnee(0);
+        selecteurCaseNavireCourant.setSelecteurVisible(true);
+        selecteurCasesDeplacement = new SelecteurCase[3];
+        for (int i =0;i<selecteurCasesDeplacement.length;i++){
+            selecteurCasesDeplacement[i] = new SelecteurCase(3);
+            selecteurCasesDeplacement[i].setIdCaseSelectionnee(1);
+        }
     }
 
     public void nextTurn() {
-    	// fin du tour du joueur courant : on verifie si il prend un phare
-    	Map.getInstance().verifierPriseDePhare(joueurCourant);
-    	
-    	// debut du tour du prochain joueur courant
-    	joueurCourant = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS];
+        joueurCourant = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS];
         joueurCourant.newTurn();
-    	
-        // un joueur gagne seulement au debut de son tour s'il a possede 3 phares
-    	if (Map.getInstance().victoire(joueurCourant.getId())) {
-    		System.out.println("Victoire de " + joueurCourant.getNom() + " !!");
-    	}
     }
 
     @Override
