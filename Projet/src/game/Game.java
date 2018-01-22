@@ -173,7 +173,9 @@ public class Game extends BasicGameState {
         
         if(Map.getInstance().getNavires().containsValue(coordPosTab)){ // On selectionne le bateau cliqué
         	joueurCourant.setNavireCourant(Map.getInstance().getNavireAtCoord(coordPosTab));
-        }else{ // Car on ne veut pas ajouter le clic de selection du bateau comme une action (déplacement ou tir) à effectuer
+        	
+        }else{
+        	
         	if(!bufferClick.contains(Map.getInstance().coordMaillageToTab(coordMaillage))){ // On enregistre le clic dans une "liste d'attente d'action"
         		bufferClick.add(Map.getInstance().coordMaillageToTab(coordMaillage));
         	}
@@ -181,8 +183,11 @@ public class Game extends BasicGameState {
     }
 
     public void executeClick(){
-        joueurCourant.getNavireCourant().tryAccess(bufferClick.get(0));
-        bufferClick.remove(0); // On supprime l'action enregistrée dans tous les cas. Si la méthode try access s'est bien déroulée et si elle ne s'est pas bien déroulée. Il ne faut pas encombrer le buffer avec des actions invalides.
+    	if(joueurCourant.getId() == joueurCourant.getNavireCourant().getIdProprietaire()){ // Si le bateau appartient au bon joueur
+    		joueurCourant.getNavireCourant().tryAccess(bufferClick.get(0));
+    	}
+        
+    	bufferClick.remove(0); // On supprime l'action enregistrée dans tous les cas. Si la méthode try access s'est bien déroulée et si elle ne s'est pas bien déroulée. Il ne faut pas encombrer le buffer avec des actions invalides.
     }
     @Override
     public int getID() {
