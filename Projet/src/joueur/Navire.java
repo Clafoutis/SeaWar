@@ -22,10 +22,14 @@ public class Navire {
     private int nbDeplacementsAnimRestants;
     private double tempX, tempY, deltaX, deltaY;
     private Point destination;
+    private int longueurCoteTuile = 64;// (par defaut)
 
-    public Navire(int direction, SpriteSheet spriteSheet) throws SlickException {
-        this.direction = direction;
-        deplacementEnCours = false;
+    public Navire(int _direction, String _nomSpriteSheet, int _longueurCoteTuile) throws SlickException {
+        this.direction = _direction;
+        this.deplacementEnCours = false;
+        this.longueurCoteTuile = _longueurCoteTuile;
+        this.spriteSheet = new SpriteSheet(_nomSpriteSheet, longueurCoteTuile, longueurCoteTuile);
+        
         this.animations[0] = loadAnimation(spriteSheet, 0, 0);
         this.animations[1] = loadAnimation(spriteSheet, 0, 1);
         this.animations[2] = loadAnimation(spriteSheet, 0, 2);
@@ -258,7 +262,10 @@ public class Navire {
     }
 
     public void draw() {
-        animations[direction].draw(Map.getInstance().getPosition().x + position.x, Map.getInstance().getPosition().y + position.y);
+        animations[direction].draw(Map.getInstance().getPosition().x + position.x, 
+        		Map.getInstance().getPosition().y + position.y,
+        		longueurCoteTuile * Map.getInstance().getScaleX(),
+        		longueurCoteTuile * Map.getInstance().getScaleY());
     }
 
     public void initialiserDeplacement(Point position, int direction){
