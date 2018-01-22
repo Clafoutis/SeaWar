@@ -104,8 +104,17 @@ public class Game extends BasicGameState {
     }
 
     public void nextTurn() {
-        joueurCourant = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS];
+        // fin du tour du joueur courant : on verifie si il prend un phare
+    	Map.getInstance().verifierPriseDePhare(joueurCourant);
+    	
+    	// debut du tour du prochain joueur courant
+    	joueurCourant = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS];
         joueurCourant.newTurn();
+    	
+        // un joueur gagne seulement au debut de son tour s'il a possede 3 phares
+    	if (Map.getInstance().victoire(joueurCourant.getId())) {
+    		System.out.println("Victoire de " + joueurCourant.getNom() + " !!");
+    	}
     }
 
     @Override
