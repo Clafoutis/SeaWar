@@ -5,12 +5,12 @@ import java.awt.Point;
 import map.Direction;
 import map.Map;
 
+import map.SelecteurCase;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
 public class Navire {
-    private int longueurCoteTuile = 64;// (par defaut)
     private int pv, nbDeplacements, nbDeplacementsRestants, dmgCannonPrincipal, dmgCanonSecondaire,
             nbTourRechargeCanonPrincipal, nbTourRechargeCanonSecondaire;
     private int direction;
@@ -23,12 +23,9 @@ public class Navire {
     private double tempX, tempY, deltaX, deltaY;
     private Point destination;
 
-    public Navire(int _direction, String _nomSpriteSheet, int _longueurCoteTuile) throws SlickException {
-        this.direction = _direction;
-        this.deplacementEnCours = false;
-        this.longueurCoteTuile = _longueurCoteTuile;
-        this.spriteSheet = new SpriteSheet(_nomSpriteSheet, longueurCoteTuile, longueurCoteTuile);
-        
+    public Navire(int direction, SpriteSheet spriteSheet) throws SlickException {
+        this.direction = direction;
+        deplacementEnCours = false;
         this.animations[0] = loadAnimation(spriteSheet, 0, 0);
         this.animations[1] = loadAnimation(spriteSheet, 0, 1);
         this.animations[2] = loadAnimation(spriteSheet, 0, 2);
@@ -98,8 +95,109 @@ public class Navire {
         position = _position;
     }
 
+    public Point getDestination() {
+        return (Point)destination.clone();
+    }
+
     public boolean isDeplacementEnCours() {
         return deplacementEnCours;
+    }
+
+    public void getPossibleDeplacements(SelecteurCase[] selecteurs){
+        Point coordPosTab = Map.getInstance().coordMaillageToTab(position);
+        int X = (int) coordPosTab.getX();
+        int Y = (int) coordPosTab.getY();
+        Point newPoint[] = new Point[3];
+        int sensPremierDenivele = Map.getInstance().getSensPremierDenivele();
+        boolean xPaire = (coordPosTab.getX() % 2) == 0;
+        boolean deniveleInverse = sensPremierDenivele == 1;
+        boolean ohMyGodness = xPaire != deniveleInverse;
+        if(!deplacementEnCours && nbDeplacementsRestants>0){
+            switch(direction){
+                case 0:
+                    if(ohMyGodness){
+                        newPoint[0] = new Point(X-1, Y);
+                        newPoint[2] = new Point(X+1, Y);
+                    }
+                    else{
+                        newPoint[0] = new Point(X-1, Y-1);
+                        newPoint[2] = new Point(X+1, Y-1);
+                    }
+                    newPoint[1] = new Point(X, Y-1);
+                    break;
+                case 1:
+                    newPoint[0] = new Point(X, Y-1);
+                    if(ohMyGodness){
+                        newPoint[1] = new Point(X+1, Y);
+                        newPoint[2] = new Point(X+1, Y+1);
+                    }
+                    else{
+                        newPoint[1] = new Point(X+1, Y-1);
+                        newPoint[2] = new Point(X+1, Y);
+                    }
+                    break;
+                case 2:
+                    newPoint[2] = new Point(X, Y+1);
+                    if(ohMyGodness){
+                        newPoint[0] = new Point(X+1, Y);
+                        newPoint[1] = new Point(X+1, Y+1);
+                    }
+                    else{
+                        newPoint[0] = new Point(X+1, Y-1);
+                        newPoint[1] = new Point(X+1, Y);
+                    }
+                    break;
+                case 3:
+                    newPoint[1] = new Point(X, Y+1);
+                    if(ohMyGodness){
+                        newPoint[0] = new Point(X+1, Y+1);
+                        newPoint[2] = new Point(X-1, Y+1);
+                    }
+                    else{
+                        newPoint[0] = new Point(X+1, Y);
+                        newPoint[2] = new Point(X-1, Y);
+                    }
+                    break;
+                case 4:
+                    newPoint[0] = new Point(X, Y+1);
+                    if(ohMyGodness){
+                        newPoint[1] = new Point(X-1, Y);
+                        newPoint[2] = new Point(X-1, Y+1);
+                    }
+                    else{
+                        newPoint[1] = new Point(X-1, Y);
+                        newPoint[2] = new Point(X-1, Y-1);
+                    }
+                    break;
+                case 5:
+                    newPoint[2] = new Point(X, Y-1);
+                    if(ohMyGodness){
+                        newPoint[0] = new Point(X-1, Y);
+                        newPoint[1] = new Point(X-1, Y+1);
+                    }
+                    else{
+                        newPoint[0] = new Point(X-1, Y-1);
+                        newPoint[1] = new Point(X-1, Y);
+                    }
+                    break;
+            }
+            for (int i=0;i<selecteurs.length;i++) {
+                if(newPoint[i].getX()<0 || newPoint[i].getY()<0 ||
+                        newPoint[i].getX()>Map.getInstance().getNbCases().getX()-1 ||
+                        newPoint[i].getY()>Map.getInstance().getNbCases().getY()-1){
+                    selecteurs[i].setSelecteurVisible(false);
+                }else if(Map.getInstance().getGrille().get((int) newPoint[i].getY()).get((int) newPoint[i].getX()).getId()==1){
+                    selecteurs[i].setSelecteurVisible(false);
+                }else{
+                    selecteurs[i].setPosition(Map.getInstance().coordTabToMaillage(newPoint[i]));
+                    selecteurs[i].setSelecteurVisible(true);
+                }
+            }
+        }else{
+            for (SelecteurCase selecteur:selecteurs) {
+                selecteur.setSelecteurVisible(false);
+            }
+        }
     }
 
     public void tryAccess(Point coordCibleTab) {
@@ -160,22 +258,21 @@ public class Navire {
     }
 
     public void draw() {
-        animations[direction].draw(Map.getInstance().getPosition().x + position.x, 
-        		Map.getInstance().getPosition().y + position.y,
-        		longueurCoteTuile * Map.getInstance().getScaleX(),
-        		longueurCoteTuile * Map.getInstance().getScaleY());
+        animations[direction].draw(Map.getInstance().getPosition().x + position.x, Map.getInstance().getPosition().y + position.y);
     }
 
     public void initialiserDeplacement(Point position, int direction){
-        this.setDirection(direction);
-        deltaX = (position.getX() - this.position.getX())/30;
-        deltaY = (position.getY() - this.position.getY())/30;
-        tempX = this.position.getX();
-        tempY = this.position.getY();
-        destination = position;
-        nbDeplacementsAnimRestants = 30;
-        nbDeplacementsRestants--;
-        deplacementEnCours = true;
+        if(!position.equals(this.position)){
+            this.setDirection(direction);
+            deltaX = (position.getX() - this.position.getX())/30;
+            deltaY = (position.getY() - this.position.getY())/30;
+            tempX = this.position.getX();
+            tempY = this.position.getY();
+            destination = position;
+            nbDeplacementsAnimRestants = 30;
+            nbDeplacementsRestants--;
+            deplacementEnCours = true;
+        }
     }
 
     public void animationDeplacement(){
