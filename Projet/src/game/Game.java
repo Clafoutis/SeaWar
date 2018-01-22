@@ -1,6 +1,5 @@
 package game;
-
-import java.awt.Color;
+ 
 import java.awt.Point;
 
 import map.SelecteurCase;
@@ -8,6 +7,7 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.state.BasicGameState;
@@ -74,23 +74,37 @@ public class Game extends BasicGameState {
         Map.getInstance().draw();
         selecteurCaseNavireCourant.draw();
         for (SelecteurCase selecteur:selecteurCasesDeplacement) selecteur.draw();
-        graphics.drawString( "Joueur 1 :", 0, 30);
-        graphics.drawString( "Points de vie Amiral :"+joueurs[0].getNavire(0).getPv(), 0, 50);
-        graphics.drawString( "Points de vie Frégate :"+joueurs[0].getNavire(1).getPv(), 0, 70);
-        graphics.drawString( "nbDeplacements Amiral :"+joueurs[0].getNavire(0).getNbDeplacementsRestants(), 0, 90);
-        graphics.drawString( "nbDeplacements Frégate :"+joueurs[0].getNavire(1).getNbDeplacementsRestants(), 0, 110);
-        graphics.drawString( "Joueur 2 :", 800, 30);
-        graphics.drawString( "Points de vie Amiral :"+joueurs[1].getNavire(0).getPv(), 800, 50);
-        graphics.drawString( "Points de vie Frégate :"+joueurs[1].getNavire(1).getPv(), 800, 70);
-        graphics.drawString( "nbDeplacements Amiral :"+joueurs[1].getNavire(0).getNbDeplacementsRestants(), 800, 90);
-        graphics.drawString( "nbDeplacements Frégate :"+joueurs[1].getNavire(1).getNbDeplacementsRestants(), 800, 110);
+        
+    	
+        // Render de l'interface
+        // Affichage de la barre de vie en % de la vie maximale
+        graphics.setColor(Color.red);
+    	graphics.drawGradientLine(1, 1, Color.red, 1, 1, Color.red); // Indispensable de tracer un premier point inutile avec la couleur selectionnée, sinon la couleur n'est pas prise en compte dans le dessin #Obviously
+    	graphics.fillRect(145, 110, 20, -100);
+    	graphics.setColor(Color.green);
+    	graphics.drawGradientLine(1, 1, Color.green, 1, 1, Color.green); // LOL MDR POURQUOI QUAND JE METS CETTE LIGNE, LA LIGNE DE CODE PRÉCÉDENTE MARCHE ???
+    	graphics.fillRect(145, 110, 20, -(joueurCourant.getNavireCourant().getPv() * 100 / joueurCourant.getNavireCourant().getPvMax() ));
+    	
+    	// Affichage de l'image représentant le navire sélectionné
+    	joueurCourant.getNavireCourant().drawStatus();
+    	
+    	// Affichage déplacement
+    	graphics.setColor(Color.cyan);
+    	graphics.drawGradientLine(1, 1, Color.cyan, 1, 1, Color.cyan);
+    	// A terminer : afficher les autres infos comme le nombre de déplacements restant et le temps de recharge d'un tir
+    	
+    
+    
+        
+        
+        
     }
 
     public void newGame() throws SlickException {
         Map.getInstance().load("test.txt");
         Map.getInstance().centrerDansFenetre(container);
-        joueurs[0] = new Joueur(0, "Joueur 1", Color.RED, 1);
-        joueurs[1] = new Joueur(1, "Joueur 2", Color.BLUE, 2);
+        joueurs[0] = new Joueur(0, "Joueur 1", java.awt.Color.RED, 1);
+        joueurs[1] = new Joueur(1, "Joueur 2", java.awt.Color.BLUE, 2);
         joueurCourant = joueurs[0];
         // Selecteurs de case
         selecteurCaseNavireCourant = new SelecteurCase(3);
