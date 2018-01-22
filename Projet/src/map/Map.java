@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
-import joueur.Joueur;
 import joueur.Navire;
 
 import org.newdawn.slick.Animation;
@@ -19,7 +18,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
-import game.Game;
 import utility.FileUtility;
 
 public class Map implements Serializable {
@@ -31,22 +29,22 @@ public class Map implements Serializable {
 	private static final int DECALAGE_X = (int) ((float) LONGUEUR_COTE_TUILE * 3f / 4f);
 	private static final int DENIVELE_Y = (int) (Math.sin(1) * (float) LONGUEUR_COTE_TUILE / 2f);//60 deg = 1.0472 rad
 	private static final int DECALAGE_Y = (int) 2 * DENIVELE_Y;
-	private static final int MARGE_ORIGINE_Y = (int) (LONGUEUR_COTE_TUILE / 2f - DENIVELE_Y);
+	private static final int MARGE_ORIGINE_Y = - (int) (LONGUEUR_COTE_TUILE / 2f - DENIVELE_Y);
 
 	private Class<?> typeDeCaseParId[] = {
 		Ocean.class, 
 		Terre.class,
-		Phare.class
+		Phare.class,
 	};
+		/*PhareJ1.class,
+		PhareJ2.class,
+	};*/
 	private Vector< Vector<Case> > grille;
-	private Vector<Phare> phares;
 	private java.util.Map<Navire, Point> navires = new HashMap<Navire, Point>();
 	private SpriteSheet spriteSheet;
 	private int sensPremierDenivele = -1;
 	
 	private Point position = new Point();
-	private float scaleX = 1f;
-	private float scaleY = 1f;
 	private SelecteurCase selecteurCase;
 	
 	private Map() throws SlickException {
@@ -68,7 +66,6 @@ public class Map implements Serializable {
 		spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_MAP, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 	}
 	
-	
 	//////////////////
 	/// ACCESSEURS ///
 	//////////////////
@@ -81,9 +78,9 @@ public class Map implements Serializable {
 	public SpriteSheet getSpriteSheet() {
 		return spriteSheet;
 	}
-	
-	public final float getLongueurAbsolueCoteTuile() {
-		return LONGUEUR_COTE_TUILE;
+
+	public Vector<Vector<Case>> getGrille() {
+		return grille;
 	}
 
 	public int getSensPremierDenivele() {
@@ -96,7 +93,7 @@ public class Map implements Serializable {
 	
 	public void setPosition(int x, int y) {
 		position.x = x;
-		position.y = y - Math.round(MARGE_ORIGINE_Y * scaleY);
+		position.y = y + MARGE_ORIGINE_Y;
 	}
 	
 	public Point getNbCases() {
@@ -146,57 +143,14 @@ public class Map implements Serializable {
 		}
 	}
 	
-	public Point getTailleAbsolue() {
-		Point taille = new Point();
-		Point nbCases = getNbCases();
-
-		taille.x = DECALAGE_X * (nbCases.x - 1) + LONGUEUR_COTE_TUILE;
-		taille.y = DECALAGE_Y * nbCases.y + DENIVELE_Y + LONGUEUR_COTE_TUILE - DECALAGE_Y;
-		
-		return taille;
-	}
-	
 	public Point getTaille() {
 		Point taille = new Point();
 		Point nbCases = getNbCases();
 
-		taille.x = Math.round(DECALAGE_X * scaleX) * (nbCases.x - 1) + Math.round(LONGUEUR_COTE_TUILE * scaleX);
-		taille.y = Math.round(DECALAGE_Y * scaleY) * nbCases.y + Math.round(DENIVELE_Y * scaleY)  + Math.round(LONGUEUR_COTE_TUILE * scaleY) - Math.round(DECALAGE_Y * scaleY);
+		taille.x = DECALAGE_X * (nbCases.x - 1) + LONGUEUR_COTE_TUILE;
+		taille.y = DECALAGE_Y * nbCases.y + DENIVELE_Y;
 		
 		return taille;
-	}
-	
-	public void setScale(float x, float y) {
-		scaleX = x;
-		scaleY = y;
-		
-		reagencerMaillage();
-		for (Navire navire : navires.keySet()) {
-			navire.setPosition(coordTabToMaillage(navires.get(navire)));
-		}
-	}
-	
-	public void setTaille(int hauteur, int largeur) {
-		Point tailleAbsolue = getTailleAbsolue();
-		setScale((float)(hauteur) / tailleAbsolue.x, (float)(largeur) / tailleAbsolue.y);
-	}
-	
-	public void setHauteur(int hauteur) {
-		Point tailleAbsolue = getTailleAbsolue();
-		setScale((float)(hauteur) / tailleAbsolue.x, (float)(hauteur) / tailleAbsolue.x);
-	}
-	
-	public void setLargeur(int largeur) {
-		Point tailleAbsolue = getTailleAbsolue();
-		setScale((float)(largeur) / tailleAbsolue.x, (float)(largeur) / tailleAbsolue.x);
-	}
-	
-	public float getScaleX() {
-		return scaleX;
-	}
-	
-	public float getScaleY() {
-		return scaleY;
 	}
 	
 	public boolean isAgencementMaillageHaut() {
@@ -208,31 +162,15 @@ public class Map implements Serializable {
 	}
 	
 	public void setAgencementMaillageHaut() {
-		sensPremierDenivele = -1;
-		reagencerMaillage();
+		reagencerMaillage(-1);
 	}
 	
 	public void setAgencementMaillageBas() {
-		sensPremierDenivele = 1;
-		reagencerMaillage();
+		reagencerMaillage(1);
 	}
 	
 	public void changerAgencementMaillage() {
-		sensPremierDenivele = -sensPremierDenivele;
-		reagencerMaillage();
-	}
-	
-	// retourne null si il n'y a pas de bateau a cette case
-	public Navire getNavireAtCoord(Point coordTab) {
-		Set<Entry<Navire, Point>> set = navires.entrySet();
-		Iterator<Entry<Navire, Point>> it = set.iterator();
-		while(it.hasNext()){
-			Entry<Navire, Point> e = it.next();
-			if (coordTab.equals(e.getValue())) {
-				return e.getKey();
-			}
-		}
-		return null;
+		reagencerMaillage(-sensPremierDenivele);
 	}
 	
 	///////////////
@@ -246,12 +184,12 @@ public class Map implements Serializable {
 	public Point coordTabToMaillage(Point coordTab) {
 		Point coordMaillage = new Point();
 
-		coordMaillage.x = coordTab.x * Math.round(DECALAGE_X * scaleX);
-		coordMaillage.y = coordTab.y * Math.round(DECALAGE_Y * scaleY);
+		coordMaillage.x = coordTab.x * DECALAGE_X;
+		coordMaillage.y = coordTab.y * DECALAGE_Y;
 
 		if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 || 
 			sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
-			coordMaillage.y += Math.round(DENIVELE_Y * scaleY);
+			coordMaillage.y += DENIVELE_Y;
 		}
 		
 		return coordMaillage;
@@ -261,18 +199,18 @@ public class Map implements Serializable {
 		Point coordTab = new Point();
 		Point coordMaillageClone = new Point(coordMaillage);
 
-		coordTab.x = coordMaillageClone.x / Math.round(DECALAGE_X * scaleX);
+		coordTab.x = coordMaillageClone.x / DECALAGE_X;
 
 		if (sensPremierDenivele == -1 && coordTab.x % 2 == 0 ||
 			sensPremierDenivele ==  1 && Math.abs(coordTab.x % 2) == 1) {
-			coordMaillageClone.y -= Math.round(DENIVELE_Y * scaleY);
+			coordMaillageClone.y -= DENIVELE_Y;
 		}
 
-		coordTab.y = coordMaillageClone.y / Math.round(DECALAGE_Y * scaleY);
+		coordTab.y = coordMaillageClone.y / DECALAGE_Y;
 		
 		return coordTab;
 	}
-
+	
 	public void load(String nomMap) {
 		Vector < Vector<Integer> > tabMap = FileUtility.getInstance().loadMap(nomMap);
 		int sensDenivele = sensPremierDenivele;
@@ -280,14 +218,13 @@ public class Map implements Serializable {
 		int y = 0;
 		
 		if (sensDenivele == -1) {
-			y = Math.round(DENIVELE_Y * scaleY);
+			y = DENIVELE_Y;
 		}
 		
 		FileUtility.getInstance().printTabMap(tabMap);
 
 		setPosition(0, 0);
 		grille = new Vector< Vector<Case> >();
-		phares = new Vector<Phare>();
 		navires = new HashMap<Navire, Point>();
 
 		for (int j = 0; j < tabMap.size(); j++) {
@@ -321,20 +258,17 @@ public class Map implements Serializable {
 					caseCourante = new Ocean(new Point(x, y));
 				}
 				
-				if (caseCourante.getClass() == Phare.class) {
-					phares.add((Phare)caseCourante);
-				}
 				grille.lastElement().add(caseCourante);
-				x += Math.round(DECALAGE_X * scaleX);
-				y += Math.round(DENIVELE_Y * scaleY * sensDenivele);
+				x += DECALAGE_X;
+				y += DENIVELE_Y * sensDenivele;
 				sensDenivele = -sensDenivele;
 			}
 
 			if (sensDenivele != sensPremierDenivele) {
 				sensDenivele = sensPremierDenivele;
-				y += Math.round(DENIVELE_Y * scaleY);
+				y += DENIVELE_Y;
 			}
-			y += Math.round(DECALAGE_Y * scaleY);
+			y += DECALAGE_Y;
 		}
 	}
 	
@@ -351,7 +285,6 @@ public class Map implements Serializable {
 	
 	public void selectionnerCase(int idCase, Point coordTab) {
 		boolean bordsTabAtteint = true;
-
 		selecteurCase.setIdCaseSelectionnee(idCase);
 		
 		bordsTabAtteint = checkBordsTabEtAjusterCoord(coordTab);
@@ -369,7 +302,7 @@ public class Map implements Serializable {
 		if (coordTab.y < grille.size()) {
 			if (coordTab.x < grille.get(coordTab.y).size()) {
 				Point posCase = grille.get(coordTab.y).get(coordTab.x).getPosition();
-
+				
 				try {
 					if (idCase < typeDeCaseParId.length) {
 						grille.get(coordTab.y).set(coordTab.x, (Case)(typeDeCaseParId[idCase])
@@ -403,7 +336,7 @@ public class Map implements Serializable {
 		Point coordTab = navires.get(navire);
 		Point coordCible = new Point(coordTab);
 		int directionCible = navire.getDirection();
-		
+
 		if (coordTab != null) {
 			switch (direction) {
 			case HAUT:
@@ -470,7 +403,7 @@ public class Map implements Serializable {
 			}
 			
 			// case interdite (terre)
-			if (grille.get(coordCible.y).get(coordCible.x).getId()==Terre.ID) {//grid[][]
+			if (grille.get(coordCible.y).get(coordCible.x).getId()==1) {//grid[][]
 				System.out.println("Throw : Collision avec une case interdite");
 				return;
 			}
@@ -498,33 +431,6 @@ public class Map implements Serializable {
 		}
 	}
 	
-	// Le joueur prend le ou les phares sur lequel est son ou ses navires
-	// (si le joueur n'a pas de navire sur un phare, rien ne se passe)
-	public void verifierPriseDePhare(Joueur joueur) {
-		for (int i = 0; i < joueur.getNbNavires(); i++) {
-			Point coordNavire = navires.get(joueur.getNavire(i));
-			Case caseACoordNavire = grille.get(coordNavire.y).get(coordNavire.x);
-			
-			if (caseACoordNavire.getClass() == Phare.class) {
-				((Phare)(caseACoordNavire)).setJoueurPossesseur(joueur.getId());
-			}
-		}
-	}
-	
-	public int nombrePharePossede(int idJoueur) {
-		int nbPharePossede = 0;
-		for (Phare phare : phares) {
-			if (phare.getJoueurPossesseur() == idJoueur) {
-				nbPharePossede++;
-			}
-		}
-		return nbPharePossede;
-	}
-	
-	public boolean victoire(int idJoueur) {
-		return nombrePharePossede(idJoueur) == phares.size();
-	}
-
 	public void draw() {
 		for (Vector <Case> ligne : grille) {
 			for (Case caseCourante : ligne) {
@@ -536,7 +442,7 @@ public class Map implements Serializable {
 		for (Navire navire : navires.keySet()) {
 			navire.draw();
 		}
-	}
+    }
 	
 	//////////////////////////
 	/// FONCTIONS INTERNES ///
@@ -585,29 +491,23 @@ public class Map implements Serializable {
 		return coordHorsBordsTab;
 	}
 	
-	private void reagencerMaillage() {
-		int sensDenivele = sensPremierDenivele;
-		int x = 0;
-		int y = 0;
+	private void reagencerMaillage(int _sensPremierDenivele) {
+		int sensDenivele;
 		
-		if (sensDenivele == -1) {
-			y = Math.round(DENIVELE_Y * scaleY);
-		}
-
-		for (Vector <Case> ligne : grille) {
-			x = 0;
-			for (Case caseCourante : ligne) {
-				caseCourante.setPosition(new Point(x, y));
-					
-				x += Math.round(DECALAGE_X * scaleX);
-				y += Math.round(DENIVELE_Y * scaleY * sensDenivele);
-				sensDenivele = -sensDenivele;
+		if (sensPremierDenivele != _sensPremierDenivele) {
+			sensPremierDenivele = _sensPremierDenivele;
+			sensDenivele = -sensPremierDenivele;
+			selecteurCase.setSelecteurVisible(false);
+			
+			for (Vector <Case> ligne : grille) {
+				for (Case caseCourante : ligne) {
+					caseCourante.move(0, DENIVELE_Y * sensDenivele);
+					sensDenivele = -sensDenivele;
+				}
+				if (sensDenivele == sensPremierDenivele) {
+					sensDenivele = -sensPremierDenivele;
+				}
 			}
-			if (sensDenivele != sensPremierDenivele) {
-				sensDenivele = sensPremierDenivele;
-				y += Math.round(DENIVELE_Y * scaleY);
-			}
-			y += Math.round(DECALAGE_Y * scaleY);
 		}
 	}
 }
