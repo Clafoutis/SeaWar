@@ -14,6 +14,7 @@ public class SelecteurCase {
 	public static final String DOSSIER_SPRITE = "resources/sprites/";
 	public static final String FICHIER_SPRITE_SHEET_SELECTEUR = "spriteSheetSelecteur.png";
 	private static final int LONGUEUR_COTE_TUILE = 64;
+	private static final int NB_TYPES_CASES = 4;
 	
 	private SpriteSheet spriteSheetSelecteur;
 	private Animation selecteurs[];
@@ -24,7 +25,7 @@ public class SelecteurCase {
 	
 	
 	public SelecteurCase(int nbTypesCases) throws SlickException {
-		selecteurs = new Animation[nbTypesCases];
+		selecteurs = new Animation[NB_TYPES_CASES];
 		spriteSheetSelecteur = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_SELECTEUR, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 		for (int i = 0; i < selecteurs.length; i++) {
 			selecteurs[i] = new Animation();
