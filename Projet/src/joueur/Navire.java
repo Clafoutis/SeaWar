@@ -25,10 +25,12 @@ public class Navire {
     private int nbDeplacementsAnimRestants;
     private double tempX, tempY, deltaX, deltaY;
     private Point destination;
+    private ModeNavire etat;
 
     public Navire(int _direction, String _nomSpriteSheet, String _spriteSheetMiniature, int _longueurCoteTuile) throws SlickException {
-        this.direction = _direction;
         this.deplacementEnCours = false;
+        this.etat = ModeNavire.NON_SELECTIONNE;
+        this.direction = _direction;
         this.longueurCoteTuile = _longueurCoteTuile;
         this.spriteSheet = new SpriteSheet(_nomSpriteSheet, longueurCoteTuile, longueurCoteTuile);
         this.spriteSheetMiniature = new SpriteSheet(_spriteSheetMiniature, 1300, 1390);
@@ -320,5 +322,15 @@ public class Navire {
             deplacementEnCours = false;
             position = destination;
         }
+    }
+    
+    // Gestion tirs canon
+    public void selectionnerCanonPrincipal() {
+    	etat = ModeNavire.CANON_PRINCIPAL;
+    	Map.getInstance().getZoneTireCanonPrincipale(this);
+    }
+    
+    public boolean modeTirCanonActive() {
+    	return etat == ModeNavire.CANON_PRINCIPAL || etat == ModeNavire.CANON_SECONDAIRE;
     }
 }
