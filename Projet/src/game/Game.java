@@ -237,7 +237,6 @@ public class Game extends BasicGameState {
                 
             case Input.KEY_A:
             	joueurCourant.getNavireCourant().selectionnerCanonPrincipal(selecteurCasesTirs);
-            	System.out.println("selecteurCasesTirs : " + selecteurCasesTirs);
                 break;
                 
             case Input.KEY_Z:
@@ -272,7 +271,7 @@ public class Game extends BasicGameState {
 
     public void executeClick(){
         if (joueurCourant.getNavireCourant().modeTirCanonActive()) {
-    		joueurCourant.getNavireCourant().tirer(bufferClick.get(0));
+    		joueurCourant.getNavireCourant().tirer(selecteurCasesTirs, bufferClick.get(0));
     	} else {
     		joueurCourant.getNavireCourant().tryAccess(bufferClick.get(0));
     	}
