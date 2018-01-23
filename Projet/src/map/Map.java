@@ -63,7 +63,7 @@ public class Map implements Serializable {
 	public void init() throws SlickException {
 		
 		selecteurCase = new SelecteurCase();
-
+		selecteurCase.setSelecteurVisible(false);
 		spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_MAP, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 	}
 	
@@ -358,7 +358,7 @@ public class Map implements Serializable {
 	public void selectionnerCase(int idCase, Point coordTab) {
 		boolean bordsTabAtteint = true;
 
-		selecteurCase.setIdCaseSelectionnee(idCase);
+		selecteurCase.setCouleurSelecteur(CouleurSelecteur.values()[idCase]);
 		
 		bordsTabAtteint = checkBordsTabEtAjusterCoord(coordTab);
 
@@ -504,25 +504,32 @@ public class Map implements Serializable {
 		}
 	}
 	
-	public Vector<SelecteurCase> getZoneTireCanonPrincipale(Navire navire) {
-		Vector<SelecteurCase> zoneTireCanon = new Vector<SelecteurCase>();
-		if (navire.getClass() == NavireFregate.class) {
-			return zoneTireCanon;
-		} else if (navire.getClass() == NavireAmiral.class) {
-			return zoneTireCanon;
-		} else {
-			return zoneTireCanon;
+	public void getZoneTireCanonPrincipale(Navire navire, Vector<SelecteurCase> selecteurs) {
+		try {
+			if (navire.getClass() == NavireAmiral.class) {
+				selecteurs.add(new SelecteurCase(CouleurSelecteur.ROUGE, 5, 2));
+			} else if (navire.getClass() == NavireFregate.class) {
+				//selecteurs;
+			} else {
+				//selecteurs;
+			}
+		} catch (SlickException e) {
+			e.printStackTrace();
 		}
+		//System.out.println("zoneTireCanon : " + zoneTireCanon);
 	}
 	
-	public Vector<SelecteurCase> getZoneTireCanonSecondaire(Navire navire) {
-		Vector<SelecteurCase> zoneTireCanon = new Vector<SelecteurCase>();
-		if (navire.getClass() == NavireFregate.class) {
-			return zoneTireCanon;
-		} else if (navire.getClass() == NavireAmiral.class) {
-			return zoneTireCanon;
-		} else {
-			return zoneTireCanon;
+	public void getZoneTireCanonSecondaire(Navire navire, Vector<SelecteurCase> selecteurs) {
+		try {
+			if (navire.getClass() == NavireAmiral.class) {
+				selecteurs.add(new SelecteurCase());
+			} else if (navire.getClass() == NavireFregate.class) {
+				//selecteurs;
+			} else {
+				//selecteurs;
+			}
+		} catch (SlickException e) {
+			e.printStackTrace();
 		}
 	}
 	
