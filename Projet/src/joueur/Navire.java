@@ -13,8 +13,11 @@ import org.newdawn.slick.SpriteSheet;
 public class Navire {
     private int longueurCoteTuile = 64;// (par defaut)
     private int id_proprietaire;
-    private int pv, pvMax, nbDeplacements, nbDeplacementsRestants, dmgCannonPrincipal, dmgCanonSecondaire,
-            nbTourRechargeCanonPrincipal, nbTourRechargeCanonSecondaire;
+    private int pv, pvMax, 
+    	nbDeplacements, nbDeplacementsRestants, 
+    	dmgCannonPrincipal, dmgCanonSecondaire,
+        nbTourRechargeCanonPrincipal, nbTourRechargeCanonPrincipalRestant,
+        nbTourRechargeCanonSecondaire, nbTourRechargeCanonSecondaireRestant;
     private int direction;
     private SpriteSheet spriteSheet;
     public SpriteSheet spriteSheetMiniature;
@@ -30,6 +33,9 @@ public class Navire {
     public Navire(int _direction, String _nomSpriteSheet, String _spriteSheetMiniature, int _longueurCoteTuile) throws SlickException {
         this.deplacementEnCours = false;
         this.etat = ModeNavire.NON_SELECTIONNE;
+        this.nbTourRechargeCanonPrincipalRestant = 0;
+        this.nbTourRechargeCanonSecondaireRestant = 0;
+        
         this.direction = _direction;
         this.longueurCoteTuile = _longueurCoteTuile;
         this.spriteSheet = new SpriteSheet(_nomSpriteSheet, longueurCoteTuile, longueurCoteTuile);
@@ -324,13 +330,22 @@ public class Navire {
         }
     }
     
-    // Gestion tirs canon
-    public void selectionnerCanonPrincipal() {
+    // Gestion tirs canons
+    public void selectionnerCanonPrincipal(Vector<SelecteurCase> selecteurs) {
     	etat = ModeNavire.CANON_PRINCIPAL;
-    	//Map.getInstance().getZoneTireCanonPrincipale(this);
+    	Map.getInstance().getZoneTireCanonPrincipale(this);
+    }
+    
+    public void selectionnerCanonSecondaire(Vector<SelecteurCase> selecteurs) {
+    	etat = ModeNavire.CANON_SECONDAIRE;
+    	Map.getInstance().getZoneTireCanonSecondaire(this);
     }
     
     public boolean modeTirCanonActive() {
     	return etat == ModeNavire.CANON_PRINCIPAL || etat == ModeNavire.CANON_SECONDAIRE;
+    }
+    
+    public void tirer(Point coordTab) {
+    	
     }
 }
