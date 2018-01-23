@@ -34,6 +34,7 @@ public class Game extends BasicGameState {
     private SelecteurCase selecteurCaseNavireCourant;
     private SelecteurCase selecteurCaseNavireAffiche; // forcément ennemi
     private SelecteurCase[] selecteurCasesDeplacement;
+    private Vector<SelecteurCase> selecteurCasesTirs = new Vector<SelecteurCase>();
     // Pause
     private Image parchemin;
     private MouseOverArea quitterArea;
@@ -86,16 +87,21 @@ public class Game extends BasicGameState {
     public void render(GameContainer container, StateBasedGame game, Graphics graphics) throws SlickException {
         background.draw(0, 0, container.getWidth(), container.getHeight());
         Map.getInstance().draw();
-        // draw les sélecteurs des déplacements possibles
+        
+        // draw les sélecteurs des déplacements et des tirs possibles
         for (SelecteurCase selecteur:selecteurCasesDeplacement) selecteur.draw();
+        for (SelecteurCase selecteur:selecteurCasesTirs) selecteur.draw();
+        
         // draw le sélecteur du navire courant et affiche
         selecteurCaseNavireAffiche.draw();
         selecteurCaseNavireCourant.draw();
+        
         // draw les navires
         for (Joueur joueur:joueurs) {
             joueur.getNavire(0).draw();
             joueur.getNavire(1).draw();
         }
+        
         // Render de l'interface
         // Affichage de la barre de vie en % de la vie maximale (du navire courant)
         graphics.setColor(Color.red);
@@ -142,15 +148,15 @@ public class Game extends BasicGameState {
         joueurCourant = joueurs[0];
         navireAffiche = joueurs[1].getNavire(0);
         // Selecteurs de case
-        selecteurCaseNavireCourant = new SelecteurCase(3);
+        selecteurCaseNavireCourant = new SelecteurCase();
         selecteurCaseNavireCourant.setIdCaseSelectionnee(2);
         selecteurCaseNavireCourant.setSelecteurVisible(true);
-        selecteurCaseNavireAffiche = new SelecteurCase(3);
+        selecteurCaseNavireAffiche = new SelecteurCase();
         selecteurCaseNavireAffiche.setIdCaseSelectionnee(0);
         selecteurCaseNavireAffiche.setSelecteurVisible(true);
         selecteurCasesDeplacement = new SelecteurCase[3];
         for (int i =0;i<selecteurCasesDeplacement.length;i++){
-            selecteurCasesDeplacement[i] = new SelecteurCase(3);
+            selecteurCasesDeplacement[i] = new SelecteurCase();
             selecteurCasesDeplacement[i].setIdCaseSelectionnee(1);
         }
         etat = GAME;
@@ -226,6 +232,14 @@ public class Game extends BasicGameState {
             case Input.KEY_2:
                 joueurCourant.setNavireCourant(joueurCourant.getNavire(1));
                 break;
+                
+            case Input.KEY_A:
+            	joueurCourant.getNavireCourant().selectionnerCanonPrincipal(selecteurCasesTirs);
+                break;
+                
+            case Input.KEY_B:
+            	joueurCourant.getNavireCourant().selectionnerCanonSecondaire(selecteurCasesTirs);
+                break;
         }
     }
 
@@ -250,7 +264,11 @@ public class Game extends BasicGameState {
     }
 
     public void executeClick(){
-        joueurCourant.getNavireCourant().tryAccess(bufferClick.get(0));
+        if (joueurCourant.getNavireCourant().modeTirCanonActive()) {
+    		joueurCourant.getNavireCourant().tirer(bufferClick.get(0));
+    	} else {
+    		joueurCourant.getNavireCourant().tryAccess(bufferClick.get(0));
+    	}
         bufferClick.remove(0); // On supprime l'action enregistrée dans tous les cas. Si la méthode try access s'est bien déroulée et si elle ne s'est pas bien déroulée. Il ne faut pas encombrer le buffer avec des actions invalides.
     }
     @Override
