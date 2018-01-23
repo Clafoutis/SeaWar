@@ -11,6 +11,7 @@ import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import joueur.Joueur;
+import map.CouleurSelecteur;
 import map.Direction;
 import map.Map;
 import utility.Music;
@@ -150,15 +151,15 @@ public class Game extends BasicGameState {
         navireAffiche = joueurs[1].getNavire(0);
         // Selecteurs de case
         selecteurCaseNavireCourant = new SelecteurCase();
-        selecteurCaseNavireCourant.setIdCaseSelectionnee(2);
+        selecteurCaseNavireCourant.setCouleurSelecteur(CouleurSelecteur.ROUGE);
         selecteurCaseNavireCourant.setSelecteurVisible(true);
         selecteurCaseNavireAffiche = new SelecteurCase();
-        selecteurCaseNavireAffiche.setIdCaseSelectionnee(0);
+        selecteurCaseNavireAffiche.setCouleurSelecteur(CouleurSelecteur.CYAN);
         selecteurCaseNavireAffiche.setSelecteurVisible(true);
         selecteurCasesDeplacement = new SelecteurCase[3];
         for (int i =0;i<selecteurCasesDeplacement.length;i++){
             selecteurCasesDeplacement[i] = new SelecteurCase();
-            selecteurCasesDeplacement[i].setIdCaseSelectionnee(1);
+            selecteurCasesDeplacement[i].setCouleurSelecteur(CouleurSelecteur.JAUNE);
         }
         etat = GAME;
     }
@@ -176,8 +177,8 @@ public class Game extends BasicGameState {
         int tmp;
         if(joueurCourant.getId()==0) tmp = 2;
         else tmp = 0;
-        selecteurCaseNavireCourant.setIdCaseSelectionnee(tmp);
-        selecteurCaseNavireAffiche.setIdCaseSelectionnee(2-tmp);
+        selecteurCaseNavireCourant.setCouleurSelecteur(CouleurSelecteur.values()[tmp]);
+        selecteurCaseNavireAffiche.setCouleurSelecteur(CouleurSelecteur.values()[2-tmp]);
     	
         // un joueur gagne seulement au debut de son tour s'il a possede 3 phares
     	if (Map.getInstance().victoire(joueurCourant.getId())) {
@@ -236,10 +237,15 @@ public class Game extends BasicGameState {
                 
             case Input.KEY_A:
             	joueurCourant.getNavireCourant().selectionnerCanonPrincipal(selecteurCasesTirs);
+            	System.out.println("selecteurCasesTirs : " + selecteurCasesTirs);
                 break;
                 
-            case Input.KEY_B:
+            case Input.KEY_Z:
             	joueurCourant.getNavireCourant().selectionnerCanonSecondaire(selecteurCasesTirs);
+                break;
+                
+            case Input.KEY_E:
+            	joueurCourant.getNavireCourant().deselectionnerCanon(selecteurCasesTirs);
                 break;
         }
     }
