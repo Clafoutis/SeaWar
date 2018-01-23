@@ -15,6 +15,7 @@ import map.Direction;
 import map.Map;
 import utility.Music;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Game extends BasicGameState {
     public static final int ID = 2;
