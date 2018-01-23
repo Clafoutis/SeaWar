@@ -176,10 +176,10 @@ public class Game extends BasicGameState {
 
             // switch des couleurs de sélecteurs
             int tmp;
-            if(joueurCourant.getId()==0) tmp = 2;
+            if(joueurCourant.getId()==0) tmp = 3;
             else tmp = 0;
             selecteurCaseNavireCourant.setIdCaseSelectionnee(tmp);
-            selecteurCaseNavireAffiche.setIdCaseSelectionnee(2-tmp);
+            selecteurCaseNavireAffiche.setIdCaseSelectionnee(3-tmp);
 
             // un joueur gagne seulement au debut de son tour s'il a possede 3 phares
             if (Map.getInstance().victoire(joueurCourant.getId())) {
