@@ -1,6 +1,6 @@
 package joueur;
 
-import java.awt.*;
+import org.newdawn.slick.*;
 import java.util.ArrayList;
 
 import map.Map;
