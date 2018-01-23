@@ -16,6 +16,7 @@ import map.Direction;
 import map.Map;
 import utility.Music;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Vector;
 
 public class Game extends BasicGameState {
@@ -36,7 +37,7 @@ public class Game extends BasicGameState {
     private SelecteurCase selecteurCaseNavireCourant;
     private SelecteurCase selecteurCaseNavireAffiche; // forcément ennemi
     private SelecteurCase[] selecteurCasesDeplacement;
-    private Vector<SelecteurCase> selecteursCasesTirs = new Vector<SelecteurCase>();
+    private java.util.Map<SelecteurCase, Point> selecteursCasesTirs = new HashMap<SelecteurCase, Point>();
     // Pause
     private Image parchemin;
     private MouseOverArea quitterArea;
@@ -92,7 +93,7 @@ public class Game extends BasicGameState {
         
         // draw les sélecteurs des déplacements et des tirs possibles
         for (SelecteurCase selecteur:selecteurCasesDeplacement) selecteur.draw();
-        for (SelecteurCase selecteur:selecteursCasesTirs) selecteur.draw();
+        for (SelecteurCase selecteur:selecteursCasesTirs.keySet()) selecteur.draw();
         
         // draw le sélecteur du navire courant et affiche
         selecteurCaseNavireAffiche.draw();
