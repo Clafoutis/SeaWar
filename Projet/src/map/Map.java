@@ -503,11 +503,11 @@ public class Map implements Serializable {
 			System.out.println("Erreur : Deplacement d'un navire qui n'a pas ete ajoute dans la map");
 		}
 	}
-	
-	public void getZoneTireCanonPrincipale(Navire navire, Vector<SelecteurCase> selecteurs) {
-		/*try {
+
+	public void getZoneTireCanonPrincipale(Navire navire, java.util.Map<SelecteurCase, Point> selecteurs) {
+		try {
 			if (navire.getClass() == NavireAmiral.class) {
-				selecteurs.add(new SelecteurCase(CouleurSelecteur.ROUGE, 0, 0));
+				ajouterSelecteurPourZone(selecteurs, 0, 0);
 			} else if (navire.getClass() == NavireFregate.class) {
 				//selecteurs;
 			} else {
@@ -515,13 +515,13 @@ public class Map implements Serializable {
 			}
 		} catch (SlickException e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 	
-	public void getZoneTireCanonSecondaire(Navire navire, Vector<SelecteurCase> selecteurs) {
-		/*try {
+	public void getZoneTireCanonSecondaire(Navire navire, java.util.Map<SelecteurCase, Point> selecteurs) {
+		try {
 			if (navire.getClass() == NavireAmiral.class) {
-				selecteurs.add(new SelecteurCase());
+				ajouterSelecteurPourZone(selecteurs, 0, 0);
 			} else if (navire.getClass() == NavireFregate.class) {
 				//selecteurs;
 			} else {
@@ -529,7 +529,7 @@ public class Map implements Serializable {
 			}
 		} catch (SlickException e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 	
 	// Le joueur prend le ou les phares sur lequel est son ou ses navires
@@ -577,6 +577,13 @@ public class Map implements Serializable {
 	//////////////////////////
 	private boolean checkCollisions(Point coordTab) {
 		return false;
+	}
+	
+	private void ajouterSelecteurPourZone(java.util.Map<SelecteurCase, Point> selecteurs, int coordTabX, int coordTabY) throws SlickException {
+		Point coordTab = new Point(coordTabX, coordTabY);
+		if (checkBordsTab(coordTab)) {
+			selecteurs.put(new SelecteurCase(CouleurSelecteur.ROUGE, coordTab.x, coordTab.y), coordTab);
+		}
 	}
 
 	private boolean checkBordsTab(Point coordTab) {
