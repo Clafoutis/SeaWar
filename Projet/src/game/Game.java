@@ -160,27 +160,38 @@ public class Game extends BasicGameState {
     }
 
     public void nextTurn() {
-    	// fin du tour du joueur courant : on verifie si il prend un phare
-    	Map.getInstance().verifierPriseDePhare(joueurCourant);
-    	
-    	// debut du tour du prochain joueur courant
-    	joueurCourant = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS];
-        //navireAffiche = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS].getNavire(0);
-        navireAffiche = null;
-        joueurCourant.newTurn();
+        if(conditionsRemplies()){
+            // fin du tour du joueur courant : on verifie si il prend un phare
+            Map.getInstance().verifierPriseDePhare(joueurCourant);
 
-        // switch des couleurs de sélecteurs
-        int tmp;
-        if(joueurCourant.getId()==0) tmp = 2;
-        else tmp = 0;
-        selecteurCaseNavireCourant.setIdCaseSelectionnee(tmp);
-        selecteurCaseNavireAffiche.setIdCaseSelectionnee(2-tmp);
-    	
-        // un joueur gagne seulement au debut de son tour s'il a possede 3 phares
-    	if (Map.getInstance().victoire(joueurCourant.getId())) {
-    		System.out.println("Victoire de " + joueurCourant.getNom() + " !!");
-    		// etat = END_OF_GAME;
-    	}
+            // debut du tour du prochain joueur courant
+            joueurCourant = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS];
+            //navireAffiche = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS].getNavire(0);
+            navireAffiche = null;
+            joueurCourant.newTurn();
+
+            // switch des couleurs de sélecteurs
+            int tmp;
+            if(joueurCourant.getId()==0) tmp = 2;
+            else tmp = 0;
+            selecteurCaseNavireCourant.setIdCaseSelectionnee(tmp);
+            selecteurCaseNavireAffiche.setIdCaseSelectionnee(2-tmp);
+
+            // un joueur gagne seulement au debut de son tour s'il a possede 3 phares
+            if (Map.getInstance().victoire(joueurCourant.getId())) {
+                System.out.println("Victoire de " + joueurCourant.getNom() + " !!");
+                // etat = END_OF_GAME;
+            }
+        }
+    }
+
+    public boolean conditionsRemplies(){
+        for(int i=0;i<joueurCourant.getNbNavires();i++){
+            if(!joueurCourant.getNavire(i).aBouge() && !joueurCourant.getNavire(i).isEtatDetruit()){
+                return false;
+            }
+        }
+        return true;
     }
 
     public void drawInterface(Graphics graphics, Navire navire, float x, float y) {
