@@ -505,9 +505,9 @@ public class Map implements Serializable {
 	}
 	
 	public void getZoneTireCanonPrincipale(Navire navire, Vector<SelecteurCase> selecteurs) {
-		try {
+		/*try {
 			if (navire.getClass() == NavireAmiral.class) {
-				selecteurs.add(new SelecteurCase(CouleurSelecteur.ROUGE, 5, 2));
+				selecteurs.add(new SelecteurCase(CouleurSelecteur.ROUGE, 0, 0));
 			} else if (navire.getClass() == NavireFregate.class) {
 				//selecteurs;
 			} else {
@@ -515,12 +515,11 @@ public class Map implements Serializable {
 			}
 		} catch (SlickException e) {
 			e.printStackTrace();
-		}
-		//System.out.println("zoneTireCanon : " + zoneTireCanon);
+		}*/
 	}
 	
 	public void getZoneTireCanonSecondaire(Navire navire, Vector<SelecteurCase> selecteurs) {
-		try {
+		/*try {
 			if (navire.getClass() == NavireAmiral.class) {
 				selecteurs.add(new SelecteurCase());
 			} else if (navire.getClass() == NavireFregate.class) {
@@ -530,7 +529,7 @@ public class Map implements Serializable {
 			}
 		} catch (SlickException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	// Le joueur prend le ou les phares sur lequel est son ou ses navires
