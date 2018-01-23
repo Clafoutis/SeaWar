@@ -16,6 +16,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import joueur.Joueur;
 import map.Map;
+import utility.FileUtility;
 import utility.Music;
 import java.util.ArrayList;
 
@@ -53,7 +54,7 @@ public class Game extends BasicGameState {
         this.game = _game;
         this.container = _container;
         this.background = new Image("resources/images/backgroundGame.png");
-        bufferClick = new ArrayList<>();
+        bufferClick = new ArrayList<Point>();
         parchemin = new Image("resources/images/parchemin.png");
         Image quitter = new Image("resources/images/quitter.png");
         Image quitterHover = new Image("resources/images/quitter-hover.png");
@@ -65,6 +66,7 @@ public class Game extends BasicGameState {
             }
         });
         quitterArea.setMouseOverImage(quitterHover);
+        interfaceInformations = new SpriteSheet(FileUtility.DOSSIER_SPRITE + "interfaceInformations.png",64,64);
         newGame();
     }
 
@@ -147,15 +149,15 @@ public class Game extends BasicGameState {
         tir.stopAt(16);
         tir.setCurrentFrame(16);
         // Selecteurs de case
-        selecteurCaseNavireCourant = new SelecteurCase(3);
-        selecteurCaseNavireCourant.setIdCaseSelectionnee(2);
+        selecteurCaseNavireCourant = new SelecteurCase();
+        selecteurCaseNavireCourant.setIdCaseSelectionnee(3);
         selecteurCaseNavireCourant.setSelecteurVisible(true);
-        selecteurCaseNavireAffiche = new SelecteurCase(3);
+        selecteurCaseNavireAffiche = new SelecteurCase();
         selecteurCaseNavireAffiche.setIdCaseSelectionnee(0);
         selecteurCaseNavireAffiche.setSelecteurVisible(true);
         selecteurCasesDeplacement = new SelecteurCase[3];
         for (int i =0;i<selecteurCasesDeplacement.length;i++){
-            selecteurCasesDeplacement[i] = new SelecteurCase(3);
+            selecteurCasesDeplacement[i] = new SelecteurCase();
             selecteurCasesDeplacement[i].setIdCaseSelectionnee(1);
         }
         etat = GAME;
@@ -213,16 +215,16 @@ public class Game extends BasicGameState {
         	graphics.drawString(""+joueurCourant.getNavireCourant().getNbDeplacementsRestants(), x-100, y+13);
         
         	// Draw du temps de recharge restant
-        	int nbRestant = navire.getNbTourRechargeCanonPrincipalRestant();
-        	int nbTotal = navire.getNbTourRechargeCanonPrincipal();
-        	int numeroImage = 64 / nbTotal;
+        	int nb = navire.getNbTourRechargeCanonPrincipal();
+        	int nbMax = navire.getNbTourMaxRechargeCanonPrincipal() -1;
+        	int numeroImage = 64 / nbMax;
         	
-        	int xImage= (numeroImage * (nbTotal - nbRestant)) % 8;
-        	int yImage= (numeroImage * (nbTotal - nbRestant)) / 8;
+        	int xImage= (numeroImage * (nbMax - nb)) % 8;
+        	int yImage= (numeroImage * (nbMax - nb)) / 8;
         	
-        	System.out.println("max:"+nbTotal+" left:"+nbRestant+"x:"+xImage+" | y:"+yImage);
+        	System.out.println("max:"+nbMax+" left:"+nb+"x:"+xImage+" | y:"+yImage);
         
-        interfaceInformations.getSprite(xImage,yImage+1).draw(x-80, y+10, 100, 100);
+        interfaceInformations.getSprite(xImage,yImage).draw(x-80, y+10, 100, 100);
         }
         
     }

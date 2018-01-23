@@ -108,6 +108,22 @@ public abstract class Navire {
     public void setDmgCanonSecondaire(int dmgCanonSecondaire) {
         this.dmgCanonSecondaire = dmgCanonSecondaire;
     }
+    
+    public int getNbTourRechargeCanonPrincipal() {
+    	return nbTourRechargeCanonPrincipal;
+    }
+    
+    public int getNbTourRechargeCanonSecondaire() {
+    	return nbTourRechargeCanonSecondaire;
+    }
+    
+    public int getNbTourMaxRechargeCanonPrincipal() {
+    	return nbTourMaxRechargeCanonPrincipal;
+    }
+
+    public int getNbTourMaxRechargeCanonSecondaire() {
+    	return nbTourMaxRechargeCanonSecondaire;
+    }
 
     public void setNbTourRechargeCanonPrincipal(int nbTourRechargeCanonPrincipal) {
         this.nbTourRechargeCanonPrincipal = nbTourRechargeCanonPrincipal;
