@@ -41,6 +41,8 @@ public class Game extends BasicGameState {
     // Pause
     private Image parchemin;
     private MouseOverArea quitterArea;
+    private SpriteSheet interfaceInformations;
+
 
 
     @Override
@@ -200,10 +202,30 @@ public class Game extends BasicGameState {
         graphics.drawGradientLine(1, 1, Color.red, 1, 1, Color.red); // Indispensable de tracer un premier point inutile avec la couleur selectionnée, sinon la couleur n'est pas prise en compte dans le dessin #Obviously
         graphics.fillRect(x, y, 20, -100);
         graphics.setColor(Color.green);
-        graphics.drawGradientLine(1, 1, Color.green, 1, 1, Color.green); // LOL MDR POURQUOI QUAND JE METS CETTE LIGNE, LA LIGNE DE CODE PRÉCÉDENTE MARCHE ???
+        graphics.drawGradientLine(1, 1, Color.green, 1, 1, Color.green);
         graphics.fillRect(x, y, 20, -(navire.getPv() * 100 / navire.getPvMax() ));
-    }
 
+        if(navire == joueurCourant.getNavireCourant()){
+        	// Draw du nombre de déplacements restant
+        	interfaceInformations.getSprite(0, 0).draw(x-130, y+10, 24, 24);
+        	graphics.setColor(Color.blue);
+        	graphics.drawGradientLine(1, 1, Color.blue, 1, 1, Color.blue);
+        	graphics.drawString(""+joueurCourant.getNavireCourant().getNbDeplacementsRestants(), x-100, y+13);
+        
+        	// Draw du temps de recharge restant
+        	int nbRestant = navire.getNbTourRechargeCanonPrincipalRestant();
+        	int nbTotal = navire.getNbTourRechargeCanonPrincipal();
+        	int numeroImage = 64 / nbTotal;
+        	
+        	int xImage= (numeroImage * (nbTotal - nbRestant)) % 8;
+        	int yImage= (numeroImage * (nbTotal - nbRestant)) / 8;
+        	
+        	System.out.println("max:"+nbTotal+" left:"+nbRestant+"x:"+xImage+" | y:"+yImage);
+        
+        interfaceInformations.getSprite(xImage,yImage+1).draw(x-80, y+10, 100, 100);
+        }
+        
+    }
     public void startTir(Point point) {
         tir.setXY(point);
         tir.setCurrentFrame(0);
