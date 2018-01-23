@@ -1,11 +1,9 @@
 package joueur;
 
-import org.newdawn.slick.*;
 import java.util.ArrayList;
-
 import map.Map;
-
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Color;
 
 public class Joueur {
     private int id;
@@ -19,8 +17,8 @@ public class Joueur {
         this.nom = nom;
         this.couleur = couleur;
         this.navires = new ArrayList<Navire>();
-        this.navires.add(new NavireAmiral(2 * numero + numero - 1, this.id));
-        this.navires.add(new NavireFregate(2 * numero + numero - 1, this.id));
+        this.navires.add(new NavireAmiral((2 * numero + numero - 1), id));
+        this.navires.add(new NavireFregate((2 * numero + numero - 1), id));
         this.navireCourant = navires.get(0);
         int xDepart, yDepart;
         if(numero==2){
@@ -49,7 +47,7 @@ public class Joueur {
     public Navire getNavire(int id) {
         return navires.get(id);
     }
-    
+
     public int getNbNavires() {
     	return navires.size();
     }
@@ -68,6 +66,9 @@ public class Joueur {
 
     public void newTurn(){
 	    navires.get(0).setNbDeplacementsRestants(navires.get(0).getNbDeplacements());
+	    navires.get(0).newTurn();
 	    navires.get(1).setNbDeplacementsRestants(navires.get(1).getNbDeplacements());
+	    navires.get(1).newTurn();
+	    while(navireCourant.isEtatDetruit()) navireCourant = navires.get((navires.indexOf(navireCourant) + 1) % getNbNavires());
     }
 }

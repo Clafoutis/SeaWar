@@ -1,44 +1,44 @@
 package joueur;
 
 import java.awt.Point;
-import java.util.Vector;
 
 import map.Direction;
 import map.Map;
-import map.SelecteurCase;
-import map.Terre;
 
+import map.SelecteurCase;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
-public class Navire {
+public abstract class Navire {
+    private final int DEPLACEMENT = 0, TIR_PRINCIPAL = 1, TIR_SECONDAIRE = 2, DETRUIT = 3;
+    private int etat;
     private int longueurCoteTuile = 64;// (par defaut)
     private int id_proprietaire;
-    private int pv, pvMax, 
-    	nbDeplacements, nbDeplacementsRestants, 
-    	dmgCannonPrincipal, dmgCanonSecondaire,
-        nbTourRechargeCanonPrincipal, nbTourRechargeCanonPrincipalRestant,
-        nbTourRechargeCanonSecondaire, nbTourRechargeCanonSecondaireRestant;
+    private int pv, pvMax, nbDeplacements, nbDeplacementsRestants, dmgCannonPrincipal, dmgCanonSecondaire,
+            nbTourRechargeCanonPrincipal, nbTourMaxRechargeCanonPrincipal,
+            nbTourRechargeCanonSecondaire, nbTourMaxRechargeCanonSecondaire;
     private int direction;
     private SpriteSheet spriteSheet;
     public SpriteSheet spriteSheetMiniature;
     private Animation[] animations = new Animation[6];
     private Point position = new Point();
+    // Pour les tirs
+    protected SelecteurCaseTir selecteursCasesTir[];
+    private boolean tirEffectue;
     // Pour les déplacements animés
     private boolean deplacementEnCours;
     private int nbDeplacementsAnimRestants;
     private double tempX, tempY, deltaX, deltaY;
     private Point destination;
-    private ModeNavire etat;
 
     public Navire(int _direction, String _nomSpriteSheet, String _spriteSheetMiniature, int _longueurCoteTuile) throws SlickException {
-        this.deplacementEnCours = false;
-        this.etat = ModeNavire.DEPLACEMENT;
-        this.nbTourRechargeCanonPrincipalRestant = 0;
-        this.nbTourRechargeCanonSecondaireRestant = 0;
-        
         this.direction = _direction;
+        etat = DEPLACEMENT;
+        tirEffectue = false;
+        selecteursCasesTir = new SelecteurCaseTir[6];
+        for(int i=0;i<6;i++) selecteursCasesTir[i] = new SelecteurCaseTir();
+        this.deplacementEnCours = false;
         this.longueurCoteTuile = _longueurCoteTuile;
         this.spriteSheet = new SpriteSheet(_nomSpriteSheet, longueurCoteTuile, longueurCoteTuile);
         this.spriteSheetMiniature = new SpriteSheet(_spriteSheetMiniature, 1300, 1390);
@@ -63,6 +63,10 @@ public class Navire {
 
     public void setPv(int pv) {
         this.pv = pv;
+        if(pv<1){
+            this.pv = 0;
+            etat = DETRUIT;
+        }
     }
 
     public int getPvMax(){
@@ -113,6 +117,14 @@ public class Navire {
         this.nbTourRechargeCanonSecondaire = nbTourRechargeCanonSecondaire;
     }
 
+    public void setNbTourMaxRechargeCanonPrincipal(int nbTourMaxRechargeCanonPrincipal) {
+        this.nbTourMaxRechargeCanonPrincipal = nbTourMaxRechargeCanonPrincipal;
+    }
+
+    public void setNbTourMaxRechargeCanonSecondaire(int nbTourMaxRechargeCanonSecondaire) {
+        this.nbTourMaxRechargeCanonSecondaire = nbTourMaxRechargeCanonSecondaire;
+    }
+
     public int getDirection() {
         return direction;
     }
@@ -129,12 +141,32 @@ public class Navire {
         position = _position;
     }
 
+    public boolean isEtatDeplacement() {
+        return etat==DEPLACEMENT;
+    }
+
+    public boolean isEtatTirPrincipal() {
+        return etat==TIR_PRINCIPAL;
+    }
+
+    public boolean isEtatTirSecondaire() {
+        return etat==TIR_SECONDAIRE;
+    }
+
+    public boolean isEtatDetruit() {
+        return etat==DETRUIT;
+    }
+
     public boolean isDeplacementEnCours() {
         return deplacementEnCours;
     }
 
     public Point getDestination() {
         return destination;
+    }
+
+    public boolean isTirEffectue() {
+        return tirEffectue;
     }
 
     public void getPossibleDeplacements(SelecteurCase[] selecteurs){
@@ -220,7 +252,7 @@ public class Navire {
                         newPoint[i].getX()>Map.getInstance().getNbCases().getX()-1 ||
                         newPoint[i].getY()>Map.getInstance().getNbCases().getY()-1){
                     selecteurs[i].setSelecteurVisible(false);
-                }else if(Map.getInstance().getGrille().get((int) newPoint[i].getY()).get((int) newPoint[i].getX()).getId()==Terre.ID){
+                }else if(Map.getInstance().getGrille().get((int) newPoint[i].getY()).get((int) newPoint[i].getX()).getId()==1){
                     selecteurs[i].setSelecteurVisible(false);
                 }else{
                     selecteurs[i].setPosition(Map.getInstance().coordTabToMaillage(newPoint[i]));
@@ -292,10 +324,12 @@ public class Navire {
     }
 
     public void draw() {
-        animations[direction].draw(Map.getInstance().getPosition().x + position.x, 
-        		Map.getInstance().getPosition().y + position.y,
-        		longueurCoteTuile * Map.getInstance().getScaleX(),
-        		longueurCoteTuile * Map.getInstance().getScaleY());
+        if(etat != DETRUIT){
+            animations[direction].draw(Map.getInstance().getPosition().x + position.x,
+                    Map.getInstance().getPosition().y + position.y,
+                    longueurCoteTuile * Map.getInstance().getScaleX(),
+                    longueurCoteTuile * Map.getInstance().getScaleY());
+        }
     }
 
     public void drawStatus(boolean enemy){
@@ -304,6 +338,60 @@ public class Navire {
         }else{
             spriteSheetMiniature.getSprite(0, id_proprietaire).draw(10, 150, 130, 139);
         }
+    }
+
+    public void drawZoneTir() {
+        if(etat!=DEPLACEMENT){
+            for (SelecteurCaseTir selecteur:selecteursCasesTir) {
+                selecteur.draw();
+            }
+        }
+    }
+
+    public boolean tryShoot(Point coordPosTab, Navire navire, boolean principal) {
+        if(nbTourRechargeCanonPrincipal==0 && principal || nbTourRechargeCanonSecondaire==0 && !principal){
+            for (SelecteurCaseTir selecteur:selecteursCasesTir) {
+                if(Map.getInstance().coordMaillageToTab(selecteur.getPosition()).getX()==coordPosTab.getX()
+                        && Map.getInstance().coordMaillageToTab(selecteur.getPosition()).getY()==coordPosTab.getY()){
+                    if(principal){
+                        navire.setPv(navire.getPv() - dmgCannonPrincipal);
+                        nbTourRechargeCanonPrincipal = nbTourMaxRechargeCanonPrincipal;
+                    }
+                    else{
+                        navire.setPv(navire.getPv() - dmgCanonSecondaire);
+                        nbTourRechargeCanonSecondaire = nbTourMaxRechargeCanonSecondaire;
+                    }
+                    etat = DEPLACEMENT;
+                    tirEffectue = true;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    abstract public void zoneTirCannonPrincipal(boolean activation);
+
+    abstract public void zoneTirCannonSecondaire(boolean activation);
+
+    public void switchMode(){
+        if(etat==DEPLACEMENT){
+            if(nbTourRechargeCanonPrincipal==0) etat = TIR_PRINCIPAL;
+            else if(nbTourRechargeCanonSecondaire==0) etat = TIR_SECONDAIRE;
+        }
+        else if(etat==TIR_PRINCIPAL){
+            if(nbTourRechargeCanonSecondaire==0) etat = TIR_SECONDAIRE;
+            else etat = DEPLACEMENT;
+        }
+        else if(etat==TIR_SECONDAIRE) etat = DEPLACEMENT;
+    }
+
+    public void update(){
+        if(etat == TIR_PRINCIPAL){
+            zoneTirCannonPrincipal(true);
+        }else if(etat == TIR_SECONDAIRE){
+            zoneTirCannonSecondaire(true);
+        }else zoneTirCannonSecondaire(false);
     }
 
     public void initialiserDeplacement(Point position, int direction){
@@ -331,27 +419,10 @@ public class Navire {
             position = destination;
         }
     }
-    
-    public void selectionnerCanonPrincipal(java.util.Map<SelecteurCase, Point> selecteurs) {
-    	etat = ModeNavire.CANON_PRINCIPAL;
-    	Map.getInstance().getZoneTireCanonPrincipale(this, selecteurs);
-    }
-    
-    public void selectionnerCanonSecondaire(java.util.Map<SelecteurCase, Point> selecteurs) {
-    	etat = ModeNavire.CANON_SECONDAIRE;
-    	Map.getInstance().getZoneTireCanonSecondaire(this, selecteurs);
-    }
-    
-    public void deselectionnerCanon(java.util.Map<SelecteurCase, Point> selecteurs) {
-    	etat = ModeNavire.DEPLACEMENT;
-    	selecteurs.clear();
-    }
-    
-    public boolean modeTirCanonActive() {
-    	return etat == ModeNavire.CANON_PRINCIPAL || etat == ModeNavire.CANON_SECONDAIRE;
-    }
-    
-    public void tirer(java.util.Map<SelecteurCase, Point> selecteurs, Point coordTab) {
-    	
+
+    public void newTurn(){
+        if(nbTourRechargeCanonPrincipal>0) nbTourRechargeCanonPrincipal--;
+        if(nbTourRechargeCanonSecondaire>0) nbTourRechargeCanonSecondaire--;
+        tirEffectue = false;
     }
 }
