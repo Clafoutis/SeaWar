@@ -1,6 +1,7 @@
 package joueur;
 
 import java.awt.Point;
+import java.util.Vector;
 
 import map.Direction;
 import map.Map;
@@ -218,7 +219,7 @@ public class Navire {
                         newPoint[i].getX()>Map.getInstance().getNbCases().getX()-1 ||
                         newPoint[i].getY()>Map.getInstance().getNbCases().getY()-1){
                     selecteurs[i].setSelecteurVisible(false);
-                }else if(Map.getInstance().getGrille().get((int) newPoint[i].getY()).get((int) newPoint[i].getX()).getId()==1){
+                }else if(Map.getInstance().getGrille().get((int) newPoint[i].getY()).get((int) newPoint[i].getX()).getId()==Terre.ID){
                     selecteurs[i].setSelecteurVisible(false);
                 }else{
                     selecteurs[i].setPosition(Map.getInstance().coordTabToMaillage(newPoint[i]));
