@@ -505,6 +505,28 @@ public class Map implements Serializable {
 		}
 	}
 	
+	public Vector<SelecteurCase> getZoneTireCanonPrincipale(Navire navire) {
+		Vector<SelecteurCase> zoneTireCanon = new Vector<SelecteurCase>();
+		if (navire.getClass() == NavireFregate.class) {
+			return zoneTireCanon;
+		} else if (navire.getClass() == NavireAmiral.class) {
+			return zoneTireCanon;
+		} else {
+			return zoneTireCanon;
+		}
+	}
+	
+	public Vector<SelecteurCase> getZoneTireCanonSecondaire(Navire navire) {
+		Vector<SelecteurCase> zoneTireCanon = new Vector<SelecteurCase>();
+		if (navire.getClass() == NavireFregate.class) {
+			return zoneTireCanon;
+		} else if (navire.getClass() == NavireAmiral.class) {
+			return zoneTireCanon;
+		} else {
+			return zoneTireCanon;
+		}
+	}
+	
 	// Le joueur prend le ou les phares sur lequel est son ou ses navires
 	// (si le joueur n'a pas de navire sur un phare, rien ne se passe)
 	public void verifierPriseDePhare(Joueur joueur) {
