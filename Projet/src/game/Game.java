@@ -1,23 +1,23 @@
 package game;
 
-import java.awt.Point;
+import java.awt.*;
 
 import joueur.Navire;
+import joueur.Tir;
 import map.SelecteurCase;
 import org.newdawn.slick.*;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import joueur.Joueur;
-import map.CouleurSelecteur;
-import map.Direction;
 import map.Map;
 import utility.Music;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Vector;
 
 public class Game extends BasicGameState {
     public static final int ID = 2;
@@ -34,10 +34,10 @@ public class Game extends BasicGameState {
     private Joueur[] joueurs = new Joueur[NB_JOUEURS];
     private Joueur joueurCourant;
     private Navire navireAffiche; // forcément ennemi
+    private Tir tir;
     private SelecteurCase selecteurCaseNavireCourant;
     private SelecteurCase selecteurCaseNavireAffiche; // forcément ennemi
     private SelecteurCase[] selecteurCasesDeplacement;
-    private java.util.Map<SelecteurCase, Point> selecteursCasesTirs = new HashMap<SelecteurCase, Point>();
     // Pause
     private Image parchemin;
     private MouseOverArea quitterArea;
@@ -82,51 +82,40 @@ public class Game extends BasicGameState {
         }else{
             selecteurCaseNavireCourant.setPosition(joueurCourant.getNavireCourant().getPosition());
         }
-        selecteurCaseNavireAffiche.setPosition(navireAffiche.getPosition());
+        if(navireAffiche != null) selecteurCaseNavireAffiche.setPosition(navireAffiche.getPosition());
         joueurCourant.getNavireCourant().getPossibleDeplacements(selecteurCasesDeplacement);
+        joueurCourant.getNavireCourant().update();
     }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics graphics) throws SlickException {
         background.draw(0, 0, container.getWidth(), container.getHeight());
         Map.getInstance().draw();
-        
-        // draw les sélecteurs des déplacements et des tirs possibles
-        for (SelecteurCase selecteur:selecteurCasesDeplacement) selecteur.draw();
-        for (SelecteurCase selecteur:selecteursCasesTirs.keySet()) selecteur.draw();
-        
+        // draw les sélecteurs des déplacements possibles
+        if(joueurCourant.getNavireCourant().isEtatDeplacement()){
+            for (SelecteurCase selecteur:selecteurCasesDeplacement) selecteur.draw();
+        }
         // draw le sélecteur du navire courant et affiche
-        selecteurCaseNavireAffiche.draw();
+        if(navireAffiche != null) selecteurCaseNavireAffiche.draw();
         selecteurCaseNavireCourant.draw();
-        
         // draw les navires
         for (Joueur joueur:joueurs) {
             joueur.getNavire(0).draw();
             joueur.getNavire(1).draw();
         }
-        
+        // draw les zones de tir
+        joueurCourant.getNavireCourant().drawZoneTir();
         // Render de l'interface
-        // Affichage de la barre de vie en % de la vie maximale (du navire courant)
-        graphics.setColor(Color.red);
-        graphics.drawGradientLine(1, 1, Color.red, 1, 1, Color.red); // Indispensable de tracer un premier point inutile avec la couleur selectionnée, sinon la couleur n'est pas prise en compte dans le dessin #Obviously
-        graphics.fillRect(145, 275, 20, -100);
-        graphics.setColor(Color.green);
-        graphics.drawGradientLine(1, 1, Color.green, 1, 1, Color.green); // LOL MDR POURQUOI QUAND JE METS CETTE LIGNE, LA LIGNE DE CODE PRÉCÉDENTE MARCHE ???
-        graphics.fillRect(145, 275, 20, -(joueurCourant.getNavireCourant().getPv() * 100 / joueurCourant.getNavireCourant().getPvMax() ));
-
+        drawInterface(graphics, joueurCourant.getNavireCourant(), 145, 275);
         // Affichage de l'image représentant le navire sélectionné (courant)
         joueurCourant.getNavireCourant().drawStatus(false);
 
-        // Affichage de la barre de vie en % de la vie maximale (du navire sélectionné)
-        graphics.setColor(Color.red);
-        graphics.drawGradientLine(1, 1, Color.red, 1, 1, Color.red); // Indispensable de tracer un premier point inutile avec la couleur selectionnée, sinon la couleur n'est pas prise en compte dans le dessin #Obviously
-        graphics.fillRect(915, 275, 20, -100);
-        graphics.setColor(Color.green);
-        graphics.drawGradientLine(1, 1, Color.green, 1, 1, Color.green); // LOL MDR POURQUOI QUAND JE METS CETTE LIGNE, LA LIGNE DE CODE PRÉCÉDENTE MARCHE ???
-        graphics.fillRect(915, 275, 20, -(navireAffiche.getPv() * 100 / navireAffiche.getPvMax() ));
-
-        // Affichage de l'image représentant le navire sélectionné (sélectionné)
-        navireAffiche.drawStatus(true);
+        if(navireAffiche != null){
+            // Affichage de la barre de vie en % de la vie maximale (du navire sélectionné)
+            drawInterface(graphics, navireAffiche, 915, 275);
+            // Affichage de l'image représentant le navire sélectionné (sélectionné)
+            navireAffiche.drawStatus(true);
+        }
 
         // Affichage déplacement
         graphics.setColor(Color.cyan);
@@ -141,6 +130,7 @@ public class Game extends BasicGameState {
             parchemin.draw(container.getWidth()/2 - 180, container.getHeight()/2 - 225, 360, 450);
             // @TODO un message de félicitation au gagnant + un bouton restart (et placer le quitter)
         }
+        tir.draw(tir.getX(), tir.getY(), 64 * Map.getInstance().getScaleX(), 64 * Map.getInstance().getScaleY());
     }
 
     public void newGame() throws SlickException {
@@ -149,18 +139,22 @@ public class Game extends BasicGameState {
         joueurs[0] = new Joueur(0, "Joueur 1", Color.red, 1);
         joueurs[1] = new Joueur(1, "Joueur 2", Color.blue, 2);
         joueurCourant = joueurs[0];
-        navireAffiche = joueurs[1].getNavire(0);
+        if(navireAffiche != null) navireAffiche = joueurs[1].getNavire(0);
+        // Animation de tir
+        tir = new Tir();
+        tir.stopAt(16);
+        tir.setCurrentFrame(16);
         // Selecteurs de case
-        selecteurCaseNavireCourant = new SelecteurCase();
-        selecteurCaseNavireCourant.setCouleurSelecteur(CouleurSelecteur.ROUGE);
+        selecteurCaseNavireCourant = new SelecteurCase(3);
+        selecteurCaseNavireCourant.setIdCaseSelectionnee(2);
         selecteurCaseNavireCourant.setSelecteurVisible(true);
-        selecteurCaseNavireAffiche = new SelecteurCase();
-        selecteurCaseNavireAffiche.setCouleurSelecteur(CouleurSelecteur.CYAN);
+        selecteurCaseNavireAffiche = new SelecteurCase(3);
+        selecteurCaseNavireAffiche.setIdCaseSelectionnee(0);
         selecteurCaseNavireAffiche.setSelecteurVisible(true);
         selecteurCasesDeplacement = new SelecteurCase[3];
         for (int i =0;i<selecteurCasesDeplacement.length;i++){
-            selecteurCasesDeplacement[i] = new SelecteurCase();
-            selecteurCasesDeplacement[i].setCouleurSelecteur(CouleurSelecteur.JAUNE);
+            selecteurCasesDeplacement[i] = new SelecteurCase(3);
+            selecteurCasesDeplacement[i].setIdCaseSelectionnee(1);
         }
         etat = GAME;
     }
@@ -171,21 +165,38 @@ public class Game extends BasicGameState {
     	
     	// debut du tour du prochain joueur courant
     	joueurCourant = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS];
-        navireAffiche = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS].getNavire(0);
+        //navireAffiche = joueurs[(joueurCourant.getId() + 1) % NB_JOUEURS].getNavire(0);
+        navireAffiche = null;
         joueurCourant.newTurn();
 
         // switch des couleurs de sélecteurs
         int tmp;
         if(joueurCourant.getId()==0) tmp = 2;
         else tmp = 0;
-        selecteurCaseNavireCourant.setCouleurSelecteur(CouleurSelecteur.values()[tmp]);
-        selecteurCaseNavireAffiche.setCouleurSelecteur(CouleurSelecteur.values()[2-tmp]);
+        selecteurCaseNavireCourant.setIdCaseSelectionnee(tmp);
+        selecteurCaseNavireAffiche.setIdCaseSelectionnee(2-tmp);
     	
         // un joueur gagne seulement au debut de son tour s'il a possede 3 phares
     	if (Map.getInstance().victoire(joueurCourant.getId())) {
     		System.out.println("Victoire de " + joueurCourant.getNom() + " !!");
     		// etat = END_OF_GAME;
     	}
+    }
+
+    public void drawInterface(Graphics graphics, Navire navire, float x, float y) {
+        // Affichage de la barre de vie en % de la vie maximale (du navire courant)
+        graphics.setColor(Color.red);
+        graphics.drawGradientLine(1, 1, Color.red, 1, 1, Color.red); // Indispensable de tracer un premier point inutile avec la couleur selectionnée, sinon la couleur n'est pas prise en compte dans le dessin #Obviously
+        graphics.fillRect(x, y, 20, -100);
+        graphics.setColor(Color.green);
+        graphics.drawGradientLine(1, 1, Color.green, 1, 1, Color.green); // LOL MDR POURQUOI QUAND JE METS CETTE LIGNE, LA LIGNE DE CODE PRÉCÉDENTE MARCHE ???
+        graphics.fillRect(x, y, 20, -(navire.getPv() * 100 / navire.getPvMax() ));
+    }
+
+    public void startTir(Point point) {
+        tir.setXY(point);
+        tir.setCurrentFrame(0);
+        tir.start();
     }
 
     @Override
@@ -195,59 +206,9 @@ public class Game extends BasicGameState {
                 nextTurn();
                 break;
 
-            case Input.KEY_RETURN:
-                game.enterState(EditeurMap.ID);
-                break;
-
             case Input.KEY_ESCAPE:
                 if(etat == GAME) etat = PAUSE;
                 else if(etat == PAUSE) etat = GAME;
-                break;
-
-            case Input.KEY_NUMPAD8:
-                joueurCourant.getNavireCourant().deplacer(Direction.HAUT);
-                break;
-
-            case Input.KEY_NUMPAD9:
-                joueurCourant.getNavireCourant().deplacer(Direction.HAUT_DROITE);
-                break;
-
-            case Input.KEY_NUMPAD3:
-                joueurCourant.getNavireCourant().deplacer(Direction.BAS_DROITE);
-                break;
-
-            case Input.KEY_NUMPAD2:
-                joueurCourant.getNavireCourant().deplacer(Direction.BAS);
-                break;
-
-            case Input.KEY_NUMPAD1:
-                joueurCourant.getNavireCourant().deplacer(Direction.BAS_GAUCHE);
-                break;
-
-            case Input.KEY_NUMPAD7:
-                joueurCourant.getNavireCourant().deplacer(Direction.HAUT_GAUCHE);
-                break;
-
-            case Input.KEY_1:
-            	joueurCourant.getNavireCourant().deselectionnerCanon(selecteursCasesTirs);
-                joueurCourant.setNavireCourant(joueurCourant.getNavire(0));
-                break;
-
-            case Input.KEY_2:
-            	joueurCourant.getNavireCourant().deselectionnerCanon(selecteursCasesTirs);
-                joueurCourant.setNavireCourant(joueurCourant.getNavire(1));
-                break;
-                
-            case Input.KEY_A:
-            	joueurCourant.getNavireCourant().selectionnerCanonPrincipal(selecteursCasesTirs);
-                break;
-                
-            case Input.KEY_Z:
-            	joueurCourant.getNavireCourant().selectionnerCanonSecondaire(selecteursCasesTirs);
-                break;
-                
-            case Input.KEY_E:
-            	joueurCourant.getNavireCourant().deselectionnerCanon(selecteursCasesTirs);
                 break;
         }
     }
@@ -257,16 +218,33 @@ public class Game extends BasicGameState {
             Point coordMaillage = new Point(x - (int) Map.getInstance().getPosition().getX(), y - (int) Map.getInstance().getPosition().getY());
             Point coordPosTab = Map.getInstance().coordMaillageToTab(coordMaillage); // Coordonnées de la case cliquée
 
-            if(Map.getInstance().getNavires().containsValue(coordPosTab)){ // On selectionne le bateau cliqué
+            if(Map.getInstance().getNavires().containsValue(coordPosTab) && !joueurCourant.getNavireCourant().isDeplacementEnCours()){ // On selectionne le bateau cliqué
                 Navire navire = Map.getInstance().getNavireAtCoord(coordPosTab);
                 if(navire.getIdProprietaire() == joueurCourant.getId()){
-                	joueurCourant.getNavireCourant().deselectionnerCanon(selecteursCasesTirs);
-                    joueurCourant.setNavireCourant(navire);
+                    if(navire.equals(joueurCourant.getNavireCourant())
+                            && !joueurCourant.getNavireCourant().isTirEffectue()){
+                        navire.switchMode();
+                    }else{
+                        joueurCourant.setNavireCourant(navire);
+                    }
                 }else{
                     navireAffiche = navire;
                 }
-            }else{
-                if(!bufferClick.contains(Map.getInstance().coordMaillageToTab(coordMaillage))){ // On enregistre le clic dans une "liste d'attente d'action"
+                if(!navire.equals(joueurCourant.getNavireCourant())
+                        && (joueurCourant.getNavireCourant().isEtatTirPrincipal()
+                        || joueurCourant.getNavireCourant().isEtatTirSecondaire())){
+                    boolean success = joueurCourant.getNavireCourant().tryShoot(coordPosTab, navire, joueurCourant.getNavireCourant().isEtatTirPrincipal());
+                    if(success){
+                        startTir(Map.getInstance().coordTabToMaillage(coordPosTab));
+                        if(navire.getPv()<1){
+                            Map.getInstance().removeNavire(navire);
+                            navireAffiche = null;
+                        }
+                    }
+                }
+            }else if(joueurCourant.getNavireCourant().isEtatDeplacement()){
+                if(!bufferClick.contains(Map.getInstance().coordMaillageToTab(coordMaillage))
+                        && joueurCourant.getNavireCourant().isEtatDeplacement()){ // On enregistre le clic dans une "liste d'attente d'action"
                     bufferClick.add(Map.getInstance().coordMaillageToTab(coordMaillage));
                 }
             }
@@ -274,11 +252,7 @@ public class Game extends BasicGameState {
     }
 
     public void executeClick(){
-        if (joueurCourant.getNavireCourant().modeTirCanonActive()) {
-    		joueurCourant.getNavireCourant().tirer(selecteursCasesTirs, bufferClick.get(0));
-    	} else {
-    		joueurCourant.getNavireCourant().tryAccess(bufferClick.get(0));
-    	}
+        joueurCourant.getNavireCourant().tryAccess(bufferClick.get(0));
         bufferClick.remove(0); // On supprime l'action enregistrée dans tous les cas. Si la méthode try access s'est bien déroulée et si elle ne s'est pas bien déroulée. Il ne faut pas encombrer le buffer avec des actions invalides.
     }
     @Override
