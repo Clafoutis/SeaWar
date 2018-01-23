@@ -336,7 +336,6 @@ public class Navire {
     public void selectionnerCanonPrincipal(Vector<SelecteurCase> selecteurs) {
     	etat = ModeNavire.CANON_PRINCIPAL;
     	Map.getInstance().getZoneTireCanonPrincipale(this, selecteurs);
-    	System.out.println("selecteurs : " + selecteurs);
     }
     
     public void selectionnerCanonSecondaire(Vector<SelecteurCase> selecteurs) {
@@ -353,7 +352,7 @@ public class Navire {
     	return etat == ModeNavire.CANON_PRINCIPAL || etat == ModeNavire.CANON_SECONDAIRE;
     }
     
-    public void tirer(Point coordTab) {
+    public void tirer(Vector<SelecteurCase> selecteurs, Point coordTab) {
     	
     }
 }
