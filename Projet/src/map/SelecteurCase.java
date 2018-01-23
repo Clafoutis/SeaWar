@@ -17,24 +17,14 @@ public class SelecteurCase {
 	
 	private SpriteSheet spriteSheetSelecteur;
 	private Animation selecteurs[];
-	private boolean visible = true;
-	private CouleurSelecteur couleurSelecteur = CouleurSelecteur.CYAN;
+	private boolean visible = false;
+	private int idCaseSelectionnee = 0;
 	private Point position = new Point(0, 0);
 	
-	public SelecteurCase(CouleurSelecteur couleurSelecteur, int coordTabX, int coordTabY) throws SlickException {
-		this();
-		this.couleurSelecteur = couleurSelecteur;
-		this.setCoordTab(new Point(coordTabX, coordTabY));
-	}
 	
-	public SelecteurCase(CouleurSelecteur couleurSelecteur, Point position) throws SlickException {
-		this();
-		this.couleurSelecteur = couleurSelecteur;
-		this.position = (Point) position.clone();
-	}
 	
 	public SelecteurCase() throws SlickException {
-		selecteurs = new Animation[CouleurSelecteur.values().length];
+		selecteurs = new Animation[nbTypesCases];
 		spriteSheetSelecteur = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_SELECTEUR, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 		for (int i = 0; i < selecteurs.length; i++) {
 			selecteurs[i] = new Animation();
@@ -42,12 +32,12 @@ public class SelecteurCase {
 		}
 	}
 	
-	public CouleurSelecteur getCouleurSelecteur() {
-		return couleurSelecteur;
+	public int getIdCaseSelectionnee() {
+		return idCaseSelectionnee;
 	}
 	
-	public void setCouleurSelecteur(CouleurSelecteur couleurSelecteur) {
-		this.couleurSelecteur = couleurSelecteur;
+	public void setIdCaseSelectionnee(int _idCaseSelectionnee) {
+		idCaseSelectionnee = _idCaseSelectionnee;
 	}
 	
 	public Point getPosition() {
@@ -56,14 +46,6 @@ public class SelecteurCase {
 	
 	public void setPosition(Point _position) {
 		position = _position;
-	}
-	
-	public Point getCoordTab() {
-		return Map.getInstance().coordMaillageToTab(position);
-	}
-	
-	public void setCoordTab(Point coordTab) {
-		position = Map.getInstance().coordTabToMaillage((Point) coordTab.clone());
 	}
 	
 	public boolean isSelecteurVisible() {
@@ -76,7 +58,7 @@ public class SelecteurCase {
 	
 	public void draw() {
 		if (isSelecteurVisible()) {
-			selecteurs[couleurSelecteur.ordinal()].draw(Map.getInstance().getPosition().x + position.x, 
+			selecteurs[idCaseSelectionnee].draw(Map.getInstance().getPosition().x + position.x, 
 					Map.getInstance().getPosition().y + position.y,
 					LONGUEUR_COTE_TUILE * Map.getInstance().getScaleX(),
 					LONGUEUR_COTE_TUILE * Map.getInstance().getScaleY());
