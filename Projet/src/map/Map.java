@@ -10,8 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
-import joueur.Joueur;
-import joueur.Navire;
+import joueur.*;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.GameContainer;
