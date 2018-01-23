@@ -10,7 +10,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
-import joueur.*;
+import joueur.Joueur;
+import joueur.Navire;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.GameContainer;
@@ -62,8 +63,8 @@ public class Map implements Serializable {
 
 	public void init() throws SlickException {
 		
-		selecteurCase = new SelecteurCase();
-		selecteurCase.setSelecteurVisible(false);
+		selecteurCase = new SelecteurCase(typeDeCaseParId.length);
+
 		spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_MAP, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 	}
 	
@@ -76,8 +77,17 @@ public class Map implements Serializable {
 		navire.setPosition(coordTabToMaillage(coordTab));
 		navires.put(navire, coordTab);
 	}
+
+	public void removeNavire(Navire navire) {
+		navires.remove(navire);
+	}
+
 	public java.util.Map<Navire, Point> getNavires(){
 		return navires;
+	}
+
+	public Vector<Vector<Case>> getGrille() {
+		return grille;
 	}
 	
 	public SpriteSheet getSpriteSheet() {
@@ -86,10 +96,6 @@ public class Map implements Serializable {
 	
 	public final float getLongueurAbsolueCoteTuile() {
 		return LONGUEUR_COTE_TUILE;
-	}
-	
-	public Vector<Vector<Case>> getGrille() {
-		return grille;
 	}
 
 	public int getSensPremierDenivele() {
@@ -358,7 +364,7 @@ public class Map implements Serializable {
 	public void selectionnerCase(int idCase, Point coordTab) {
 		boolean bordsTabAtteint = true;
 
-		selecteurCase.setCouleurSelecteur(CouleurSelecteur.values()[idCase]);
+		selecteurCase.setIdCaseSelectionnee(idCase);
 		
 		bordsTabAtteint = checkBordsTabEtAjusterCoord(coordTab);
 
@@ -503,44 +509,18 @@ public class Map implements Serializable {
 			System.out.println("Erreur : Deplacement d'un navire qui n'a pas ete ajoute dans la map");
 		}
 	}
-
-	public void getZoneTireCanonPrincipale(Navire navire, java.util.Map<SelecteurCase, Point> selecteurs) {
-		try {
-			if (navire.getClass() == NavireAmiral.class) {
-				ajouterSelecteurPourZone(selecteurs, 0, 0);
-			} else if (navire.getClass() == NavireFregate.class) {
-				//selecteurs;
-			} else {
-				//selecteurs;
-			}
-		} catch (SlickException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void getZoneTireCanonSecondaire(Navire navire, java.util.Map<SelecteurCase, Point> selecteurs) {
-		try {
-			if (navire.getClass() == NavireAmiral.class) {
-				ajouterSelecteurPourZone(selecteurs, 0, 0);
-			} else if (navire.getClass() == NavireFregate.class) {
-				//selecteurs;
-			} else {
-				//selecteurs;
-			}
-		} catch (SlickException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	// Le joueur prend le ou les phares sur lequel est son ou ses navires
 	// (si le joueur n'a pas de navire sur un phare, rien ne se passe)
 	public void verifierPriseDePhare(Joueur joueur) {
 		for (int i = 0; i < joueur.getNbNavires(); i++) {
-			Point coordNavire = navires.get(joueur.getNavire(i));
-			Case caseACoordNavire = grille.get(coordNavire.y).get(coordNavire.x);
-			
-			if (caseACoordNavire.getClass() == Phare.class) {
-				((Phare)(caseACoordNavire)).setJoueurPossesseur(joueur.getId());
+			if(!joueur.getNavire(i).isEtatDetruit()){
+				Point coordNavire = navires.get(joueur.getNavire(i));
+				Case caseACoordNavire = grille.get(coordNavire.y).get(coordNavire.x);
+
+				if (caseACoordNavire.getClass() == Phare.class) {
+					((Phare)(caseACoordNavire)).setJoueurPossesseur(joueur.getId());
+				}
 			}
 		}
 	}
@@ -567,9 +547,9 @@ public class Map implements Serializable {
 		}
 		selecteurCase.draw();
 
-		for (Navire navire : navires.keySet()) {
+		/*for (Navire navire : navires.keySet()) {
 			navire.draw();
-		}
+		} Déplacé dans Game */
 	}
 	
 	//////////////////////////
@@ -577,13 +557,6 @@ public class Map implements Serializable {
 	//////////////////////////
 	private boolean checkCollisions(Point coordTab) {
 		return false;
-	}
-	
-	private void ajouterSelecteurPourZone(java.util.Map<SelecteurCase, Point> selecteurs, int coordTabX, int coordTabY) throws SlickException {
-		Point coordTab = new Point(coordTabX, coordTabY);
-		if (checkBordsTab(coordTab)) {
-			selecteurs.put(new SelecteurCase(CouleurSelecteur.ROUGE, coordTab.x, coordTab.y), coordTab);
-		}
 	}
 
 	private boolean checkBordsTab(Point coordTab) {
