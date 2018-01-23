@@ -34,7 +34,7 @@ public class Navire {
 
     public Navire(int _direction, String _nomSpriteSheet, String _spriteSheetMiniature, int _longueurCoteTuile) throws SlickException {
         this.deplacementEnCours = false;
-        this.etat = ModeNavire.NON_SELECTIONNE;
+        this.etat = ModeNavire.DEPLACEMENT;
         this.nbTourRechargeCanonPrincipalRestant = 0;
         this.nbTourRechargeCanonSecondaireRestant = 0;
         
