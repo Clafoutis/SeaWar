@@ -63,7 +63,7 @@ public class Map implements Serializable {
 
 	public void init() throws SlickException {
 		
-		selecteurCase = new SelecteurCase(typeDeCaseParId.length);
+		selecteurCase = new SelecteurCase();
 
 		spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_MAP, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 	}
