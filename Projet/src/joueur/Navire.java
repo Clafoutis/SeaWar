@@ -332,18 +332,17 @@ public class Navire {
         }
     }
     
-    // Gestion tirs canons
-    public void selectionnerCanonPrincipal(Vector<SelecteurCase> selecteurs) {
+    public void selectionnerCanonPrincipal(java.util.Map<SelecteurCase, Point> selecteurs) {
     	etat = ModeNavire.CANON_PRINCIPAL;
     	Map.getInstance().getZoneTireCanonPrincipale(this, selecteurs);
     }
     
-    public void selectionnerCanonSecondaire(Vector<SelecteurCase> selecteurs) {
+    public void selectionnerCanonSecondaire(java.util.Map<SelecteurCase, Point> selecteurs) {
     	etat = ModeNavire.CANON_SECONDAIRE;
     	Map.getInstance().getZoneTireCanonSecondaire(this, selecteurs);
     }
     
-    public void deselectionnerCanon(Vector<SelecteurCase> selecteurs) {
+    public void deselectionnerCanon(java.util.Map<SelecteurCase, Point> selecteurs) {
     	etat = ModeNavire.DEPLACEMENT;
     	selecteurs.clear();
     }
@@ -352,7 +351,7 @@ public class Navire {
     	return etat == ModeNavire.CANON_PRINCIPAL || etat == ModeNavire.CANON_SECONDAIRE;
     }
     
-    public void tirer(Vector<SelecteurCase> selecteurs, Point coordTab) {
+    public void tirer(java.util.Map<SelecteurCase, Point> selecteurs, Point coordTab) {
     	
     }
 }
