@@ -327,7 +327,7 @@ public class Navire {
     // Gestion tirs canon
     public void selectionnerCanonPrincipal() {
     	etat = ModeNavire.CANON_PRINCIPAL;
-    	Map.getInstance().getZoneTireCanonPrincipale(this);
+    	//Map.getInstance().getZoneTireCanonPrincipale(this);
     }
     
     public boolean modeTirCanonActive() {
