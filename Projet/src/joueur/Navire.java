@@ -6,36 +6,30 @@ import map.Direction;
 import map.Map;
 
 import map.SelecteurCase;
-import map.Terre;
-
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.Image;
 
 public class Navire {
+    private int longueurCoteTuile = 64;// (par defaut)
+    private int id_proprietaire;
     private int pv, pvMax, nbDeplacements, nbDeplacementsRestants, dmgCannonPrincipal, dmgCanonSecondaire,
             nbTourRechargeCanonPrincipal, nbTourRechargeCanonSecondaire;
     private int direction;
     private SpriteSheet spriteSheet;
     public SpriteSheet spriteSheetMiniature;
-    
     private Animation[] animations = new Animation[6];
-    
     private Point position = new Point();
     // Pour les déplacements animés
     private boolean deplacementEnCours;
     private int nbDeplacementsAnimRestants;
     private double tempX, tempY, deltaX, deltaY;
     private Point destination;
-    private int longueurCoteTuile = 64;// (par defaut)
-    private int id_proprietaire;
 
-    public Navire(int _direction, String _nomSpriteSheet, int _longueurCoteTuile, String _spriteSheetMiniature) throws SlickException {
+    public Navire(int _direction, String _nomSpriteSheet, String _spriteSheetMiniature, int _longueurCoteTuile) throws SlickException {
         this.direction = _direction;
         this.deplacementEnCours = false;
         this.longueurCoteTuile = _longueurCoteTuile;
-        
         this.spriteSheet = new SpriteSheet(_nomSpriteSheet, longueurCoteTuile, longueurCoteTuile);
         this.spriteSheetMiniature = new SpriteSheet(_spriteSheetMiniature, 1300, 1390);
         
@@ -50,22 +44,6 @@ public class Navire {
     public int getPv(){
         return this.pv;
     }
-    
-    public int getPvMax(){
-    	return this.pvMax;
-    }
-    
-    public void setPvMax(int _pvMax){
-    	this.pvMax = _pvMax;
-    }
-    
-    public void setIdProprietaire(int id){
-    	this.id_proprietaire = id;
-    }
-    
-    public int getIdProprietaire(){
-    	return this.id_proprietaire;
-    }
 
     private Animation loadAnimation(SpriteSheet spriteSheet, int x, int y) {
         Animation animation = new Animation();
@@ -76,6 +54,23 @@ public class Navire {
     public void setPv(int pv) {
         this.pv = pv;
     }
+
+    public int getPvMax(){
+        return this.pvMax;
+    }
+
+    public void setPvMax(int _pvMax){
+        this.pvMax = _pvMax;
+    }
+
+    public void setIdProprietaire(int id){
+        this.id_proprietaire = id;
+    }
+
+    public int getIdProprietaire(){
+        return this.id_proprietaire;
+    }
+
     public int getNbDeplacements(){
         return this.nbDeplacements;
     }
@@ -124,12 +119,12 @@ public class Navire {
         position = _position;
     }
 
-    public Point getDestination() {
-        return (Point)destination.clone();
-    }
-
     public boolean isDeplacementEnCours() {
         return deplacementEnCours;
+    }
+
+    public Point getDestination() {
+        return destination;
     }
 
     public void getPossibleDeplacements(SelecteurCase[] selecteurs){
@@ -215,7 +210,7 @@ public class Navire {
                         newPoint[i].getX()>Map.getInstance().getNbCases().getX()-1 ||
                         newPoint[i].getY()>Map.getInstance().getNbCases().getY()-1){
                     selecteurs[i].setSelecteurVisible(false);
-                }else if(Map.getInstance().getGrille().get((int) newPoint[i].getY()).get((int) newPoint[i].getX()).getId()==Terre.ID){
+                }else if(Map.getInstance().getGrille().get((int) newPoint[i].getY()).get((int) newPoint[i].getX()).getId()==1){
                     selecteurs[i].setSelecteurVisible(false);
                 }else{
                     selecteurs[i].setPosition(Map.getInstance().coordTabToMaillage(newPoint[i]));
@@ -287,17 +282,19 @@ public class Navire {
     }
 
     public void draw() {
-    	// draw boat
         animations[direction].draw(Map.getInstance().getPosition().x + position.x, 
         		Map.getInstance().getPosition().y + position.y,
         		longueurCoteTuile * Map.getInstance().getScaleX(),
         		longueurCoteTuile * Map.getInstance().getScaleY());
     }
-    
-    public void drawStatus(){
-    	spriteSheetMiniature.getSprite(0, id_proprietaire).draw(10, 10, 130, 139);
+
+    public void drawStatus(boolean enemy){
+        if(enemy){
+            spriteSheetMiniature.getSprite(0, id_proprietaire).draw(940, 150, 130, 139);
+        }else{
+            spriteSheetMiniature.getSprite(0, id_proprietaire).draw(10, 150, 130, 139);
+        }
     }
-    
 
     public void initialiserDeplacement(Point position, int direction){
         if(!position.equals(this.position)){

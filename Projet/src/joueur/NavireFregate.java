@@ -7,8 +7,9 @@ import utility.FileUtility;
 public class NavireFregate extends Navire {
 
 	public NavireFregate(int direction, int id_proprietaire) throws SlickException {
-		super(direction, FileUtility.DOSSIER_SPRITE + "navire_fregate.png", 64,
-				FileUtility.DOSSIER_SPRITE + "Sprite_Miniature_Fregate.png");
+		super(direction, FileUtility.DOSSIER_SPRITE + "navire_fregate.png",
+				FileUtility.DOSSIER_SPRITE + "Sprite_Miniature_Fregate.png",
+				64);
 		setNbDeplacements(7);
 		setNbDeplacementsRestants(7);
 		setPv(50);
