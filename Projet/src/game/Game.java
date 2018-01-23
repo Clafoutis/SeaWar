@@ -36,7 +36,7 @@ public class Game extends BasicGameState {
     private SelecteurCase selecteurCaseNavireCourant;
     private SelecteurCase selecteurCaseNavireAffiche; // forcément ennemi
     private SelecteurCase[] selecteurCasesDeplacement;
-    private Vector<SelecteurCase> selecteurCasesTirs = new Vector<SelecteurCase>();
+    private Vector<SelecteurCase> selecteursCasesTirs = new Vector<SelecteurCase>();
     // Pause
     private Image parchemin;
     private MouseOverArea quitterArea;
@@ -92,7 +92,7 @@ public class Game extends BasicGameState {
         
         // draw les sélecteurs des déplacements et des tirs possibles
         for (SelecteurCase selecteur:selecteurCasesDeplacement) selecteur.draw();
-        for (SelecteurCase selecteur:selecteurCasesTirs) selecteur.draw();
+        for (SelecteurCase selecteur:selecteursCasesTirs) selecteur.draw();
         
         // draw le sélecteur du navire courant et affiche
         selecteurCaseNavireAffiche.draw();
@@ -228,23 +228,25 @@ public class Game extends BasicGameState {
                 break;
 
             case Input.KEY_1:
+            	joueurCourant.getNavireCourant().deselectionnerCanon(selecteursCasesTirs);
                 joueurCourant.setNavireCourant(joueurCourant.getNavire(0));
                 break;
 
             case Input.KEY_2:
+            	joueurCourant.getNavireCourant().deselectionnerCanon(selecteursCasesTirs);
                 joueurCourant.setNavireCourant(joueurCourant.getNavire(1));
                 break;
                 
             case Input.KEY_A:
-            	joueurCourant.getNavireCourant().selectionnerCanonPrincipal(selecteurCasesTirs);
+            	joueurCourant.getNavireCourant().selectionnerCanonPrincipal(selecteursCasesTirs);
                 break;
                 
             case Input.KEY_Z:
-            	joueurCourant.getNavireCourant().selectionnerCanonSecondaire(selecteurCasesTirs);
+            	joueurCourant.getNavireCourant().selectionnerCanonSecondaire(selecteursCasesTirs);
                 break;
                 
             case Input.KEY_E:
-            	joueurCourant.getNavireCourant().deselectionnerCanon(selecteurCasesTirs);
+            	joueurCourant.getNavireCourant().deselectionnerCanon(selecteursCasesTirs);
                 break;
         }
     }
@@ -257,6 +259,7 @@ public class Game extends BasicGameState {
             if(Map.getInstance().getNavires().containsValue(coordPosTab)){ // On selectionne le bateau cliqué
                 Navire navire = Map.getInstance().getNavireAtCoord(coordPosTab);
                 if(navire.getIdProprietaire() == joueurCourant.getId()){
+                	joueurCourant.getNavireCourant().deselectionnerCanon(selecteursCasesTirs);
                     joueurCourant.setNavireCourant(navire);
                 }else{
                     navireAffiche = navire;
@@ -271,7 +274,7 @@ public class Game extends BasicGameState {
 
     public void executeClick(){
         if (joueurCourant.getNavireCourant().modeTirCanonActive()) {
-    		joueurCourant.getNavireCourant().tirer(selecteurCasesTirs, bufferClick.get(0));
+    		joueurCourant.getNavireCourant().tirer(selecteursCasesTirs, bufferClick.get(0));
     	} else {
     		joueurCourant.getNavireCourant().tryAccess(bufferClick.get(0));
     	}
