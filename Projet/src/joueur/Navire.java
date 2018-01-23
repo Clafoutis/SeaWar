@@ -323,6 +323,11 @@ public abstract class Navire {
         Map.getInstance().deplacer(this, direction);
     }
 
+    public boolean aBouge(){
+        if(nbDeplacementsRestants<nbDeplacements) return true;
+        else return false;
+    }
+
     public void draw() {
         if(etat != DETRUIT){
             animations[direction].draw(Map.getInstance().getPosition().x + position.x,
