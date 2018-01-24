@@ -41,7 +41,7 @@ public class Game extends BasicGameState {
     private SelecteurCase[] selecteurCasesDeplacement;
     // Pause
     private Image parchemin;
-    private MouseOverArea quitterArea;
+    private MouseOverArea retourArea, enregistrerArea, quitterArea;
     private SpriteSheet interfaceInformations;
 
 
@@ -56,6 +56,27 @@ public class Game extends BasicGameState {
         this.background = new Image("resources/images/backgroundGame.png");
         bufferClick = new ArrayList<Point>();
         parchemin = new Image("resources/images/parchemin.png");
+        // Bouton retour
+        Image retour = new Image("resources/images/retour.png");
+        Image retourHover = new Image("resources/images/retour-hover.png");
+        this.retourArea = new MouseOverArea(container, retour, container.getWidth()/2 - 112, container.getHeight()/2 - 140, 225, 60, new ComponentListener() {
+            @Override
+            public void componentActivated(AbstractComponent abstractComponent) {
+                etat = GAME;
+            }
+        });
+        retourArea.setMouseOverImage(retourHover);
+        // Bouton enregistrer
+        Image enregistrer = new Image("resources/images/enregistrer.png");
+        Image enregistrerHover = new Image("resources/images/enregistrer-hover.png");
+        this.enregistrerArea = new MouseOverArea(container, enregistrer, container.getWidth()/2 - 112, container.getHeight()/2 - 55, 225, 60, new ComponentListener() {
+            @Override
+            public void componentActivated(AbstractComponent abstractComponent) {
+                // @TODO sauvegarde partie
+            }
+        });
+        enregistrerArea.setMouseOverImage(enregistrerHover);
+        // Bouton quitter
         Image quitter = new Image("resources/images/quitter.png");
         Image quitterHover = new Image("resources/images/quitter-hover.png");
         this.quitterArea = new MouseOverArea(container, quitter, container.getWidth()/2 - 112, container.getHeight()/2 + 30, 225, 60, new ComponentListener() {
@@ -128,8 +149,9 @@ public class Game extends BasicGameState {
 
         if(etat == PAUSE){
             parchemin.draw(container.getWidth()/2 - 180, container.getHeight()/2 - 225, 360, 450);
+            retourArea.render(container, graphics);
+            enregistrerArea.render(container, graphics);
             quitterArea.render(container, graphics);
-            // @TODO les boutons retour à la partie et sauvegarde du jeu
         }else if(etat == END_OF_GAME){
             parchemin.draw(container.getWidth()/2 - 180, container.getHeight()/2 - 225, 360, 450);
             // @TODO un message de félicitation au gagnant + un bouton restart (et placer le quitter)
