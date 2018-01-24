@@ -58,8 +58,8 @@ public class Game extends BasicGameState {
         bufferClick = new ArrayList<Point>();
         parchemin = new Image("resources/images/parchemin.png");
         // Bouton retour
-        Image retour = new Image("resources/images/jouer.png");//retour
-        Image retourHover = new Image("resources/images/jouer-hover.png");//retour
+        Image retour = new Image("resources/images/retour.png");//retour
+        Image retourHover = new Image("resources/images/retour-hover.png");//retour
         this.retourArea = new MouseOverArea(container, retour, container.getWidth()/2 - 112, container.getHeight()/2 - 140, 225, 60, new ComponentListener() {
             @Override
             public void componentActivated(AbstractComponent abstractComponent) {
@@ -68,8 +68,8 @@ public class Game extends BasicGameState {
         });
         retourArea.setMouseOverImage(retourHover);
         // Bouton enregistrer
-        Image enregistrer = new Image("resources/images/jouer.png");//enregistrer
-        Image enregistrerHover = new Image("resources/images/jouer-hover.png");//enregistrer
+        Image enregistrer = new Image("resources/images/enregistrer.png");//enregistrer
+        Image enregistrerHover = new Image("resources/images/enregistrer-hover.png");//enregistrer
         this.enregistrerArea = new MouseOverArea(container, enregistrer, container.getWidth()/2 - 112, container.getHeight()/2 - 55, 225, 60, new ComponentListener() {
             @Override
             public void componentActivated(AbstractComponent abstractComponent) {
