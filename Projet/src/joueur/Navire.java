@@ -343,6 +343,15 @@ public abstract class Navire {
         if(nbDeplacementsRestants<nbDeplacements) return true;
         else return false;
     }
+    
+    public boolean isBloque(SelecteurCase[] selecteurCasesDeplacement) {
+        boolean bloque = true;
+        getPossibleDeplacements(selecteurCasesDeplacement);
+        for(SelecteurCase selecteur:selecteurCasesDeplacement){
+            if(selecteur.isSelecteurVisible()) bloque = false;
+        }
+        return bloque;
+    }
 
     public void draw() {
         if(etat != DETRUIT){
