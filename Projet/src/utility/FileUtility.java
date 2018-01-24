@@ -75,44 +75,10 @@ public class FileUtility implements Serializable {
 
 	    return tabMap;
 	}
-
-	public Vector< Vector<Integer> > loadMapFromJar(String nomMap) {
-		Vector < Vector<Integer> > tabMap = new Vector < Vector<Integer> >();
-	    BufferedInputStream bis;
-	    
-	    try {
-			InputStream in = this.getClass().getClassLoader().getResourceAsStream(DOSSIER_MAP + nomMap);
-			bis = new BufferedInputStream(in);
-	    	byte[] buf = new byte[8];
-
-	    	tabMap.add(new Vector<Integer>());
-	    	while(bis.read(buf) != -1) {
-		    	for (byte bit : buf) {
-		    		if (bit == '\r' || bit == '\n') {
-		    			if (tabMap.lastElement().size() > 0) {
-		    				tabMap.add(new Vector<Integer>());
-		    			}
-		    		} else if (bit >= '0' && bit <= '9') {
-		    			tabMap.lastElement().add(Character.getNumericValue(bit));
-		    		}
-		    	}
-		    	buf = new byte[8];
-	    	}
-	    	
-	    	if (tabMap.lastElement().size() <= 0) {
-	    		tabMap.removeElementAt(tabMap.size()-1);
-	    	}
-	    	rendreTabMapRectangle(tabMap);
-
-	    	bis.close();
-
-    	} catch (FileNotFoundException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
-
-	    return tabMap;
+	
+	public void supprimer(String nomMap) {
+		File f = new File(DOSSIER_MAP + nomMap);
+		f.delete();
 	}
 	
 	public void saveMap(String nomMap, Vector< Vector<Integer> > tabMap) {
@@ -145,41 +111,6 @@ public class FileUtility implements Serializable {
 			e.printStackTrace();
 		}
 	  }
-	
-	public void saveMapForJar(String nomMap, Vector< Vector<Integer> > tabMap) {
-		BufferedOutputStream bos;
-		String id_str;
-
-		try {
-			URL mapURL = getClass().getResource(DOSSIER_MAP + nomMap);
-			File file = new File(mapURL.toURI().toString());
-			bos = new BufferedOutputStream(new FileOutputStream(file));
-
-			for (int j = 0; j < tabMap.size(); j++) {
-				for (int i = 0; i < tabMap.get(j).size(); i++) {
-					id_str = (tabMap.get(j).get(i)).toString();
-					if (id_str.length() > 0) {
-						bos.write(id_str.charAt(0));
-					} else {
-						bos.write('0');
-					}
-				}
-				if (j < tabMap.size() - 1) {
-					bos.write('\r');
-					bos.write('\n');
-				}
-			}
-
-			bos.close();
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	public Point getNbCasesMap(String nomMap) {
 		Point nbCases = new Point(0, 0);

@@ -19,8 +19,9 @@ public class MainScreen extends BasicGameState {
     private GameContainer container;
     private Image background, parchemin;
     private MouseOverArea jouerArea, editerArea, quitterArea;
-    private final int MENU = 0, CHOIX_MAP_JEU = 1, CHOIX_MAP_EDITION = 2;
+    private final int MENU = 0, CHOIX_MAP = 1;
 	private int etat;
+	private boolean demarrerEditeur = false;
 	private UnicodeFont font;
 	private Vector<Rectangle> nomMapRects = new Vector<Rectangle>();
 	private Vector<Point> nomMapPoints = new Vector<Point>();
@@ -82,15 +83,11 @@ public class MainScreen extends BasicGameState {
 	        quitterArea.render(container, g);
 	        break;
 	        
-        case CHOIX_MAP_JEU:
+        case CHOIX_MAP:
 	        parchemin.draw((container.getWidth()-360)/2, (container.getHeight()-450)/2, 360, 450);
 	        for (int i = 0; i < nomMaps.size(); i++) {
 	        	font.drawString(nomMapPoints.get(i).x, nomMapPoints.get(i).y, nomMaps.get(i), Color.black);
 	        }
-	        break;
-	        
-        case CHOIX_MAP_EDITION:
-	        parchemin.draw((container.getWidth()-360)/2, (container.getHeight()-450)/2, 360, 450);
 	        break;
         }
     }
@@ -108,12 +105,8 @@ public class MainScreen extends BasicGameState {
     	        exit();
     	        break;
     	        
-            case CHOIX_MAP_JEU:
+            case CHOIX_MAP:
     	        etat = MENU;
-    	        break;
-    	        
-            case CHOIX_MAP_EDITION:
-            	etat = MENU;
     	        break;
             }
 			break;
@@ -121,17 +114,22 @@ public class MainScreen extends BasicGameState {
     }
 
     private void startGame() {
-        Music.playGame();
-        try {
-            ((Game) game.getState(Game.ID)).newGame("test");
-        } catch (SlickException e) {
-            e.printStackTrace();
-        }
-        game.enterState(Game.ID);
+        etat = CHOIX_MAP;
+        demarrerEditeur = false;
+    	nomMapRects = new Vector<Rectangle>();
+    	nomMapPoints = new Vector<Point>();
+    	nomMaps = FileUtility.getInstance().loadMapNames();
+    	for (int i = 0; i < nomMaps.size(); i++) {
+    		nomMapPoints.add(new Point((container.getWidth()-360)/2 + 75, (container.getHeight()-450)/2 + 80 + i*30));
+    		nomMapRects.add(new Rectangle(nomMapPoints.lastElement().x, nomMapPoints.lastElement().y, 200, 30));
+    	}
     }
     
     private void startEditeur() {
-    	etat = CHOIX_MAP_JEU;
+    	etat = CHOIX_MAP;
+    	demarrerEditeur = true;
+    	nomMapRects = new Vector<Rectangle>();
+    	nomMapPoints = new Vector<Point>();
     	nomMaps = FileUtility.getInstance().loadMapNames();
     	nomMaps.insertElementAt("<Nouvelle Map>", 0);
     	for (int i = 0; i < nomMaps.size(); i++) {
@@ -142,16 +140,25 @@ public class MainScreen extends BasicGameState {
     
     @Override
     public void mouseClicked(int button, int x, int y, int clickCount){
-        if(etat == CHOIX_MAP_JEU) {
+        if(etat == CHOIX_MAP) {
         	for (int i = 0; i < nomMaps.size(); i++) {
         		if (nomMapRects.get(i).contains(x, y)) {
-        			if (i == 0) {
-        				((EditeurMap) game.getState(EditeurMap.ID)).startEditeur(null);
+        			if (demarrerEditeur) {
+	        			if (i == 0) {
+	        				((EditeurMap) game.getState(EditeurMap.ID)).startEditeur(null);
+	        			} else {
+	        				((EditeurMap) game.getState(EditeurMap.ID)).startEditeur(nomMaps.get(i));
+	        			}
+	        			game.enterState(EditeurMap.ID);
         			} else {
-        				((EditeurMap) game.getState(EditeurMap.ID)).startEditeur(nomMaps.get(i));
+        				Music.playGame();
+        				try {
+        		            ((Game) game.getState(Game.ID)).newGame(nomMaps.get(i));
+        		        } catch (SlickException e) {
+        		            e.printStackTrace();
+        		        }
+        		        game.enterState(Game.ID);
         			}
-
-    				game.enterState(EditeurMap.ID);
         			etat = MENU;
         		}
         	}

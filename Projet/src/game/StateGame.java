@@ -6,6 +6,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.state.StateBasedGame;
+
+import utility.FileUtility;
 import utility.Music;
 
 import map.Map;
@@ -26,7 +28,7 @@ public class StateGame extends StateBasedGame {
 	public void initStatesList(GameContainer container) throws SlickException {
 		Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
 		Map.initInstance();
-		
+
 		addState(new MainScreen());
 	    addState(new Game());
 	    addState(new EditeurMap());

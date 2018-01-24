@@ -371,7 +371,7 @@ public class Map implements Serializable {
 			//setNbCases(1, 1);
 		}
 	}
-	
+
 	public void save(String nomMap) {
 		Vector< Vector<Integer> > tabMap = new Vector< Vector<Integer> >();
 		for (int j = 0; j < grille.size(); j++) {
@@ -382,12 +382,12 @@ public class Map implements Serializable {
 		}
 		FileUtility.getInstance().saveMap(nomMap, tabMap);
 	}
-	
+
 	public void selectionnerCase(int idCase) {
 		selecteurCase.setSelecteurVisible(true);
 		selecteurCase.setIdCaseSelectionnee(idCase);
 	}
-	
+
 	public void selectionnerCase(int idCase, Point coordTab) {
 		boolean bordsTabAtteint = true;
 

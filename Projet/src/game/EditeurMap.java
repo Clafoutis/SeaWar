@@ -99,6 +99,7 @@ public class EditeurMap extends BasicGameState {
 		Map.getInstance().load(nomMap);
 		Map.getInstance().setNbCases(13, 11);
 		Map.getInstance().centrerDansFenetre(container);
+		champNomMap.setText("");
 		etat = EDITION;
 		Music.stopMusic();
 	}
@@ -211,6 +212,7 @@ public class EditeurMap extends BasicGameState {
 					} else {
 						etat = ENREGISTREE;
 						messageEnregistrement = NOM_ENREGISTRE;
+						Map.getInstance().save(nomMap);
 					}
 					break;
 				case PAUSE:
