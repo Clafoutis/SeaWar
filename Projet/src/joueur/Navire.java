@@ -335,13 +335,12 @@ public abstract class Navire {
         }
     }
 
-    public void deplacer(Direction direction) {
+    private void deplacer(Direction direction) {
         Map.getInstance().deplacer(this, direction);
     }
 
     public boolean aBouge(){
-        if(nbDeplacementsRestants<nbDeplacements) return true;
-        else return false;
+        return nbDeplacementsRestants < nbDeplacements;
     }
     
     public boolean isBloque(SelecteurCase[] selecteurCasesDeplacement) {
