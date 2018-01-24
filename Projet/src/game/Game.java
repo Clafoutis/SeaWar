@@ -191,7 +191,7 @@ public class Game extends BasicGameState {
 
     public boolean conditionsRemplies(){
         for(int i=0;i<joueurCourant.getNbNavires();i++){
-            if(!joueurCourant.getNavire(i).aBouge() && !joueurCourant.getNavire(i).isEtatDetruit()){
+            if((!joueurCourant.getNavire(i).aBouge() || joueurCourant.getNavire(i).isBloque(selecteurCasesDeplacement)) && !joueurCourant.getNavire(i).isEtatDetruit()){
                 return false;
             }
         }
