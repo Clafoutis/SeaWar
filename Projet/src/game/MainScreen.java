@@ -37,8 +37,8 @@ public class MainScreen extends BasicGameState {
         // boutons jouer et quitter
         Image jouer = new Image("resources/images/jouer.png");
         Image jouerHover = new Image("resources/images/jouer-hover.png");
-        Image editer = new Image("resources/images/jouer.png");
-        Image editerHover = new Image("resources/images/jouer-hover.png");
+        Image editer = new Image("resources/images/editer.png");
+        Image editerHover = new Image("resources/images/editer-hover.png");
         Image quitter = new Image("resources/images/quitter.png");
         Image quitterHover = new Image("resources/images/quitter-hover.png");
         this.jouerArea = new MouseOverArea(container, jouer, 100, 360, 150, 60, new ComponentListener() {
