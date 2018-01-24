@@ -274,6 +274,11 @@ public class Game extends BasicGameState {
                         if(navire.getPv()<1){
                             Map.getInstance().removeNavire(navire);
                             navireAffiche = null;
+                            // le joueur courant gagne si tous les bateaux adverses sont détruits, autrement dit si les siens sont les seuls restants
+                            if(Map.getInstance().getNavires().size()==joueurCourant.nbBateauEnVie()) {
+                                System.out.println("Victoire de " + joueurCourant.getNom() + " !!");
+                                // etat = END_OF_GAME;
+                            }
                         }
                     }
                 }
