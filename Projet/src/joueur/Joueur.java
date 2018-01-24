@@ -64,11 +64,17 @@ public class Joueur {
         return navireCourant.isDeplacementEnCours();
     }
 
+    public int nbBateauEnVie() {
+        int nb = 0;
+        for (Navire navire : navires) if (!navire.isEtatDetruit()) nb++;
+        return nb;
+    }
+
     public void newTurn(){
 	    navires.get(0).setNbDeplacementsRestants(navires.get(0).getNbDeplacements());
 	    navires.get(0).newTurn();
 	    navires.get(1).setNbDeplacementsRestants(navires.get(1).getNbDeplacements());
 	    navires.get(1).newTurn();
-	    while(navireCourant.isEtatDetruit()) navireCourant = navires.get((navires.indexOf(navireCourant) + 1) % getNbNavires());
+	    while(navireCourant.isEtatDetruit() && nbBateauEnVie()>0) navireCourant = navires.get((navires.indexOf(navireCourant) + 1) % getNbNavires());
     }
 }
