@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Vector;
 
 import org.newdawn.slick.geom.Vector2f;
@@ -27,11 +28,15 @@ public class FileUtility implements Serializable {
 	private Object readResolve() {
 		return INSTANCE;
 	}
-	
-	
+
 	//////////////////////////////////////////////////
 	//                   METHODES                   //
 	//////////////////////////////////////////////////
+	
+	public Vector<String> loadMapNames() {
+		File repertoire = new File(DOSSIER_MAP);
+		return new Vector<String>(Arrays.asList(repertoire.list()));
+	}
 	
 	public Vector< Vector<Integer> > loadMap(String nomMap) {
 		Vector < Vector<Integer> > tabMap = new Vector < Vector<Integer> >();
@@ -111,6 +116,37 @@ public class FileUtility implements Serializable {
 	}
 	
 	public void saveMap(String nomMap, Vector< Vector<Integer> > tabMap) {
+		BufferedOutputStream bos;
+		String id_str;
+
+		try {
+			bos = new BufferedOutputStream(new FileOutputStream(new File(DOSSIER_MAP + nomMap)));
+
+			for (int j = 0; j < tabMap.size(); j++) {
+				for (int i = 0; i < tabMap.get(j).size(); i++) {
+					id_str = (tabMap.get(j).get(i)).toString();
+					if (id_str.length() > 0) {
+						bos.write(id_str.charAt(0));
+					} else {
+						bos.write('0');
+					}
+				}
+				if (j < tabMap.size() - 1) {
+					bos.write('\r');
+					bos.write('\n');
+				}
+			}
+
+			bos.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	  }
+	
+	public void saveMapForJar(String nomMap, Vector< Vector<Integer> > tabMap) {
 		BufferedOutputStream bos;
 		String id_str;
 

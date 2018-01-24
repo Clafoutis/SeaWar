@@ -18,6 +18,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Rectangle;
 
 import game.Game;
 import utility.FileUtility;
@@ -38,8 +39,8 @@ public class Map implements Serializable {
 		Terre.class,
 		Phare.class
 	};
-	private Vector< Vector<Case> > grille;
-	private Vector<Phare> phares;
+	private Vector< Vector<Case> > grille = new Vector< Vector<Case> >();
+	private Vector<Phare> phares = new Vector<Phare>();
 	private java.util.Map<Navire, Point> navires = new HashMap<Navire, Point>();
 	private SpriteSheet spriteSheet;
 	private int sensPremierDenivele = -1;
@@ -62,10 +63,17 @@ public class Map implements Serializable {
 	}
 
 	public void init() throws SlickException {
-		
 		selecteurCase = new SelecteurCase();
-
 		spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_MAP, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
+	}
+	
+	public void startGameMode() {
+		selecteurCase.setSelecteurVisible(false);
+	}
+
+	public void startEditeurMode() {
+		this.setNbCases(1, 1);
+		this.selectionnerCase(0, new Point(0, 0));
 	}
 	
 	
@@ -88,6 +96,10 @@ public class Map implements Serializable {
 
 	public Vector<Vector<Case>> getGrille() {
 		return grille;
+	}
+	
+	public Class<?>[] getTypeCasesParId() {
+		return typeDeCaseParId;
 	}
 	
 	public SpriteSheet getSpriteSheet() {
@@ -176,6 +188,12 @@ public class Map implements Serializable {
 		taille.y = Math.round(DECALAGE_Y * scaleY) * nbCases.y + Math.round(DENIVELE_Y * scaleY)  + Math.round(LONGUEUR_COTE_TUILE * scaleY) - Math.round(DECALAGE_Y * scaleY);
 		
 		return taille;
+	}
+	
+	public Rectangle getRect() {
+		Point pos = this.getPosition();
+		Point taille = this.getTaille();
+		return new Rectangle(pos.x, pos.y, taille.x, taille.y);
 	}
 	
 	public void setScale(float x, float y) {
@@ -286,7 +304,7 @@ public class Map implements Serializable {
 	}
 
 	public void load(String nomMap) {
-		Vector < Vector<Integer> > tabMap = FileUtility.getInstance().loadMap(nomMap);
+		Vector < Vector<Integer> > tabMap;
 		int sensDenivele = sensPremierDenivele;
 		int x = 0;
 		int y = 0;
@@ -294,59 +312,63 @@ public class Map implements Serializable {
 		if (sensDenivele == -1) {
 			y = Math.round(DENIVELE_Y * scaleY);
 		}
-		
-		FileUtility.getInstance().printTabMap(tabMap);
 
 		setPosition(0, 0);
 		grille = new Vector< Vector<Case> >();
 		phares = new Vector<Phare>();
 		navires = new HashMap<Navire, Point>();
+		
+		if (nomMap != null) {
+			tabMap = FileUtility.getInstance().loadMap(nomMap);
 
-		for (int j = 0; j < tabMap.size(); j++) {
-			
-			x = 0;
-			grille.add(new Vector<Case>());
-			for (int i = 0; i < tabMap.get(j).size(); i++) {
-				Case caseCourante;
-				try {
-					if (tabMap.get(j).get(i) < typeDeCaseParId.length) {
-						caseCourante = (Case) (typeDeCaseParId[ tabMap.get(j).get(i) ])
-								.getConstructor(Point.class)
-								.newInstance(new Point(x, y));
-					} else {
-						throw new ArrayIndexOutOfBoundsException();
+			for (int j = 0; j < tabMap.size(); j++) {
+				
+				x = 0;
+				grille.add(new Vector<Case>());
+				for (int i = 0; i < tabMap.get(j).size(); i++) {
+					Case caseCourante;
+					try {
+						if (tabMap.get(j).get(i) < typeDeCaseParId.length) {
+							caseCourante = (Case) (typeDeCaseParId[ tabMap.get(j).get(i) ])
+									.getConstructor(Point.class)
+									.newInstance(new Point(x, y));
+						} else {
+							throw new ArrayIndexOutOfBoundsException();
+						}
+						
+					} catch (InstantiationException e1) {
+						caseCourante = new Ocean(new Point(x, y));
+					} catch (IllegalAccessException e1) {
+						caseCourante = new Ocean(new Point(x, y));
+					} catch (IllegalArgumentException e1) {
+						caseCourante = new Ocean(new Point(x, y));
+					} catch (InvocationTargetException e1) {
+						caseCourante = new Ocean(new Point(x, y));
+					} catch (NoSuchMethodException e1) {
+						caseCourante = new Ocean(new Point(x, y));
+					} catch (SecurityException e1) {
+						caseCourante = new Ocean(new Point(x, y));
+					} catch (ArrayIndexOutOfBoundsException e1) {
+						caseCourante = new Ocean(new Point(x, y));
 					}
 					
-				} catch (InstantiationException e1) {
-					caseCourante = new Ocean(new Point(x, y));
-				} catch (IllegalAccessException e1) {
-					caseCourante = new Ocean(new Point(x, y));
-				} catch (IllegalArgumentException e1) {
-					caseCourante = new Ocean(new Point(x, y));
-				} catch (InvocationTargetException e1) {
-					caseCourante = new Ocean(new Point(x, y));
-				} catch (NoSuchMethodException e1) {
-					caseCourante = new Ocean(new Point(x, y));
-				} catch (SecurityException e1) {
-					caseCourante = new Ocean(new Point(x, y));
-				} catch (ArrayIndexOutOfBoundsException e1) {
-					caseCourante = new Ocean(new Point(x, y));
+					if (caseCourante.getClass() == Phare.class) {
+						phares.add((Phare)caseCourante);
+					}
+					grille.lastElement().add(caseCourante);
+					x += Math.round(DECALAGE_X * scaleX);
+					y += Math.round(DENIVELE_Y * scaleY * sensDenivele);
+					sensDenivele = -sensDenivele;
 				}
-				
-				if (caseCourante.getClass() == Phare.class) {
-					phares.add((Phare)caseCourante);
+	
+				if (sensDenivele != sensPremierDenivele) {
+					sensDenivele = sensPremierDenivele;
+					y += Math.round(DENIVELE_Y * scaleY);
 				}
-				grille.lastElement().add(caseCourante);
-				x += Math.round(DECALAGE_X * scaleX);
-				y += Math.round(DENIVELE_Y * scaleY * sensDenivele);
-				sensDenivele = -sensDenivele;
+				y += Math.round(DECALAGE_Y * scaleY);
 			}
-
-			if (sensDenivele != sensPremierDenivele) {
-				sensDenivele = sensPremierDenivele;
-				y += Math.round(DENIVELE_Y * scaleY);
-			}
-			y += Math.round(DECALAGE_Y * scaleY);
+		} else {
+			//setNbCases(1, 1);
 		}
 	}
 	
@@ -359,6 +381,11 @@ public class Map implements Serializable {
 			}
 		}
 		FileUtility.getInstance().saveMap(nomMap, tabMap);
+	}
+	
+	public void selectionnerCase(int idCase) {
+		selecteurCase.setSelecteurVisible(true);
+		selecteurCase.setIdCaseSelectionnee(idCase);
 	}
 	
 	public void selectionnerCase(int idCase, Point coordTab) {
@@ -376,10 +403,10 @@ public class Map implements Serializable {
 		}
 	}
 	
-	//TODO : factoriser avec selectionnerCase la gestion du risque outOfBounds
 	public void mettreCase(int idCase, Point coordTab) {
 		if (coordTab.y < grille.size()) {
-			if (coordTab.x < grille.get(coordTab.y).size()) {
+			if (coordTab.x < grille.get(coordTab.y).size() && 
+				coordTab.x >= 0 && coordTab.y >= 0) {
 				Point posCase = grille.get(coordTab.y).get(coordTab.x).getPosition();
 
 				try {
@@ -524,7 +551,7 @@ public class Map implements Serializable {
 			}
 		}
 	}
-	
+
 	public int nombrePharePossede(int idJoueur) {
 		int nbPharePossede = 0;
 		for (Phare phare : phares) {
@@ -534,7 +561,7 @@ public class Map implements Serializable {
 		}
 		return nbPharePossede;
 	}
-	
+
 	public boolean victoire(int idJoueur) {
 		return nombrePharePossede(idJoueur) == phares.size();
 	}
@@ -551,7 +578,7 @@ public class Map implements Serializable {
 			navire.draw();
 		} Déplacé dans Game */
 	}
-	
+
 	//////////////////////////
 	/// FONCTIONS INTERNES ///
 	//////////////////////////

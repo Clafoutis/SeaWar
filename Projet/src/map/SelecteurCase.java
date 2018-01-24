@@ -17,10 +17,9 @@ public class SelecteurCase {
 	
 	private SpriteSheet spriteSheetSelecteur;
 	private Animation selecteurs[];
-	private boolean visible = false;
+	private boolean visible = true;
 	private int idCaseSelectionnee = 0;
 	private Point position = new Point(0, 0);
-	
 	
 	
 	public SelecteurCase() throws SlickException {
@@ -62,6 +61,12 @@ public class SelecteurCase {
 					Map.getInstance().getPosition().y + position.y,
 					LONGUEUR_COTE_TUILE * Map.getInstance().getScaleX(),
 					LONGUEUR_COTE_TUILE * Map.getInstance().getScaleY());
+		}
+	}
+	
+	public void drawAbsolu() {
+		if (isSelecteurVisible()) {
+			selecteurs[idCaseSelectionnee].draw(position.x, position.y);
 		}
 	}
 }

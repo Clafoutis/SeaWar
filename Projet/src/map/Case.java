@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Rectangle;
 
 public abstract class Case extends Animation {
 	private int id;
@@ -32,6 +33,12 @@ public abstract class Case extends Animation {
 		position.y = _position.y;
 	}
 	
+	public Rectangle getRect() {
+		return new Rectangle(position.x, position.y, 
+				Map.getInstance().getLongueurAbsolueCoteTuile(), 
+				Map.getInstance().getLongueurAbsolueCoteTuile());
+	}
+	
 	public void move(int _x, int _y) {
 		position.x += _x;
 		position.y += _y;
@@ -43,5 +50,9 @@ public abstract class Case extends Animation {
 			Map.getInstance().getPosition().y + position.y,
 			Map.getInstance().getLongueurAbsolueCoteTuile() * Map.getInstance().getScaleX(),
 			Map.getInstance().getLongueurAbsolueCoteTuile() * Map.getInstance().getScaleY());
+	}
+	
+	public void drawAbsolu() {
+		this.draw(position.x, position.y);
 	}
 }

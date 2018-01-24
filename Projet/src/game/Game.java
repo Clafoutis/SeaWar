@@ -58,8 +58,8 @@ public class Game extends BasicGameState {
         bufferClick = new ArrayList<Point>();
         parchemin = new Image("resources/images/parchemin.png");
         // Bouton retour
-        Image retour = new Image("resources/images/retour.png");
-        Image retourHover = new Image("resources/images/retour-hover.png");
+        Image retour = new Image("resources/images/jouer.png");//retour
+        Image retourHover = new Image("resources/images/jouer-hover.png");//retour
         this.retourArea = new MouseOverArea(container, retour, container.getWidth()/2 - 112, container.getHeight()/2 - 140, 225, 60, new ComponentListener() {
             @Override
             public void componentActivated(AbstractComponent abstractComponent) {
@@ -68,8 +68,8 @@ public class Game extends BasicGameState {
         });
         retourArea.setMouseOverImage(retourHover);
         // Bouton enregistrer
-        Image enregistrer = new Image("resources/images/enregistrer.png");
-        Image enregistrerHover = new Image("resources/images/enregistrer-hover.png");
+        Image enregistrer = new Image("resources/images/jouer.png");//enregistrer
+        Image enregistrerHover = new Image("resources/images/jouer-hover.png");//enregistrer
         this.enregistrerArea = new MouseOverArea(container, enregistrer, container.getWidth()/2 - 112, container.getHeight()/2 - 55, 225, 60, new ComponentListener() {
             @Override
             public void componentActivated(AbstractComponent abstractComponent) {
@@ -89,7 +89,6 @@ public class Game extends BasicGameState {
         });
         quitterArea.setMouseOverImage(quitterHover);
         interfaceInformations = new SpriteSheet(FileUtility.DOSSIER_SPRITE + "interfaceInformations.png",64,64);
-        newGame();
     }
 
     @Override
@@ -166,8 +165,9 @@ public class Game extends BasicGameState {
         tir.draw(tir.getX(), tir.getY(), 64 * Map.getInstance().getScaleX(), 64 * Map.getInstance().getScaleY());
     }
 
-    public void newGame() throws SlickException {
-        Map.getInstance().load("test.txt");
+    public void newGame(String nomMap) throws SlickException {
+    	Map.getInstance().startGameMode();
+        Map.getInstance().load(nomMap);
         Map.getInstance().centrerDansFenetre(container);
         joueurs[0] = new Joueur(0, "Joueur 1", Color.red, 1);
         joueurs[1] = new Joueur(1, "Joueur 2", Color.blue, 2);
