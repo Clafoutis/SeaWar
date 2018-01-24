@@ -39,6 +39,7 @@ public class Game extends BasicGameState {
     private SelecteurCase selecteurCaseNavireCourant;
     private SelecteurCase selecteurCaseNavireAffiche; // forcément ennemi
     private SelecteurCase[] selecteurCasesDeplacement;
+    private String gagnant;
     // Pause
     private Image parchemin;
     private MouseOverArea retourArea, enregistrerArea, quitterArea;
@@ -154,7 +155,13 @@ public class Game extends BasicGameState {
             quitterArea.render(container, graphics);
         }else if(etat == END_OF_GAME){
             parchemin.draw(container.getWidth()/2 - 180, container.getHeight()/2 - 225, 360, 450);
-            // @TODO un message de félicitation au gagnant + un bouton restart (et placer le quitter)
+            parchemin.draw(container.getWidth()/2 - 180, container.getHeight()/2 - 225, 360, 450);
+            graphics.setColor(Color.black);
+            graphics.drawGradientLine(1, 1, Color.black, 1, 1, Color.black);
+            graphics.drawString("Félicitation, " + gagnant + " !", container.getWidth()/2 - 105, container.getHeight()/2 - 140);
+            graphics.drawString("vous avez gagné !", container.getWidth()/2 - 80, container.getHeight()/2 - 110);
+            quitterArea.render(container, graphics);
+            // @TODO un bouton restart
         }
         tir.draw(tir.getX(), tir.getY(), 64 * Map.getInstance().getScaleX(), 64 * Map.getInstance().getScaleY());
     }
@@ -206,7 +213,8 @@ public class Game extends BasicGameState {
             // un joueur gagne seulement au debut de son tour s'il a possede 3 phares
             if (Map.getInstance().victoire(joueurCourant.getId())) {
                 System.out.println("Victoire de " + joueurCourant.getNom() + " !!");
-                // etat = END_OF_GAME;
+                gagnant = joueurCourant.getNom();
+                etat = END_OF_GAME;
             }
         }
     }
@@ -244,12 +252,12 @@ public class Game extends BasicGameState {
         	int xImage= (numeroImage * (nbMax - nb)) % 8;
         	int yImage= (numeroImage * (nbMax - nb)) / 8;
         	
-        	System.out.println("max:"+nbMax+" left:"+nb+"x:"+xImage+" | y:"+yImage);
+        	//System.out.println("max:"+nbMax+" left:"+nb+"x:"+xImage+" | y:"+yImage);
         
-        interfaceInformations.getSprite(xImage,yImage).draw(x-80, y+10, 100, 100);
+            //interfaceInformations.getSprite(xImage,yImage).draw(x-80, y+10, 100, 100);
         }
-        
     }
+
     public void startTir(Point point) {
         tir.setXY(point);
         tir.setCurrentFrame(0);
@@ -299,7 +307,8 @@ public class Game extends BasicGameState {
                             // le joueur courant gagne si tous les bateaux adverses sont détruits, autrement dit si les siens sont les seuls restants
                             if(Map.getInstance().getNavires().size()==joueurCourant.nbBateauEnVie()) {
                                 System.out.println("Victoire de " + joueurCourant.getNom() + " !!");
-                                // etat = END_OF_GAME;
+                                gagnant = joueurCourant.getNom();
+                                etat = END_OF_GAME;
                             }
                         }
                     }
