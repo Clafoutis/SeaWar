@@ -236,6 +236,9 @@ public class Game extends BasicGameState {
         graphics.setColor(Color.green);
         graphics.drawGradientLine(1, 1, Color.green, 1, 1, Color.green);
         graphics.fillRect(x, y, 20, -(navire.getPv() * 100 / navire.getPvMax() ));
+        graphics.setColor(Color.black);
+        graphics.drawGradientLine(1, 1, Color.black, 1, 1, Color.black);
+        graphics.drawRect(x, y, 20, -100);
 
         if(navire == joueurCourant.getNavireCourant()){
         	// Draw du nombre de déplacements restant
@@ -247,14 +250,57 @@ public class Game extends BasicGameState {
         	// Draw du temps de recharge restant
         	int nb = navire.getNbTourRechargeCanonPrincipal();
         	int nbMax = navire.getNbTourMaxRechargeCanonPrincipal() -1;
+        	
+        	int nbSec = navire.getNbTourRechargeCanonSecondaire();
+        	int nbMaxSec = navire.getNbTourMaxRechargeCanonSecondaire() -1;
+        	
+        	
+        	/* Deprecated
         	int numeroImage = 64 / nbMax;
         	
         	int xImage= (numeroImage * (nbMax - nb)) % 8;
         	int yImage= (numeroImage * (nbMax - nb)) / 8;
         	
+        	
         	//System.out.println("max:"+nbMax+" left:"+nb+"x:"+xImage+" | y:"+yImage);
-        
-            //interfaceInformations.getSprite(xImage,yImage).draw(x-80, y+10, 100, 100);
+        	//interfaceInformations.getSprite(xImage,yImage).draw(x-80, y+10, 100, 100);
+        	*/
+        	
+        	// Interface rechargement principal
+        	// Dessiner le temps restant
+        	graphics.setColor(Color.darkGray);
+        	graphics.drawGradientLine(1, 1, Color.darkGray, 1, 1, Color.darkGray);
+        	try {
+        		graphics.fillArc(x-70, y+13, 24, 24, 0,  360 / (nbMax+1) * nb);
+        	}catch (java.lang.ArithmeticException e) {
+        		graphics.fillArc(x-70, y+13, 24, 24, 0,  0);
+        	}
+        	// Dessiner le contour
+        	graphics.setColor(Color.black);
+        	graphics.drawGradientLine(1, 1, Color.black, 1, 1, Color.black);
+        	graphics.drawArc(x-70, y+13, 24, 24, 0,  360);
+        	//Dessiner le chiffre
+        	graphics.setColor(Color.white);
+        	graphics.drawGradientLine(1, 1, Color.white, 1, 1, Color.white);
+        	graphics.drawString(""+nb, x-63, y+15);
+        	
+        	// Interface rechargement secondaire
+        	graphics.setColor(Color.red);
+       		graphics.drawGradientLine(1, 1, Color.red, 1, 1, Color.red);
+       		graphics.fillArc(x-70, y+13, 24, 24, 0,  0);
+        	try{
+        	graphics.fillArc(x-40, y+13, 24, 24, 0,  360 / (nbMaxSec+1) * nbSec);
+        	}catch (java.lang.ArithmeticException e) {
+        		graphics.fillArc(x-40, y+13, 24, 24, 0, 0);
+        	}
+        	// Dessiner le contour
+        	graphics.setColor(Color.black);
+        	graphics.drawGradientLine(1, 1, Color.black, 1, 1, Color.black);
+        	graphics.drawArc(x-40, y+13, 24, 24, 0,  360);
+        	//Dessiner le chiffre
+        	graphics.setColor(Color.white);
+        	graphics.drawGradientLine(1, 1, Color.white, 1, 1, Color.white);
+        	graphics.drawString(""+nbSec, x-33, y+15);
         }
     }
 
