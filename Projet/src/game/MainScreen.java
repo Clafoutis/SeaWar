@@ -11,6 +11,7 @@ import org.newdawn.slick.state.*;
 
 import utility.FileUtility;
 import utility.Music;
+import utility.Save;
 
 
 public class MainScreen extends BasicGameState {
@@ -18,7 +19,7 @@ public class MainScreen extends BasicGameState {
     private StateBasedGame game;
     private GameContainer container;
     private Image background, parchemin;
-    private MouseOverArea jouerArea, editerArea, quitterArea;
+    private MouseOverArea jouerArea, reprendreArea, editerArea, quitterArea;
     private final int MENU = 0, CHOIX_MAP = 1;
 	private int etat;
 	private boolean demarrerEditeur = false;
@@ -35,27 +36,37 @@ public class MainScreen extends BasicGameState {
         this.background = new Image("resources/images/menu.jpg");
         this.parchemin = new Image("resources/images/parchemin.png");
         // boutons jouer et quitter
+        Image reprendre = new Image("resources/images/reprendre.png");
+        Image reprendreHover = new Image("resources/images/reprendre-hover.png");
         Image jouer = new Image("resources/images/jouer.png");
         Image jouerHover = new Image("resources/images/jouer-hover.png");
         Image editer = new Image("resources/images/editer.png");
         Image editerHover = new Image("resources/images/editer-hover.png");
         Image quitter = new Image("resources/images/quitter.png");
         Image quitterHover = new Image("resources/images/quitter-hover.png");
-        this.jouerArea = new MouseOverArea(container, jouer, 100, 360, 150, 60, new ComponentListener() {
+        this.reprendreArea = new MouseOverArea(container, reprendre, 100, 340, 150, 60, new ComponentListener() {
             @Override
             public void componentActivated(AbstractComponent abstractComponent) {
                 startGame();
             }
         });
+        reprendreArea.setMouseOverImage(reprendreHover);
+        this.jouerArea = new MouseOverArea(container, jouer, 100, 400, 150, 60, new ComponentListener() {
+            @Override
+            public void componentActivated(AbstractComponent abstractComponent) {
+            	Save.getInstance().effacerSauvegarde();
+                startGame();
+            }
+        });
         jouerArea.setMouseOverImage(jouerHover);
-        this.editerArea = new MouseOverArea(container, editer, 100, 450, 150, 60, new ComponentListener() {
+        this.editerArea = new MouseOverArea(container, editer, 115, 470, 150, 60, new ComponentListener() {
             @Override
             public void componentActivated(AbstractComponent abstractComponent) {
             	startEditeur();
             }
         });
         editerArea.setMouseOverImage(editerHover);
-        this.quitterArea = new MouseOverArea(container, quitter, 75, 540, 225, 60, new ComponentListener() {
+        this.quitterArea = new MouseOverArea(container, quitter, 75, 550, 225, 60, new ComponentListener() {
             @Override
             public void componentActivated(AbstractComponent abstractComponent) {
                 exit();
@@ -78,6 +89,8 @@ public class MainScreen extends BasicGameState {
         switch (etat) {
         case MENU:
 	        parchemin.draw(0, 275, 360, 450);
+	        if (Save.getInstance().isSauvegardePresente())
+	        	reprendreArea.render(container, g);
 	        jouerArea.render(container, g);
 	        editerArea.render(container, g);
 	        quitterArea.render(container, g);
@@ -116,13 +129,24 @@ public class MainScreen extends BasicGameState {
     private void startGame() {
         etat = CHOIX_MAP;
         demarrerEditeur = false;
-    	nomMapRects = new Vector<Rectangle>();
-    	nomMapPoints = new Vector<Point>();
-    	nomMaps = FileUtility.getInstance().loadMapNames();
-    	for (int i = 0; i < nomMaps.size(); i++) {
-    		nomMapPoints.add(new Point((container.getWidth()-360)/2 + 75, (container.getHeight()-450)/2 + 80 + i*30));
-    		nomMapRects.add(new Rectangle(nomMapPoints.lastElement().x, nomMapPoints.lastElement().y, 200, 30));
-    	}
+
+        if (Save.getInstance().isSauvegardePresente()) {
+			try {
+	            ((Game) game.getState(Game.ID)).newGame(Save.getInstance().getNomMap());
+	        } catch (SlickException e) {
+	            e.printStackTrace();
+	        }
+	        game.enterState(Game.ID);
+	        etat = MENU;
+        } else {
+	    	nomMapRects = new Vector<Rectangle>();
+	    	nomMapPoints = new Vector<Point>();
+	    	nomMaps = FileUtility.getInstance().loadMapNames();
+	    	for (int i = 0; i < nomMaps.size(); i++) {
+	    		nomMapPoints.add(new Point((container.getWidth()-360)/2 + 75, (container.getHeight()-450)/2 + 80 + i*30));
+	    		nomMapRects.add(new Rectangle(nomMapPoints.lastElement().x, nomMapPoints.lastElement().y, 200, 30));
+	    	}
+        }
     }
     
     private void startEditeur() {

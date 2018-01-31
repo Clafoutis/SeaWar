@@ -18,7 +18,10 @@ import joueur.Joueur;
 import map.Map;
 import utility.FileUtility;
 import utility.Music;
+import utility.Save;
+
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Game extends BasicGameState {
     public static final int ID = 2;
@@ -30,6 +33,7 @@ public class Game extends BasicGameState {
     private StateBasedGame game;
     private Image background;
     private ArrayList<Point> bufferClick; // Changer le type
+    private String nomMap;
     private Point position = new Point();
     // Déroulement partie
     private Joueur[] joueurs = new Joueur[NB_JOUEURS];
@@ -73,7 +77,26 @@ public class Game extends BasicGameState {
         this.enregistrerArea = new MouseOverArea(container, enregistrer, container.getWidth()/2 - 112, container.getHeight()/2 - 55, 225, 60, new ComponentListener() {
             @Override
             public void componentActivated(AbstractComponent abstractComponent) {
-                // @TODO sauvegarde partie
+            	for (int j = 0; j < NB_JOUEURS; j++) {
+            		for (int i = 0; i < joueurs[j].getNbNavires(); i++) {
+            			Navire navire = joueurs[j].getNavire(i);
+	            		Point coordPosTab = Map.getInstance().coordMaillageToTab(navire.getPosition());
+	            		Save.getInstance().setNavireSave(j, i, coordPosTab, navire.getPv(), 
+	            				navire.getNbTourRechargeCanonPrincipal(), navire.getNbTourRechargeCanonSecondaire(),
+	            				navire.getDirection(), navire.getNbDeplacementsRestants());
+	            		Save.getInstance().setNomMap(nomMap);
+	            		Save.getInstance().setJoueurCourant(joueurCourant.getId());
+	            		if (joueurCourant.getNavireCourant() == joueurCourant.getNavire(0)) {
+	            			Save.getInstance().setNavireCourant(0);
+	            		} else if (joueurCourant.getNavireCourant() == joueurCourant.getNavire(1)) {
+	            			Save.getInstance().setNavireCourant(1);
+	            		}
+	            		Save.getInstance().setPossessionPhares(Map.getInstance().getPossessionPhares());
+            		}
+            	}
+            	Save.getInstance().save();
+            	Music.playMenu();
+                game.enterState(MainScreen.ID);
             }
         });
         enregistrerArea.setMouseOverImage(enregistrerHover);
@@ -148,11 +171,12 @@ public class Game extends BasicGameState {
         // A terminer : afficher les autres infos comme le nombre de déplacements restant et le temps de recharge d'un tir
 
         if(etat == PAUSE){
-            parchemin.draw(container.getWidth()/2 - 180, container.getHeight()/2 - 225, 360, 450);
+            parchemin.draw(container.getWidth()/2 - 250, container.getHeight()/2 - 315, 500, 630);
             retourArea.render(container, graphics);
             enregistrerArea.render(container, graphics);
             quitterArea.render(container, graphics);
         }else if(etat == END_OF_GAME){
+        	Save.getInstance().effacerSauvegarde();
             parchemin.draw(container.getWidth()/2 - 180, container.getHeight()/2 - 225, 360, 450);
             parchemin.draw(container.getWidth()/2 - 180, container.getHeight()/2 - 225, 360, 450);
             graphics.setColor(Color.black);
@@ -160,18 +184,47 @@ public class Game extends BasicGameState {
             graphics.drawString("Félicitation, " + gagnant + " !", container.getWidth()/2 - 105, container.getHeight()/2 - 140);
             graphics.drawString("vous avez gagné !", container.getWidth()/2 - 80, container.getHeight()/2 - 110);
             quitterArea.render(container, graphics);
-            // @TODO un bouton restart
         }
         tir.draw(tir.getX(), tir.getY(), 64 * Map.getInstance().getScaleX(), 64 * Map.getInstance().getScaleY());
     }
 
     public void newGame(String nomMap) throws SlickException {
+    	this.nomMap = nomMap;
     	Map.getInstance().startGameMode();
         Map.getInstance().load(nomMap);
         Map.getInstance().centrerDansFenetre(container);
-        joueurs[0] = new Joueur(0, "Joueur 1", Color.red, 1);
-        joueurs[1] = new Joueur(1, "Joueur 2", Color.blue, 2);
-        joueurCourant = joueurs[0];
+        
+        if (Save.getInstance().isSauvegardePresente()) {
+	        joueurs[0] = new Joueur(0, "Joueur 1", Color.red, 1, 
+	        		Save.getInstance().getPosTabX(0, 0), Save.getInstance().getPosTabY(0, 0),
+	        		Save.getInstance().getPosTabX(0, 1), Save.getInstance().getPosTabY(0, 1));
+	        joueurs[1] = new Joueur(1, "Joueur 2", Color.blue, 2, 
+	        		Save.getInstance().getPosTabX(1, 0), Save.getInstance().getPosTabY(1, 0),
+	        		Save.getInstance().getPosTabX(1, 1), Save.getInstance().getPosTabY(1, 1));
+	        
+	        for (int j = 0; j < NB_JOUEURS; j++) {
+	        	for (int i = 0; i < joueurs[j].getNbNavires(); i++) {
+	        		joueurs[j].getNavire(i).setPv(Save.getInstance().getPv(j, i));
+	        		joueurs[j].getNavire(i).setNbTourRechargeCanonPrincipal(Save.getInstance().getNbTourRechargeCanonPrincipal(j, i));
+	        		joueurs[j].getNavire(i).setNbTourRechargeCanonSecondaire(Save.getInstance().getNbTourRechargeCanonSecondaire(j, i));
+	        		joueurs[j].getNavire(i).setNbDeplacementsRestants(Save.getInstance().getNbDeplacementsRestants(j, i));
+	        		joueurs[j].getNavire(i).setDirection(Save.getInstance().getDirection(j, i));
+	        		
+	        	}
+	        }
+	        joueurCourant = joueurs[Save.getInstance().getJoueurCourant()];
+	        joueurCourant.setNavireCourant(joueurCourant.getNavire(Save.getInstance().getNavireCourant()));
+	        
+	        Vector<Integer> possessionPhares = Save.getInstance().getPossessionPhares();
+	        for (int i = 0; i < possessionPhares.size(); i++) {
+	        	Map.getInstance().assignerPhare(i, possessionPhares.get(i));
+	        }
+        } else {
+        	joueurs[0] = new Joueur(0, "Joueur 1", Color.red, 1);
+	        joueurs[1] = new Joueur(1, "Joueur 2", Color.blue, 2);
+	        joueurCourant = joueurs[0];
+        }
+
         if(navireAffiche != null) navireAffiche = joueurs[1].getNavire(0);
         // Animation de tir
         tir = new Tir();

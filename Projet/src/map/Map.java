@@ -537,6 +537,20 @@ public class Map implements Serializable {
 		}
 	}
 	
+	public void assignerPhare(int numPhare, int idJoueur) {
+		if (numPhare >= 0 && numPhare < phares.size()) {
+			phares.get(numPhare).setJoueurPossesseur(idJoueur);
+		}
+	}
+	
+	public Vector<Integer> getPossessionPhares() {
+		Vector<Integer> possessionPhares = new Vector<Integer>();
+		for (Phare phare : phares) {
+			possessionPhares.add(phare.getJoueurPossesseur());
+		}
+		return possessionPhares;
+	}
+	
 	// Le joueur prend le ou les phares sur lequel est son ou ses navires
 	// (si le joueur n'a pas de navire sur un phare, rien ne se passe)
 	public void verifierPriseDePhare(Joueur joueur) {

@@ -11,9 +11,9 @@ public class Joueur {
     private Color couleur;
     private ArrayList<Navire> navires;
 	private Navire navireCourant;
-
-    public Joueur(int id, String nom, Color couleur, int numero) throws SlickException{
-        this.id = id;
+	
+	public Joueur(int id, String nom, Color couleur, int numero) throws SlickException{
+		this.id = id;
         this.nom = nom;
         this.couleur = couleur;
         this.navires = new ArrayList<Navire>();
@@ -30,6 +30,19 @@ public class Joueur {
         }
     	Map.getInstance().addNavire(navires.get(0), xDepart - 1, yDepart);
         Map.getInstance().addNavire(navires.get(1), xDepart, yDepart - 1);
+	}
+
+    public Joueur(int id, String nom, Color couleur, int numero, 
+    		int posTabXNavire1, int posTabYNavire1, int posTabXNavire2, int posTabYNavire2) throws SlickException{
+    	this.id = id;
+        this.nom = nom;
+        this.couleur = couleur;
+        this.navires = new ArrayList<Navire>();
+        this.navires.add(new NavireAmiral((2 * numero + numero - 1), id));
+        this.navires.add(new NavireFregate((2 * numero + numero - 1), id));
+        this.navireCourant = navires.get(0);
+        Map.getInstance().addNavire(navires.get(0), posTabXNavire1, posTabYNavire1);
+        Map.getInstance().addNavire(navires.get(1), posTabXNavire2, posTabYNavire2);
     }
 
     public int getId() {
