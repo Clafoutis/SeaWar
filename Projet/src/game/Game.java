@@ -209,7 +209,10 @@ public class Game extends BasicGameState {
 	        		joueurs[j].getNavire(i).setNbTourRechargeCanonSecondaire(Save.getInstance().getNbTourRechargeCanonSecondaire(j, i));
 	        		joueurs[j].getNavire(i).setNbDeplacementsRestants(Save.getInstance().getNbDeplacementsRestants(j, i));
 	        		joueurs[j].getNavire(i).setDirection(Save.getInstance().getDirection(j, i));
-	        		
+	        		if(joueurs[j].getNavire(i).getPv()<1) {
+					Map.getInstance().removeNavire(joueurs[j].getNavire(i));
+					navireAffiche = null;
+				}
 	        	}
 	        }
 	        joueurCourant = joueurs[Save.getInstance().getJoueurCourant()];
