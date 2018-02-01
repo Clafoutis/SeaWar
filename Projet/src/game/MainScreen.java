@@ -131,7 +131,8 @@ public class MainScreen extends BasicGameState {
         demarrerEditeur = false;
 
         if (Save.getInstance().isSauvegardePresente()) {
-			try {
+		Music.playGame();
+		try {
 	            ((Game) game.getState(Game.ID)).newGame(Save.getInstance().getNomMap());
 	        } catch (SlickException e) {
 	            e.printStackTrace();
