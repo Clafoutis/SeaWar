@@ -23,12 +23,29 @@ import org.newdawn.slick.geom.Rectangle;
 import game.Game;
 import utility.FileUtility;
 
+/**
+ * Classe représentant la map du  jeu. 
+ * Design pattern Singleton : une seul instance est créée et utilisée dans l'application.
+ * La map du jeu et modélisée par un tableau à deux dimensions ce qui fait que l'on peut parler de coordonnées dans la fenêtre 
+ * (pour parler de la position dans la fenetre dans la map par exemple) mais aussi de coordonnées dans le tableau.
+ * Pour éviter toute ambiguïté, on pose dès à présent comme principe que quand on parle de "la position" on parle des "coordonnées (x, y) dans la fenêtre" 
+ * et que quand on désigne les "coordonnées dans le tableau", on parle de "à telle colonne et telle ligne du tableau qui modélise la Map".
+ * Par convention, l'origine de la Map se situe en haut à gauche.
+ */
 public class Map implements Serializable {
 	private static Map INSTANCE;
+	
+	/**
+	 * Constante pour repérer facilement le fichier du spriteSheet de la map si besoin.
+	 */
 	public static final String FICHIER_SPRITE_SHEET_MAP = "spriteSheetMap.png";
 	
-	// Constantes pour la construction d'un maillage d'hexagones
+	/**
+	 * Constante pour récupérer facilement la longueur du côté d'un sprite représentant une case.
+	 */
 	public static final int LONGUEUR_COTE_TUILE = 64;
+	
+	// Constantes pour la construction d'un maillage d'hexagones
 	private static final int DECALAGE_X = (int) ((float) LONGUEUR_COTE_TUILE * 3f / 4f);
 	private static final int DENIVELE_Y = (int) (Math.sin(1) * (float) LONGUEUR_COTE_TUILE / 2f);//60 deg = 1.0472 rad
 	private static final int DECALAGE_Y = (int) 2 * DENIVELE_Y;
@@ -54,23 +71,38 @@ public class Map implements Serializable {
 		init();
 	}
 	
+	/**
+	 * Renvoie l'unique instance de Map.
+	 * @return l'unique instance de Map
+	 */
 	public static Map getInstance() {
 		return INSTANCE;
 	}
 	
+	/**
+	 * Initialise l'instance, cette fonction doit être appelée en statique au tout début du programme 
+	 * (typiquement dans la fonction "initStatesList" qui initialise les vues de l'application).
+	 * @throws SlickException si le chargement de SpriteSheet a échoué (mauvais nom de fichier de texture, ...)
+	 */
 	public static void initInstance() throws SlickException {
 		INSTANCE = new Map();
 	}
 
-	public void init() throws SlickException {
+	private void init() throws SlickException {
 		selecteurCase = new SelecteurCase();
 		spriteSheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + FICHIER_SPRITE_SHEET_MAP, LONGUEUR_COTE_TUILE, LONGUEUR_COTE_TUILE);
 	}
 	
+	/**
+	 * Passe la map en mode "Game", à appeler au début d'une partie pour initialiser correctement la map.
+	 */
 	public void startGameMode() {
 		selecteurCase.setSelecteurVisible(false);
 	}
 
+	/**
+	 * Passe la map en mode "Editeur", à appeler au début de l'éditeur de map pour initialiser correctement la map.
+	 */
 	public void startEditeurMode() {
 		this.setNbCases(1, 1);
 		this.selectionnerCase(0, new Point(0, 0));
@@ -80,49 +112,101 @@ public class Map implements Serializable {
 	//////////////////
 	/// ACCESSEURS ///
 	//////////////////
+	/**
+	 * Ajoute un navire sur la map.
+	 * @param navire le navire à ajouter
+	 * @param coordTabX la coordonnée en X dans le tableau où placer le navire
+	 * @param coordTabY la coordonnée en Y dans le tableau où placer le navire
+	 */
 	public void addNavire(Navire navire, int coordTabX, int coordTabY) {
 		Point coordTab = new Point(coordTabX, coordTabY);
 		navire.setPosition(coordTabToMaillage(coordTab));
 		navires.put(navire, coordTab);
 	}
 
+	/**
+	 * Supprime le navire dont la référence est passée en paramètre.
+	 * @param navire la référence du navire à supprimer
+	 */
 	public void removeNavire(Navire navire) {
 		navires.remove(navire);
 	}
 
+	/**
+	 * Renvoie la liste des navires avec leurs coordonnées dans la tableau.
+	 * @return la liste des navires avec leurs coordonnées dans la tableau
+	 */
 	public java.util.Map<Navire, Point> getNavires(){
 		return navires;
 	}
 
+	/**
+	 * Renvoie le tableau contenant toutes les cases de la map, utile si l'on veut vérifier le contenu d'une case précise en dehors de la classe Map.
+	 * @return le tableau contenant toutes les cases de la map.
+	 */
 	public Vector<Vector<Case>> getGrille() {
 		return grille;
 	}
 	
+	/**
+	 * Renvoie le tableau contenant toutes les classes représentant des Cases spécifiques (Ocean, Terre, ...), 
+	 * l'indice où est stocké la Case représente l'ID de cette même case.
+	 * @return le tableau contenant toutes les classes représentant des Cases spécifiques (Ocean, Terre, ...)
+	 */
 	public Class<?>[] getTypeCasesParId() {
 		return typeDeCaseParId;
 	}
 	
+	/**
+	 * Renvoie le spriteSheet sur lequel se trouve la texture de toutes les cases, 
+	 * ce spriteSheet n'est chargé qu'une fois dans le jeu et on n'y accède par cette fonction.
+	 * @return le spriteSheet sur lequel se trouve la texture de toutes les cases
+	 */
 	public SpriteSheet getSpriteSheet() {
 		return spriteSheet;
 	}
 	
+	/**
+	 * Renvoie la longueur du coté d'un sprite (carré) d'une case sans prendre en compte le changement d'échelle.
+	 * @return la longueur du coté d'un sprite (carré) d'une case sans prendre en compte le changement d'échelle
+	 */
 	public final float getLongueurAbsolueCoteTuile() {
 		return LONGUEUR_COTE_TUILE;
 	}
 
+	/**
+	 * Permet de vérifier la façon dont est agencé le maillage de la map.
+	 * Renvoie 1 si l'agencement de la map fait qu'il y a une seule case qui est la plus en haut à gauche de la map  
+	 * et renvoie -1 si l'agencement de la map fait qu'il y a deux cases qui sont autant en haut à gauche de la map.
+	 * @return 1 si l'agencement de la map fait qu'il y a une seule case qui est la plus en haut à gauche de la map 
+	 * et -1 si l'agencement de la map fait qu'il y a deux cases qui sont autant en haut à gauche de la map.
+	 */
 	public int getSensPremierDenivele() {
 		return sensPremierDenivele;
 	}
 
+	/**
+	 * Renvoie la position du coin en haut à gauche de la Map.
+	 * @return la position du coin en haut à gauche de la Map
+	 */
 	public Point getPosition() {
 		return position;
 	}
-	
+
+	/**
+	 * Modifie la position du coin en haut à gauche de la Map.
+	 * @param x la position en abscisse du coin en haut à gauche de la Map
+	 * @param y la position en ordonnée du coin en haut à gauche de la Map
+	 */
 	public void setPosition(int x, int y) {
 		position.x = x;
 		position.y = y - Math.round(MARGE_ORIGINE_Y * scaleY);
 	}
-	
+
+	/**
+	 * Renvoie, sous la forme d'un objet Point, le nombre de ligne et de colonne du tableau modélisant la Map.
+	 * @return sous la forme d'un objet Point, le nombre de ligne et de colonne du tableau modélisant la Map
+	 */
 	public Point getNbCases() {
 		Point nbCases = new Point();
 		
@@ -136,6 +220,11 @@ public class Map implements Serializable {
 		return nbCases;
 	}
 	
+	/**
+	 * Modifie le nombre de ligne et de colonne du tableau modélisant la Map.
+	 * @param x le nombre de colonnes (peut être vu comme la taille du tableau sur l'axe des x) du tableau modélisant la Map 
+	 * @param y le nombre de lignes (peut être vu comme la taille du tableau sur l'axe des y) du tableau modélisant la Map
+	 */
 	public void setNbCases(int x, int y) {
 		int oldX;
 		int oldY;
@@ -170,6 +259,10 @@ public class Map implements Serializable {
 		}
 	}
 	
+	/**
+	 * Renvoie la hauteur et la largeur que prend la map dans la fenetre sans prendre en compte le changement d'échelle.
+	 * @return la hauteur et la largeur que prend la map dans la fenetre sans prendre en compte le changement d'échelle
+	 */
 	public Point getTailleAbsolue() {
 		Point taille = new Point();
 		Point nbCases = getNbCases();
@@ -180,6 +273,10 @@ public class Map implements Serializable {
 		return taille;
 	}
 	
+	/**
+	 * Renvoie la hauteur et la largeur que prend la map dans la fenetre en prenant en compte le changement d'échelle.
+	 * @return la hauteur et la largeur que prend la map dans la fenetre en prenant en compte le changement d'échelle
+	 */
 	public Point getTaille() {
 		Point taille = new Point();
 		Point nbCases = getNbCases();
@@ -190,12 +287,21 @@ public class Map implements Serializable {
 		return taille;
 	}
 	
+	/**
+	 * Renvoie le rectangle dans lequel la map est inscrit.
+	 * @return le rectangle dans lequel la map est inscrit
+	 */
 	public Rectangle getRect() {
 		Point pos = this.getPosition();
 		Point taille = this.getTaille();
 		return new Rectangle(pos.x, pos.y, taille.x, taille.y);
 	}
 	
+	/**
+	 * Modifie l'échelle de la map (permet d'effectuer des zoom).
+	 * @param x l'échelle en x de la map (compris entre 0 et 1)
+	 * @param y l'échelle en y de la map (compris entre 0 et 1)
+	 */
 	public void setScale(float x, float y) {
 		scaleX = x;
 		scaleY = y;
@@ -206,53 +312,101 @@ public class Map implements Serializable {
 		}
 	}
 	
+	/**
+	 * Modifie l'échelle de la map en changeant la hauteur et la largeur de la map dans la fenetre.
+	 * @param hauteur la nouvelle hauteur de la map dans la fenetre
+	 * @param largeur la nouvelle largeur de la map dans la fenetre
+	 */
 	public void setTaille(int hauteur, int largeur) {
 		Point tailleAbsolue = getTailleAbsolue();
 		setScale((float)(hauteur) / tailleAbsolue.x, (float)(largeur) / tailleAbsolue.y);
 	}
 	
+	/**
+	 * Modifie l'échelle de la map en changeant la hauteur, la largeur s'adapte de sorte à ce que la map ne se déforme pas (ne "s'aplatisse" pas).
+	 * @param hauteur la nouvelle hauteur de la map dans la fenetre
+	 */
 	public void setHauteur(int hauteur) {
 		Point tailleAbsolue = getTailleAbsolue();
-		setScale((float)(hauteur) / tailleAbsolue.x, (float)(hauteur) / tailleAbsolue.x);
+		setScale((float)(hauteur) / tailleAbsolue.y, (float)(hauteur) / tailleAbsolue.y);
 	}
 	
+	/**
+	 * Modifie l'échelle de la map en changeant la largeur, la hauteur s'adapte de sorte à ce que la map ne se déforme pas (ne "s'aplatisse" pas).
+	 * @param largeur la nouvelle largeur de la map dans la fenetre
+	 */
 	public void setLargeur(int largeur) {
 		Point tailleAbsolue = getTailleAbsolue();
 		setScale((float)(largeur) / tailleAbsolue.x, (float)(largeur) / tailleAbsolue.x);
 	}
 	
+	/**
+	 * Renvoie l'échelle en x de la map.
+	 * @return l'échelle en x de la map
+	 */
 	public float getScaleX() {
 		return scaleX;
 	}
 	
+	/**
+	 * Renvoie l'échelle en y de la map.
+	 * @return l'échelle en y de la map
+	 */
 	public float getScaleY() {
 		return scaleY;
 	}
 	
+	/**
+	 * Permet de vérifier la façon dont est agencé le maillage de la map. 
+	 * Renvoie false si l'agencement de la map fait qu'il y a une seule case qui est la plus en haut à gauche de la map  
+	 * et renvoie true si l'agencement de la map fait qu'il y a deux cases qui sont autant en haut à gauche de la map.
+	 * @return false si l'agencement de la map fait qu'il y a une seule case qui est la plus en haut à gauche de la map 
+	 * et true si l'agencement de la map fait qu'il y a deux cases qui sont autant en haut à gauche de la map.
+	 */
 	public boolean isAgencementMaillageHaut() {
 		return (sensPremierDenivele == -1);
 	}
 	
+	/**
+	 * Permet de vérifier la façon dont est agencé le maillage de la map. 
+	 * Renvoie true si l'agencement de la map fait qu'il y a une seule case qui est la plus en haut à gauche de la map  
+	 * et renvoie false si l'agencement de la map fait qu'il y a deux cases qui sont autant en haut à gauche de la map.
+	 * @return true si l'agencement de la map fait qu'il y a une seule case qui est la plus en haut à gauche de la map 
+	 * et false si l'agencement de la map fait qu'il y a deux cases qui sont autant en haut à gauche de la map.
+	 */
 	public boolean isAgencementMaillageBas() {
 		return (sensPremierDenivele == 1);
 	}
 	
+	/**
+	 * Change l'agencement du maillage pour qu'il passe à "l'agencement haut" (cf. fonction isAgencementMaillageHaut).
+	 */
 	public void setAgencementMaillageHaut() {
 		sensPremierDenivele = -1;
 		reagencerMaillage();
 	}
 	
+	/**
+	 * Change l'agencement du maillage pour qu'il passe à "l'agencement bas" (cf. fonction isAgencementMaillageBas).
+	 */
 	public void setAgencementMaillageBas() {
 		sensPremierDenivele = 1;
 		reagencerMaillage();
 	}
 	
+	/**
+	 * Passe l'agencement du maillage à "l'agencement haut" si il était en "agencement bas" et vice versa (cf. fonction isAgencementMaillageHaut et isAgencementMaillageBas).
+	 */
 	public void changerAgencementMaillage() {
 		sensPremierDenivele = -sensPremierDenivele;
 		reagencerMaillage();
 	}
 	
-	// retourne null si il n'y a pas de bateau a cette case
+	/**
+	 * Renvoie le navire présent sur la case entrée en paramètre.
+	 * @param coordTab Les coordonnées dans le tableau où l'on veut vérifier si il y a un navire 
+	 * @return le navire dans la case à coordTab ou null si il n'y a pas de navire a cette case
+	 */
 	public Navire getNavireAtCoord(Point coordTab) {
 		Set<Entry<Navire, Point>> set = navires.entrySet();
 		Iterator<Entry<Navire, Point>> it = set.iterator();
@@ -268,11 +422,20 @@ public class Map implements Serializable {
 	///////////////
 	/// ACTIONS ///
 	///////////////
+	/**
+	 * Centre la position de la map dans la fenetre.
+	 * @param container l'objet GameContainer géré par Slick2D (à récupérer des paramètres des fonctions comme BasicGameState.init ou BasicGameState.update ou BasicGameState.render)
+	 */
 	public void centrerDansFenetre(GameContainer container) {
 		Point tailleMap = this.getTaille();
 		this.setPosition((container.getWidth() - tailleMap.x) / 2, (container.getHeight() - tailleMap.y) / 2);
 	}
 	
+	/**
+	 * Convertie les coordonnées dans le tableau en position (x,y) dans la fenêtre relatives à la position de la map.
+	 * @param coordTab coordonnées dans le tableau
+	 * @return position (x,y) dans la fenêtre relatives à la position de la map
+	 */
 	public Point coordTabToMaillage(Point coordTab) {
 		Point coordMaillage = new Point();
 
@@ -287,6 +450,11 @@ public class Map implements Serializable {
 		return coordMaillage;
 	}
 	
+	/**
+	 * Convertie la position (x,y) dans la fenêtre (relatives à la position de la map) en coordonnées dans le tableau.
+	 * @param coordMaillage position (x,y) dans la fenêtre relatives à la position de la map
+	 * @return coordonnées dans le tableau
+	 */
 	public Point coordMaillageToTab(Point coordMaillage) {
 		Point coordTab = new Point();
 		Point coordMaillageClone = new Point(coordMaillage);
@@ -303,6 +471,10 @@ public class Map implements Serializable {
 		return coordTab;
 	}
 
+	/**
+	 * Charge la map ayant pour nom nomMap.
+	 * @param nomMap le nom de la map à charger
+	 */
 	public void load(String nomMap) {
 		Vector < Vector<Integer> > tabMap;
 		int sensDenivele = sensPremierDenivele;
@@ -368,10 +540,14 @@ public class Map implements Serializable {
 				y += Math.round(DECALAGE_Y * scaleY);
 			}
 		} else {
-			//setNbCases(1, 1);
+			setNbCases(1, 1);
 		}
 	}
 
+	/**
+	 * Enregistre la map avec pour nom nomMap.
+	 * @param nomMap le nom de la map à enregistrer
+	 */
 	public void save(String nomMap) {
 		Vector< Vector<Integer> > tabMap = new Vector< Vector<Integer> >();
 		for (int j = 0; j < grille.size(); j++) {
@@ -383,11 +559,28 @@ public class Map implements Serializable {
 		FileUtility.getInstance().saveMap(nomMap, tabMap);
 	}
 
+	/**
+	 * Affiche un sélecteur qui prend une couleur associée au type de Case ayant l'ID idCase.
+	 * @param idCase l'ID de la Case à laquelle est associée la couleur du sélecteur <br>
+	 * - 0 pour un selecteur cyan, correspondant à la case Océan <br>
+	 * - 1 pour un selecteur de case Terre <br>
+	 * - 2 pour un sélecteur de case Phare <br>
+	 * - 3 pour un sélecteur de couleur rouge (ne correspond pas à un type de case mais peut tout de même être utile)
+	 */
 	public void selectionnerCase(int idCase) {
 		selecteurCase.setSelecteurVisible(true);
 		selecteurCase.setIdCaseSelectionnee(idCase);
 	}
 
+	/**
+	 * Affiche un sélecteur aux coordonnées coordTab et dont la couleur est associée au type de Case ayant l'ID idCase.
+	 * @param idCase l'ID de la Case à laquelle est associée la couleur du sélecteur <br>
+	 * - 0 pour un selecteur cyan, correspondant à la case Océan <br>
+	 * - 1 pour un selecteur de case Terre <br>
+	 * - 2 pour un sélecteur de case Phare <br>
+	 * - 3 pour un sélecteur de couleur rouge (ne correspond pas à un type de case mais peut tout de même être utile)
+	 * @param coordTab les coordonnées dans le tableau où placer le sélecteur
+	 */
 	public void selectionnerCase(int idCase, Point coordTab) {
 		boolean bordsTabAtteint = true;
 
@@ -403,6 +596,14 @@ public class Map implements Serializable {
 		}
 	}
 	
+	/**
+	 * Place sur la map une case ayant pour ID idCase aux coordonnées coordTab, utile pour éditer la map.
+	 * @param idCase l'ID de la case à placer <br>
+	 * - 0 pour une case Océan <br>
+	 * - 1 pour une case Terre <br>
+	 * - 2 pour une case Phare
+	 * @param coordTab les coordonnées dans le tableau où placer la case
+	 */
 	public void mettreCase(int idCase, Point coordTab) {
 		if (coordTab.y < grille.size()) {
 			if (coordTab.x < grille.get(coordTab.y).size() && 
@@ -437,7 +638,11 @@ public class Map implements Serializable {
 		}
 	}
 
-	//TODO : factoriser avec selectionnerCase la gestion du risque outOfBounds
+	/**
+	 * Déplace un navire d'une case dans une direction donnée.
+	 * @param navire le navire à déplacer
+	 * @param direction la direction dans laquelle déplacer le navire
+	 */
 	public void deplacer(Navire navire, Direction direction) {
 		Point coordTab = navires.get(navire);
 		Point coordCible = new Point(coordTab);
@@ -537,12 +742,25 @@ public class Map implements Serializable {
 		}
 	}
 	
+	/**
+	 * Assigner un phare à un joueur.
+	 * @param numPhare le numéro du phare à assigner (l'ordre croissant des numéros part de gauche à droite puis de haut en bas de la map)
+	 * @param idJoueur l'id du joueur qui récupère le phare <br>
+	 * - 0 pour le joueur 1 <br>
+	 * - 1 pour le joueur 2
+	 */
 	public void assignerPhare(int numPhare, int idJoueur) {
 		if (numPhare >= 0 && numPhare < phares.size()) {
 			phares.get(numPhare).setJoueurPossesseur(idJoueur);
 		}
 	}
 	
+	/**
+	 * Renvoie un tableau contenant pour chaque indice (correspondant à un numéro de phare) l'id du joueur possédant le phare ou -1 si aucun joueur ne possède le phare
+	 * (l'ordre croissant des numéros de phare part de gauche à droite puis de haut en bas de la map).
+	 * @return un tableau contenant pour chaque indice (correspondant à un numéro de phare) l'id du joueur possédant le phare ou -1 si aucun joueur ne possède le phare
+	 * (l'ordre croissant des numéros de phare part de gauche à droite puis de haut en bas de la map)
+	 */
 	public Vector<Integer> getPossessionPhares() {
 		Vector<Integer> possessionPhares = new Vector<Integer>();
 		for (Phare phare : phares) {
@@ -550,9 +768,11 @@ public class Map implements Serializable {
 		}
 		return possessionPhares;
 	}
-	
-	// Le joueur prend le ou les phares sur lequel est son ou ses navires
-	// (si le joueur n'a pas de navire sur un phare, rien ne se passe)
+
+	/**
+	 * Le joueur prend le ou les phares sur lequel est son ou ses navires (si le joueur n'a pas de navire sur un phare, rien ne se passe).
+	 * @param joueur le joueur dont on gère la prise de phare
+	 */
 	public void verifierPriseDePhare(Joueur joueur) {
 		for (int i = 0; i < joueur.getNbNavires(); i++) {
 			if(!joueur.getNavire(i).isEtatDetruit()){
@@ -566,6 +786,11 @@ public class Map implements Serializable {
 		}
 	}
 
+	/**
+	 * Renvoie le nombre de phare possédés par un joueur ayant pour id idJoueur (0 ou 1)
+	 * @param idJoueur l'id du joueur dont on veut connaître le nombre de phare en sa possession
+	 * @return le nombre de phare possédés par un joueur ayant pour id idJoueur (0 ou 1)
+	 */
 	public int nombrePharePossede(int idJoueur) {
 		int nbPharePossede = 0;
 		for (Phare phare : phares) {
@@ -576,10 +801,18 @@ public class Map implements Serializable {
 		return nbPharePossede;
 	}
 
+	/**
+	 * Renvoie true si le joueur ayant pour id idJoueur (0 ou 1) a pris tout les phares
+	 * @param idJoueur l'id du joueur dont on vérifie si il a pris tout les phares
+	 * @return true si le joueur ayant pour id idJoueur (0 ou 1) a pris tout les phares
+	 */
 	public boolean victoire(int idJoueur) {
 		return nombrePharePossede(idJoueur) == phares.size();
 	}
 
+	/**
+	 * Dessine la vue de la map, fonction à appeler dans une fonction render
+	 */
 	public void draw() {
 		for (Vector <Case> ligne : grille) {
 			for (Case caseCourante : ligne) {
@@ -587,18 +820,14 @@ public class Map implements Serializable {
 			}
 		}
 		selecteurCase.draw();
-
-		/*for (Navire navire : navires.keySet()) {
-			navire.draw();
-		} DÃ©placÃ© dans Game */
 	}
 
 	//////////////////////////
 	/// FONCTIONS INTERNES ///
 	//////////////////////////
-	private boolean checkCollisions(Point coordTab) {
+	/*private boolean checkCollisions(Point coordTab) {
 		return false;
-	}
+	}*/
 
 	private boolean checkBordsTab(Point coordTab) {
 		boolean coordHorsBordsTab = true;
