@@ -427,7 +427,7 @@ public class Game extends BasicGameState {
     }
 
     /**
-    * détecte le click de la sourie
+    * détecte le click de la souris
     * @param button représente le numéro du bouton cliqué
     * @param x représente la position x de l'emplacement cliqué
     * @param y représente la position y de l'emplacement cliqué
