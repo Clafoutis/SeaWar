@@ -232,7 +232,7 @@ public class Save {
 	
 	/**
 	 * Renvoie le nom de la map de la partie chargée
-	 * @return
+	 * @return Le nom de la map de la partie chargée
 	 */
 	public String getNomMap() {
 		return nomMap;
