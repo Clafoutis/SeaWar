@@ -14,6 +14,9 @@ import java.awt.*;
 public class Tir extends Animation {
     private float x, y;
 
+    /**
+	 * Constructeur, construit les tirs, qui sont des animations d'explosion.
+	 */
     public Tir() throws SlickException {
         SpriteSheet spritesheet = new SpriteSheet(FileUtility.DOSSIER_SPRITE + "explosion.png", 64, 64);
         this.addFrame(spritesheet.getSprite(0, 0), 75);
@@ -38,14 +41,26 @@ public class Tir extends Animation {
         this.y = 10;
     }
 
+    /**
+     * retourne la position du tir
+	 * @return position X du tir
+	 */
     public float getX() {
         return x;
     }
 
+    /**
+     * retourne la position du tir
+	 * @return position Y du tir
+	 */
     public float getY() {
         return y;
     }
 
+    /**
+     * modifie la position du tir
+	 * @param point du tir
+	 */
     public void setXY(Point point) {
         this.x = (float) (Map.getInstance().getPosition().x + point.getX());
         this.y = (float) (Map.getInstance().getPosition().y + point.getY());
