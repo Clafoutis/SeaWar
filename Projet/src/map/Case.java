@@ -7,7 +7,7 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
 
 /**
- * Case est une classe abstraite qui représente le contenu d'un élément du maillage de la map. Un tableau de Case peut modéliser une map.
+ * Classe abstraite qui représente le contenu d'un élément du maillage de la map. Un tableau de Case peut modéliser une map.
  */
 public abstract class Case extends Animation {
 	private int id;
@@ -40,8 +40,8 @@ public abstract class Case extends Animation {
 	}
 	
 	/**
-	 * Renvoie la position de la Case.
-	 * @return la position de la Case
+	 * Renvoie la position de la Case par rapport à l'origine de la Map.
+	 * @return la position de la Case par rapport à l'origine de la Map
 	 */
 	public Point getPosition() {
 		return (Point) position.clone();
@@ -77,7 +77,7 @@ public abstract class Case extends Animation {
 	}
 	
 	/**
-	 * Dessine la case sur la fenetre, dans le référentiel de la map, en prenant en compte l'échelle
+	 * Dessine la case sur la fenêtre, dans le référentiel de la map, en prenant en compte l'échelle
 	 */
 	@Override
 	public void draw() {
