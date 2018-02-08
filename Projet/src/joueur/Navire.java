@@ -10,6 +10,9 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+/**
+ * Element qui défini un navire dans le jeu
+ */
 public abstract class Navire {
     private final int DEPLACEMENT = 0, TIR_PRINCIPAL = 1, TIR_SECONDAIRE = 2, DETRUIT = 3;
     private int etat;
@@ -32,6 +35,19 @@ public abstract class Navire {
     private double tempX, tempY, deltaX, deltaY;
     private Point destination;
 
+    /**
+	 * Créé un navire
+	 * @param direction représente la direction du bateau
+	 * - 0 pour haut
+	 * - 1 pour haut droite
+	 * - 2 pour bas droite
+	 * - 3 pour bas
+	 * - 4 pour bas gauche
+	 * - 5 pour haut gauche
+     * @param _nomSpriteSheet représente le nom du spritesheet à prendre pour dessiner ce navire
+     * @param _spriteSheetMiniature représente le nom du spritesheet à prendre pour dessiner la miniature de ce navire
+     * @param _longueurCoteTuile représente la longueur d'une tuile (hexagone) de la carte, et donc du navire
+	 */
     public Navire(int _direction, String _nomSpriteSheet, String _spriteSheetMiniature, int _longueurCoteTuile) throws SlickException {
         this.direction = _direction;
         etat = DEPLACEMENT;
@@ -51,16 +67,28 @@ public abstract class Navire {
         this.animations[5] = loadAnimation(spriteSheet, 0, 5);
     }
 
+    /**
+	 * Renvoie les points de vie restant du navire
+	 * @return les points de vie restant du navire
+	 */
     public int getPv(){
         return this.pv;
     }
 
+    /**
+	 * charge une animation à l'emplacement x et y du spritesheet
+	 * @return la nouvelle animation créée
+	 */
     private Animation loadAnimation(SpriteSheet spriteSheet, int x, int y) {
         Animation animation = new Animation();
         animation.addFrame(spriteSheet.getSprite(x, y), 100);
         return animation;
     }
 
+    /**
+	 * modifie les points de vie du navire
+     * @param pv représente les points de vie
+	 */
     public void setPv(int pv) {
         this.pv = pv;
         if(pv<1){
@@ -69,122 +97,242 @@ public abstract class Navire {
         }
     }
 
+    /**
+	 * Renvoie les points de vie maximum du navire
+	 * @return les points de vie maximum du navire
+	 */
     public int getPvMax(){
         return this.pvMax;
     }
 
+    /**
+	 * modifie les points de vie maximum du navire
+     * @param pv représente les points de vie
+	 */
     public void setPvMax(int _pvMax){
         this.pvMax = _pvMax;
     }
 
+    /**
+	 * modifie l'id du propriétaire du navire
+     * @param id représente l'id du joueur propriétaire
+	 */
     public void setIdProprietaire(int id){
         this.id_proprietaire = id;
     }
 
+    /**
+	 * Renvoie l'id du propriétaire du navire
+	 * @return l'id du propriétaire du navire
+	 */
     public int getIdProprietaire(){
         return this.id_proprietaire;
     }
 
+    /**
+	 * Renvoie le nombre de déplacements maximum du navire
+	 * @return le nombre de déplacements maximum du navire
+	 */
     public int getNbDeplacements(){
         return this.nbDeplacements;
     }
 
+    /**
+	 * modifie le nombre de déplacements maximum du navire
+     * @param nbDeplacements représente le nombre de déplacements maximum du navire
+	 */
     public void setNbDeplacements(int nbDeplacements) {
         this.nbDeplacements = nbDeplacements;
     }
 
+    /**
+	 * Renvoie le nombre de déplacements restant du navire
+	 * @return le nombre de déplacements restant du navire
+	 */
     public int getNbDeplacementsRestants() {
         return nbDeplacementsRestants;
     }
 
+    /**
+	 * modifie le nombre de déplacements restant du navire
+     * @param nbDeplacementsRestants représente le nombre de déplacements restant du navire
+	 */
     public void setNbDeplacementsRestants(int nbDeplacementsRestants) {
         this.nbDeplacementsRestants = nbDeplacementsRestants;
     }
 
+    /**
+	 * modifie les dégats du cannon principal du navire
+     * @param dmgCannonPrincipal représente les dégats du cannon
+	 */
     public void setDmgCannonPrincipal(int dmgCannonPrincipal) {
         this.dmgCannonPrincipal = dmgCannonPrincipal;
     }
 
+    /**
+	 * modifie les dégats du cannon secondaire du navire
+     * @param dmgCannonSecondaire représente les dégats du cannon
+	 */
     public void setDmgCanonSecondaire(int dmgCanonSecondaire) {
         this.dmgCanonSecondaire = dmgCanonSecondaire;
     }
     
+    /**
+	 * Renvoie le nombre de tours restant avant la recharge du cannon principal
+	 * @return le nombre de tours restant avant la recharge du cannon principal
+	 */
     public int getNbTourRechargeCanonPrincipal() {
     	return nbTourRechargeCanonPrincipal;
     }
     
+    /**
+	 * Renvoie le nombre de tours restant avant la recharge du cannon secondaire
+	 * @return le nombre de tours restant avant la recharge du cannon secondaire
+	 */
     public int getNbTourRechargeCanonSecondaire() {
     	return nbTourRechargeCanonSecondaire;
     }
     
+    /**
+	 * Renvoie le nombre de tours maximum de la recharge du cannon principal
+	 * @return le nombre de tours maximum de la recharge du cannon principal
+	 */
     public int getNbTourMaxRechargeCanonPrincipal() {
     	return nbTourMaxRechargeCanonPrincipal;
     }
 
+    /**
+	 * Renvoie le nombre de tours maximum de la recharge du cannon secondaire
+	 * @return le nombre de tours maximum de la recharge du cannon secondaire
+	 */
     public int getNbTourMaxRechargeCanonSecondaire() {
     	return nbTourMaxRechargeCanonSecondaire;
     }
 
+    /**
+	 * modifie le nombre de tours restants de la recharge du cannon principal
+     * @param nbTourRechargeCanonPrincipal représente le nombre de tours restants
+	 */
     public void setNbTourRechargeCanonPrincipal(int nbTourRechargeCanonPrincipal) {
         this.nbTourRechargeCanonPrincipal = nbTourRechargeCanonPrincipal;
     }
 
+    /**
+	 * modifie le nombre de tours restants de la recharge du cannon secondaire
+     * @param nbTourRechargeCanonSecondaire représente le nombre de tours restants
+	 */
     public void setNbTourRechargeCanonSecondaire(int nbTourRechargeCanonSecondaire) {
         this.nbTourRechargeCanonSecondaire = nbTourRechargeCanonSecondaire;
     }
 
+    /**
+	 * modifie le nombre de tours maximum de la recharge du cannon principal
+     * @param nbTourMaxRechargeCanonPrincipal représente le nombre de tours restants
+	 */
     public void setNbTourMaxRechargeCanonPrincipal(int nbTourMaxRechargeCanonPrincipal) {
         this.nbTourMaxRechargeCanonPrincipal = nbTourMaxRechargeCanonPrincipal;
     }
 
+    /**
+	 * modifie le nombre de tours maximum de la recharge du cannon secondaire
+     * @param nbTourMaxRechargeCanonSecondaire représente le nombre de tours restants
+	 */
     public void setNbTourMaxRechargeCanonSecondaire(int nbTourMaxRechargeCanonSecondaire) {
         this.nbTourMaxRechargeCanonSecondaire = nbTourMaxRechargeCanonSecondaire;
     }
 
+    /**
+	 * Renvoie la direction du navire
+	 * @return la direction du navire
+	 */
     public int getDirection() {
         return direction;
     }
 
+    /**
+	 * modifie la direction du navire
+     * @param direction représente la direction du navire
+	 */
     public void setDirection(int direction) {
         this.direction = direction;
     }
 
+    /**
+	 * Renvoie la position du navire
+	 * @return la position du navire
+	 */
     public Point getPosition() {
         return (Point)position.clone();
     }
 
+    /**
+	 * modifie la position du navire
+     * @param _position représente la position du navire
+	 */
     public void setPosition(Point _position) {
         position = _position;
     }
 
+    /**
+	 * Indique si le navire est dans l'état déplacement
+	 * @return booleen indiquant si le navire est dans l'état déplacement
+	 */
     public boolean isEtatDeplacement() {
         return etat==DEPLACEMENT;
     }
 
+    /**
+	 * Indique si le navire est dans l'état tir principal
+	 * @return booleen indiquant si le navire est dans l'état tir principal
+	 */
     public boolean isEtatTirPrincipal() {
         return etat==TIR_PRINCIPAL;
     }
 
+    /**
+	 * Indique si le navire est dans l'état tir principal
+	 * @return booleen indiquant si le navire est dans l'état tir principal
+	 */
     public boolean isEtatTirSecondaire() {
         return etat==TIR_SECONDAIRE;
     }
 
+    /**
+	 * Indique si le navire est dans l'état détruit
+	 * @return booleen indiquant si le navire est dans l'état détruit
+	 */
     public boolean isEtatDetruit() {
         return etat==DETRUIT;
     }
 
+    /**
+	 * Indique si le navire est en train de se déplacer
+	 * @return booleen indiquant si le navire est en train de se déplacer
+	 */
     public boolean isDeplacementEnCours() {
         return deplacementEnCours;
     }
 
+    /**
+	 * Renvoie la destination du navire
+	 * @return point indiquant la destination du navire
+	 */
     public Point getDestination() {
         return destination;
     }
 
+    /**
+	 * Indique si le navire a effectué un tir pendant son tour
+	 * @return booleen indiquant si le navire a effectué un tir pendant son tour
+	 */
     public boolean isTirEffectue() {
         return tirEffectue;
     }
 
+    /**
+	 * modifie les sélecteurs de cases montrant les déplacements possible pour ce navire
+	 * @param selecteurs représente la liste des sélecteurs de cases où le navire peut se déplacer
+	 */
     public void getPossibleDeplacements(SelecteurCase[] selecteurs){
         Point coordPosTab = Map.getInstance().coordMaillageToTab(position);
         int X = (int) coordPosTab.getX();
@@ -282,6 +430,10 @@ public abstract class Navire {
         }
     }
 
+    /**
+	 * tente d'accéder à la case passée en paramètre
+	 * @param coordCibleTab réprésentant les coordonnées cible du navire
+	 */
     public void tryAccess(Point coordCibleTab) {
         if(!deplacementEnCours && nbDeplacementsRestants>0){
             Point coordPosTab = Map.getInstance().coordMaillageToTab(position);
@@ -335,14 +487,26 @@ public abstract class Navire {
         }
     }
 
+    /**
+	 * effectue un déplacement (instantané) du navire dans une direction donnée
+	 * @param direction représentant la direction vers laquelle le navire doit se déplacer
+	 */
     private void deplacer(Direction direction) {
         Map.getInstance().deplacer(this, direction);
     }
 
+    /**
+	 * Indique si le navire a bougé pendant son tour
+	 * @return booleen indiquant si le navire a bougé pendant son tour
+	 */
     public boolean aBouge(){
         return nbDeplacementsRestants < nbDeplacements;
     }
     
+    /**
+	 * Indique si le navire est bloqué
+	 * @return booleen indiquant si le navire est bloqué
+	 */
     public boolean isBloque(SelecteurCase[] selecteurCasesDeplacement) {
         boolean bloque = true;
         getPossibleDeplacements(selecteurCasesDeplacement);
@@ -352,6 +516,9 @@ public abstract class Navire {
         return bloque;
     }
 
+    /**
+	 * dessine le navire sur la fenêtre de jeu
+	 */
     public void draw() {
         if(etat != DETRUIT){
             animations[direction].draw(Map.getInstance().getPosition().x + position.x,
@@ -361,6 +528,10 @@ public abstract class Navire {
         }
     }
 
+    /**
+	 * dessine la miniature du navire (pour les informations)
+	 * @param enemy indiquant si le navire est un navire ennemi
+	 */
     public void drawStatus(boolean enemy){
         if(enemy){
             spriteSheetMiniature.getSprite(0, id_proprietaire).draw(940, 150, 130, 139);
@@ -369,6 +540,9 @@ public abstract class Navire {
         }
     }
 
+    /**
+	 * dessine la zone de tir (principal ou secondaire)
+	 */
     public void drawZoneTir() {
         if(etat!=DEPLACEMENT){
             for (SelecteurCaseTir selecteur:selecteursCasesTir) {
@@ -377,6 +551,13 @@ public abstract class Navire {
         }
     }
 
+    /**
+	 * tente d'effectuer un tir sur la case passée en paramètre
+	 * @param coordPosTab représentant la case sur lequel ce navire doit tirer
+     * @param navire représentant le navire sur lequel ce navire doit tirer
+     * @param principal booléen permettant de savoir si c'est un tir en cannon principal ou secondaire
+     * @return booléen indiquant si le tir a réussi ou non
+	 */
     public boolean tryShoot(Point coordPosTab, Navire navire, boolean principal) {
         if(nbTourRechargeCanonPrincipal==0 && principal || nbTourRechargeCanonSecondaire==0 && !principal){
             for (SelecteurCaseTir selecteur:selecteursCasesTir) {
@@ -399,10 +580,21 @@ public abstract class Navire {
         return false;
     }
 
+    /**
+	 * Met à jour la liste des sélecteurs des zones de tir du cannon principal du navire
+	 * @param activation permet de savoir si les zones sont à afficher ou non
+	 */
     abstract public void zoneTirCannonPrincipal(boolean activation);
 
+    /**
+	 * Met à jour la liste des sélecteurs des zones de tir du cannon secondaire du navire
+	 * @param activation permet de savoir si les zones sont à afficher ou non
+	 */
     abstract public void zoneTirCannonSecondaire(boolean activation);
 
+    /**
+	 * Switch le mode du navire (déplacement - tir (principal - secondaire))
+	 */
     public void switchMode(){
         if(etat==DEPLACEMENT){
             if(nbTourRechargeCanonPrincipal==0) etat = TIR_PRINCIPAL;
@@ -415,6 +607,9 @@ public abstract class Navire {
         else if(etat==TIR_SECONDAIRE) etat = DEPLACEMENT;
     }
 
+    /**
+	 * Met à jour les zones de tir du navire
+	 */
     public void update(){
         if(etat == TIR_PRINCIPAL){
             zoneTirCannonPrincipal(true);
@@ -423,6 +618,11 @@ public abstract class Navire {
         }else zoneTirCannonSecondaire(false);
     }
 
+    /**
+	 * Initialise un déplacement du navire vers une destination (animation)
+	 * @param position représente le point cible du navire
+     * @param direction représenta la direction du déplacement
+	 */
     public void initialiserDeplacement(Point position, int direction){
         if(!position.equals(this.position)){
             this.setDirection(direction);
@@ -437,6 +637,9 @@ public abstract class Navire {
         }
     }
 
+    /**
+	 * avance d'une image l'animation de déplacement du navire
+	 */
     public void animationDeplacement(){
         tempX += deltaX;
         tempY += deltaY;
@@ -449,6 +652,9 @@ public abstract class Navire {
         }
     }
 
+    /**
+	 * Met à jour l'état du navire lors d'un nouveau tour
+	 */
     public void newTurn(){
         if(nbTourRechargeCanonPrincipal>0) nbTourRechargeCanonPrincipal--;
         if(nbTourRechargeCanonSecondaire>0) nbTourRechargeCanonSecondaire--;
