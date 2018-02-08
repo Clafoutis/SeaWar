@@ -23,6 +23,9 @@ import utility.Save;
 import java.util.ArrayList;
 import java.util.Vector;
 
+/**
+ * Element représentant la fenêtre de partie du jeu
+ */
 public class Game extends BasicGameState {
     public static final int ID = 2;
     public static final int NB_JOUEURS = 2;
@@ -50,7 +53,11 @@ public class Game extends BasicGameState {
     private SpriteSheet interfaceInformations;
 
 
-
+    /**
+    * Initialise la fenêtre de partie
+    * @param _container représente la fenêtre contenant les éléments à afficher
+    * @param _game représente le jeu
+    */
     @Override
     public void init(GameContainer _container, StateBasedGame _game) throws SlickException {
         //spriteSheetdeNavire = new SpriteSheet("resources/images/AmiralPirate.png",200 , 250);
@@ -114,6 +121,12 @@ public class Game extends BasicGameState {
         interfaceInformations = new SpriteSheet(FileUtility.DOSSIER_SPRITE + "interfaceInformations.png",64,64);
     }
 
+    /**
+    * met à jour la fenêtre de partie
+    * @param _container représente la fenêtre contenant les éléments à afficher
+    * @param _game représente le jeu
+    * @param delta entier représentant l'état d'avancement dans les mises à jour de la fenêtre
+    */
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         if(etat == GAME){
@@ -135,6 +148,12 @@ public class Game extends BasicGameState {
         joueurCourant.getNavireCourant().update();
     }
 
+    /**
+    * Affiche la fenêtre de partie
+    * @param _container représente la fenêtre contenant les éléments à afficher
+    * @param _game représente le jeu
+    * @param graphics contient tous les éléments à afficher dans la fenêtre
+    */
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics graphics) throws SlickException {
         background.draw(0, 0, container.getWidth(), container.getHeight());
@@ -188,6 +207,10 @@ public class Game extends BasicGameState {
         tir.draw(tir.getX(), tir.getY(), 64 * Map.getInstance().getScaleX(), 64 * Map.getInstance().getScaleY());
     }
 
+    /**
+    * Créer une nouvelle partie
+    * @param nomMap représente le nom de la carte à charger
+    */
     public void newGame(String nomMap) throws SlickException {
     	this.nomMap = nomMap;
     	Map.getInstance().startGameMode();
@@ -248,6 +271,9 @@ public class Game extends BasicGameState {
         etat = GAME;
     }
 
+    /**
+    * Passe au tour suivant
+    */
     public void nextTurn() {
         if(conditionsRemplies()){
             // fin du tour du joueur courant : on verifie si il prend un phare
@@ -275,6 +301,10 @@ public class Game extends BasicGameState {
         }
     }
 
+    /**
+    * permet de savoir si les conditions sont remplies pour passer au tour suivant
+    * @return booléen permettant de savoir si les conditions sont remplies pour passer au tour suivant
+    */
     public boolean conditionsRemplies(){
         for(int i=0;i<joueurCourant.getNbNavires();i++){
             if(!joueurCourant.getNavire(i).aBouge() && !joueurCourant.getNavire(i).isBloque(selecteurCasesDeplacement) && !joueurCourant.getNavire(i).isEtatDetruit()){
@@ -284,6 +314,13 @@ public class Game extends BasicGameState {
         return true;
     }
 
+    /**
+    * dessine l'interface utilisateur
+    * @param graphics contient tous les éléments à afficher dans la fenêtre
+    * @param navire représente le navire duquel il faut afficher les informations
+    * @param x représente la position x à laquelle afficher les informations
+    * @param y représente la potition y à laquelle afficher les informations
+    */
     public void drawInterface(Graphics graphics, Navire navire, float x, float y) {
         // Affichage de la barre de vie en % de la vie maximale (du navire courant)
         graphics.setColor(Color.red);
@@ -360,12 +397,21 @@ public class Game extends BasicGameState {
         }
     }
 
+    /**
+    * Lance l'animation d'un tir à l'emplacement indiqué
+    * @param point représente l'emplacement à laquelle dessiner l'animation
+    */
     public void startTir(Point point) {
         tir.setXY(point);
         tir.setCurrentFrame(0);
         tir.start();
     }
 
+    /**
+    * détecte le relâchement d'une touche du clavier
+    * @param key représente la touche appuyée
+    * @param c représente le caractère de la touche appuyée
+    */
     @Override
     public void keyReleased(int key, char c) {
         switch (key) {
@@ -380,6 +426,13 @@ public class Game extends BasicGameState {
         }
     }
 
+    /**
+    * détecte le click de la sourie
+    * @param button représente le numéro du bouton cliqué
+    * @param x représente la position x de l'emplacement cliqué
+    * @param y représente la position y de l'emplacement cliqué
+    * @param clickCount représente le nombre de click de suite effectué
+    */
     public void mouseClicked(int button, int x, int y, int clickCount){
         if(etat == GAME){
             Point coordMaillage = new Point(x - (int) Map.getInstance().getPosition().getX(), y - (int) Map.getInstance().getPosition().getY());
@@ -424,10 +477,18 @@ public class Game extends BasicGameState {
         }
     }
 
+    /**
+    * Check le buffer de click pour savoir quel déplacement effectuer
+    */
     public void executeClick(){
         joueurCourant.getNavireCourant().tryAccess(bufferClick.get(0));
         bufferClick.remove(0); // On supprime l'action enregistrée dans tous les cas. Si la méthode try access s'est bien déroulée et si elle ne s'est pas bien déroulée. Il ne faut pas encombrer le buffer avec des actions invalides.
     }
+	
+    /**
+    * retourne l'id de la fenêtre
+    * @return l'id de la fenêtre
+    */
     @Override
     public int getID() {
         return ID;
