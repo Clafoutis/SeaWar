@@ -11,7 +11,7 @@ import org.newdawn.slick.geom.Vector2f;
 
 /**
  * Utilitaire permettant d'avoir une API simple pour l'écriture et la lecture dans un fichier 
- * (contient par exemple des fonctions de chargement ou sauvegarde d'une map dans un fichier).  Design pattern Singleton
+ * (contient par exemple des fonctions de chargement ou sauvegarde d'une map dans un fichier). Design pattern Singleton.
  */
 public class FileUtility implements Serializable {
 	/**
