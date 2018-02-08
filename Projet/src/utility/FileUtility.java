@@ -9,9 +9,19 @@ import java.util.Vector;
 
 import org.newdawn.slick.geom.Vector2f;
 
+/**
+ * Utilitaire permettant d'avoir une API simple pour l'écriture et la lecture dans un fichier 
+ * (contient par exemple des fonctions de chargement ou sauvegarde d'une map dans un fichier).  Design pattern Singleton
+ */
 public class FileUtility implements Serializable {
-	// Constantes pour le chemin vers les ressources
+	/**
+	 * Constante pour récupérer facilement le chemin vers le dossier de sprites
+	 */
 	public static final String DOSSIER_SPRITE = "resources/sprites/";
+	
+	/**
+	 * Constante pour récupérer facilement le chemin vers le dossier de maps
+	 */
 	public static final String DOSSIER_MAP = "resources/map/";
 	
 	private static FileUtility INSTANCE = new FileUtility();
@@ -20,6 +30,10 @@ public class FileUtility implements Serializable {
 		
 	}
  
+	/**
+	 * Renvoie l'unique instance de FileUtility.
+	 * @return L'unique instance de FileUtility
+	 */
 	public static FileUtility getInstance() {
 		return INSTANCE;
 	}
@@ -33,11 +47,20 @@ public class FileUtility implements Serializable {
 	//                   METHODES                   //
 	//////////////////////////////////////////////////
 	
+	/**
+	 * Renvoie la liste des noms des maps.
+	 * @return La liste des noms des maps
+	 */
 	public Vector<String> loadMapNames() {
 		File repertoire = new File(DOSSIER_MAP);
 		return new Vector<String>(Arrays.asList(repertoire.list()));
 	}
 	
+	/**
+	 * Charge la map nomMap.
+	 * @param nomMap Le nom de la map à charger
+	 * @return Les informations de la map sous forme d'un tableau dynamique à deux dimensions contenant les ID des cases
+	 */
 	public Vector< Vector<Integer> > loadMap(String nomMap) {
 		Vector < Vector<Integer> > tabMap = new Vector < Vector<Integer> >();
 	    BufferedInputStream bis;
@@ -76,11 +99,20 @@ public class FileUtility implements Serializable {
 	    return tabMap;
 	}
 	
+	/**
+	 * Supprime la map ayant pour nom nomMap.
+	 * @param nomMap Le nom de la map à supprimer
+	 */
 	public void supprimer(String nomMap) {
 		File f = new File(DOSSIER_MAP + nomMap);
 		f.delete();
 	}
 	
+	/**
+	 * Enregistre la map nomMap.
+	 * @param nomMap le nom de la map à enregistrer
+	 * @param tabMap Les informations de la map sous forme d'un tableau dynamique à deux dimensions contenant les ID des cases
+	 */
 	public void saveMap(String nomMap, Vector< Vector<Integer> > tabMap) {
 		BufferedOutputStream bos;
 		String id_str;
@@ -112,6 +144,11 @@ public class FileUtility implements Serializable {
 		}
 	  }
 	
+	/**
+	 * Renvoie le nombre de colonnes et de lignes de la map nomMap.
+	 * @param nomMap Le nom de la map dont on veut le nombre de colonne et de ligne
+	 * @return Le nombre de colonnes et de lignes sous formes de coordonnées (nbColonnes, nbLignes)
+	 */
 	public Point getNbCasesMap(String nomMap) {
 		Point nbCases = new Point(0, 0);
 	    BufferedInputStream bis;
@@ -157,14 +194,29 @@ public class FileUtility implements Serializable {
 		return nbCases;
 	}
 	
+	/**
+	 * Réajuste le tableau à deux dimensions d'ID de cases de sorte à ce qu'il soit rectangle 
+	 * (toute les lignes contiendront le même nombre de cases c'est à dire nbCasesLigne cases).
+	 * @param tabMap Le tableau à rectangulariser
+	 * @param nbCasesLigne Le nombre de cases que contiendra chaque ligne
+	 */
 	public void rendreTabMapRectangle(Vector < Vector<Integer> > tabMap, int nbCasesLigne) {
 		for (Vector<Integer> ligneTab : tabMap) {
-			for (int i = ligneTab.size(); i < nbCasesLigne; i++) {
-				ligneTab.add(0);
+			if (nbCasesLigne < ligneTab.size()) {
+				ligneTab.setSize(nbCasesLigne);
+			} else {
+				for (int i = ligneTab.size(); i < nbCasesLigne; i++) {
+					ligneTab.add(0);
+				}
 			}
 		}
 	}
 	
+	/**
+	 * Réajuste le tableau à deux dimensions d'ID de cases de sorte à ce qu'il soit rectangle 
+	 * (toute les lignes contiendront le même nombre de cases c'est à dire autant que la ligne qui contenait le plus de cases).
+	 * @param tabMap Le tableau à rectangulariser
+	 */
 	public void rendreTabMapRectangle(Vector < Vector<Integer> > tabMap) {
 		int nbCasesLigneMax = 0;
 		for (Vector<Integer> ligneTab : tabMap) {
@@ -175,6 +227,10 @@ public class FileUtility implements Serializable {
 		rendreTabMapRectangle(tabMap, nbCasesLigneMax);
 	}
 	
+	/**
+	 * Affiche sur la console le tableau à deux dimensions d'ID de cases entré en paramètre (utile pour du débugage).
+	 * @param tabMap Le tableau à deux dimensions d'ID de cases
+	 */
 	public void printTabMap(Vector < Vector<Integer> > tabMap) {
 		for (Vector<Integer> ligneTab : tabMap) {
 			for (int caseTab : ligneTab) {
