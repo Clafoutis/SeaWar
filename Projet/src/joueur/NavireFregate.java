@@ -6,7 +6,22 @@ import utility.FileUtility;
 
 import java.awt.*;
 
+/**
+ * Element qui défini un navire frégate dans le jeu
+ */
 public class NavireFregate extends Navire {
+	
+	/**
+	 * Créé un navire avec les caractéristiques d'un navire frégate
+	 * @param direction représente la direction du bateau
+	 * - 0 pour haut
+	 * - 1 pour haut droite
+	 * - 2 pour bas droite
+	 * - 3 pour bas
+	 * - 4 pour bas gauche
+	 * - 5 pour haut gauche
+	 * @param id_proprietaire représente l'id du joueur propriétaire
+	 */
 	public NavireFregate(int direction, int id_proprietaire) throws SlickException {
 		super(direction, FileUtility.DOSSIER_SPRITE + "navire_fregate.png",
 				FileUtility.DOSSIER_SPRITE + "Sprite_Miniature_Fregate.png",
@@ -24,10 +39,18 @@ public class NavireFregate extends Navire {
 		setIdProprietaire(id_proprietaire);
 	}
 
+	/**
+	 * Renvoie le tableau des sélecteurs de case de tir du navire
+	 * @return le tableau des sélecteurs de case de tir du navire
+	 */
 	public SelecteurCaseTir[] getSelecteursCasesTir() {
 		return selecteursCasesTir;
 	}
 
+	/**
+	 * Met à jour la liste des sélecteurs des zones de tir du cannon principal du navire
+	 * @param activation permet de savoir si les zones sont à afficher ou non
+	 */
 	public void zoneTirCannonPrincipal(boolean activation){
 		Point coordPosTab = Map.getInstance().coordMaillageToTab(getPosition());
 		int X = (int) coordPosTab.getX();
@@ -151,6 +174,10 @@ public class NavireFregate extends Navire {
 		}
 	}
 
+	/**
+	 * Met à jour la liste des sélecteurs des zones de tir du cannon secondaire du navire
+	 * @param activation permet de savoir si les zones sont à afficher ou non
+	 */
 	public void zoneTirCannonSecondaire(boolean activation){
 		Point coordPosTab = Map.getInstance().coordMaillageToTab(getPosition());
 		int X = (int) coordPosTab.getX();
