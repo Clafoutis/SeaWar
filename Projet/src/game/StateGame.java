@@ -13,11 +13,20 @@ import utility.Save;
 
 import map.Map;
 
+/**
+* Element qui représente le jeu
+*/
 public class StateGame extends StateBasedGame {
+	/**
+    	* Créé l'instance du jeu
+    	*/
 	public StateGame() {
 		super("Sea War");
 	}
 	
+	/**
+   	* main du jeu
+     	*/
 	public static void main(String[] args) throws SlickException {
 	    AppGameContainer app = new AppGameContainer(new StateGame(), 1080, 810, false);
 	    Music.init();
@@ -25,6 +34,10 @@ public class StateGame extends StateBasedGame {
 	    app.start();
 	}
 
+	/**
+   	* initialise toutes les fenêtres du jeu, la musique et la sauvegarde
+	* @param container représente la fenêtre contenant les éléments du jeu
+     	*/
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
