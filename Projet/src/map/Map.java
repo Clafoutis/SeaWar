@@ -25,8 +25,11 @@ import utility.FileUtility;
 
 /**
  * Classe représentant la map du  jeu. 
- * Design pattern Singleton : une seul instance est créée et utilisée dans l'application.
- * La map du jeu et modélisée par un tableau à deux dimensions ce qui fait que l'on peut parler de coordonnées dans la fenêtre 
+ * Design pattern Singleton : une seul instance est créée et utilisée dans l'application. 
+ * L'instance de Map devra être initialisé au début de l'application en appelant la fonction initInstance(). 
+ * L'instance de Map peut être utiliser pour jouer sur une carte ou pour éditer une carte. Il faut pour cela appeler startGameMode() ou startEditeurMode() pour 
+ * passer dans le mode voulu. 
+ * La map du jeu est modélisée par un tableau à deux dimensions ce qui fait que l'on peut parler de coordonnées dans la fenêtre 
  * (pour parler de la position dans la fenetre dans la map par exemple) mais aussi de coordonnées dans le tableau.
  * Pour éviter toute ambiguïté, on pose dès à présent comme principe que quand on parle de "la position" on parle des "coordonnées (x, y) dans la fenêtre" 
  * et que quand on désigne les "coordonnées dans le tableau", on parle de "à telle colonne et telle ligne du tableau qui modélise la Map".
