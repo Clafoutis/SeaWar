@@ -7,7 +7,21 @@ import utility.FileUtility;
 
 import java.awt.*;
 
+/**
+ * Element qui défini un navire amiral dans le jeu
+ */
 public class NavireAmiral extends Navire {
+	/**
+	 * Créé un navire avec les caractéristiques d'un navire amiral
+	 * @param direction représente la direction du bateau
+	 * - 0 pour haut
+	 * - 1 pour haut droite
+	 * - 2 pour bas droite
+	 * - 3 pour bas
+	 * - 4 pour bas gauche
+	 * - 5 pour haut gauche
+	 * @param id_proprietaire représente l'id du joueur propriétaire
+	 */
 	public NavireAmiral(int direction, int id_proprietaire) throws SlickException {
 		super(direction, FileUtility.DOSSIER_SPRITE + "navire_amiral.png",
 				FileUtility.DOSSIER_SPRITE + "Sprite_Miniature_Amiral.png",
@@ -24,6 +38,10 @@ public class NavireAmiral extends Navire {
 		setIdProprietaire(id_proprietaire);
 	}
 
+	/**
+	 * Met à jour la liste des sélecteurs des zones de tir du cannon principal du navire
+	 * @param activation permet de savoir si les zones sont à afficher ou non
+	 */
 	public void zoneTirCannonPrincipal(boolean activation){
 		Point coordPosTab = Map.getInstance().coordMaillageToTab(getPosition());
 		int X = (int) coordPosTab.getX();
@@ -123,6 +141,10 @@ public class NavireAmiral extends Navire {
 		}
 	}
 
+	/**
+	 * Met à jour la liste des sélecteurs des zones de tir du cannon secondaire du navire
+	 * @param activation permet de savoir si les zones sont à afficher ou non
+	 */
 	public void zoneTirCannonSecondaire(boolean activation){
 		Point coordPosTab = Map.getInstance().coordMaillageToTab(getPosition());
 		int X = (int) coordPosTab.getX();
