@@ -13,7 +13,9 @@ import utility.FileUtility;
 import utility.Music;
 import utility.Save;
 
-
+/**
+ * Element représentant la fenêtre du menu principal
+ */
 public class MainScreen extends BasicGameState {
     public static final int ID = 1;
     private StateBasedGame game;
@@ -28,6 +30,11 @@ public class MainScreen extends BasicGameState {
 	private Vector<Point> nomMapPoints = new Vector<Point>();
 	private Vector<String> nomMaps = new Vector<String>();
 
+    /**
+    * Initialise la fenêtre du menu principal
+    * @param container représente la fenêtre contenant les éléments à afficher
+    * @param game représente le jeu
+    */
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         this.game = game;
         this.container = container;
@@ -82,6 +89,12 @@ public class MainScreen extends BasicGameState {
 		font.loadGlyphs();
     }
 
+    /**
+    * Affiche la fenêtre du menu principal
+    * @param container représente la fenêtre contenant les éléments à afficher
+    * @param game représente le jeu
+    * @param g contient tous les éléments à afficher dans la fenêtre
+    */
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         background.draw(0, 0, container.getWidth(), container.getHeight());
@@ -105,11 +118,22 @@ public class MainScreen extends BasicGameState {
         }
     }
 
+    /**
+    * met à jour la fenêtre du menu principal
+    * @param _container représente la fenêtre contenant les éléments à afficher
+    * @param _game représente le jeu
+    * @param delta entier représentant l'état d'avancement dans les mises à jour de la fenêtre
+    */
     @Override
     public void update(GameContainer container, StateBasedGame game, int i) throws SlickException {
 
     }
 
+    /**
+    * détecte le relâchement d'une touche du clavier
+    * @param key représente la touche appuyée
+    * @param c représente le caractère de la touche appuyée
+    */
     public void keyReleased(int key, char c) {
     	switch (key) {
     	case Input.KEY_ESCAPE:
@@ -126,6 +150,9 @@ public class MainScreen extends BasicGameState {
 		}
     }
 
+    /**
+    * lance une partie
+    */
     private void startGame() {
         etat = CHOIX_MAP;
         demarrerEditeur = false;
@@ -150,6 +177,9 @@ public class MainScreen extends BasicGameState {
         }
     }
     
+    /**
+    * lance l'éditeur de carte
+    */
     private void startEditeur() {
     	etat = CHOIX_MAP;
     	demarrerEditeur = true;
@@ -163,6 +193,13 @@ public class MainScreen extends BasicGameState {
     	}
     }
     
+    /**
+    * détecte le click de la souris
+    * @param button représente le numéro du bouton cliqué
+    * @param x représente la position x de l'emplacement cliqué
+    * @param y représente la position y de l'emplacement cliqué
+    * @param clickCount représente le nombre de click de suite effectué
+    */
     @Override
     public void mouseClicked(int button, int x, int y, int clickCount){
         if(etat == CHOIX_MAP) {
@@ -190,10 +227,17 @@ public class MainScreen extends BasicGameState {
         }
     }
 
+    /**
+    * quitte le jeu
+    */
     private void exit(){
         container.exit();
     }
 
+    /**
+    * retourne l'id de la fenêtre
+    * @return l'id de la fenêtre
+    */
     @Override
     public int getID() {
         return ID;
