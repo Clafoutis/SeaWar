@@ -37,7 +37,7 @@ public abstract class Navire {
 
     /**
 	 * Créé un navire
-	 * @param direction représente la direction du bateau
+	 * @param _direction représente la direction du bateau
 	 * - 0 pour haut
 	 * - 1 pour haut droite
 	 * - 2 pour bas droite
@@ -107,7 +107,7 @@ public abstract class Navire {
 
     /**
 	 * modifie les points de vie maximum du navire
-     * @param pv représente les points de vie
+     * @param _pvMax représente les points de vie
 	 */
     public void setPvMax(int _pvMax){
         this.pvMax = _pvMax;
@@ -171,7 +171,7 @@ public abstract class Navire {
 
     /**
 	 * modifie les dégats du cannon secondaire du navire
-     * @param dmgCannonSecondaire représente les dégats du cannon
+     * @param dmgCanonSecondaire représente les dégats du cannon
 	 */
     public void setDmgCanonSecondaire(int dmgCanonSecondaire) {
         this.dmgCanonSecondaire = dmgCanonSecondaire;

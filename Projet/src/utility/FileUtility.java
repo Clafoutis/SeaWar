@@ -10,17 +10,17 @@ import java.util.Vector;
 import org.newdawn.slick.geom.Vector2f;
 
 /**
- * Utilitaire permettant d'avoir une API simple pour l'écriture et la lecture dans un fichier 
+ * Utilitaire permettant d'avoir une API simple pour l'Ã©criture et la lecture dans un fichier
  * (contient par exemple des fonctions de chargement ou sauvegarde d'une map dans un fichier). Design pattern Singleton.
  */
 public class FileUtility implements Serializable {
 	/**
-	 * Constante pour récupérer facilement le chemin vers le dossier de sprites
+	 * Constante pour rÃ©cupÃ©rer facilement le chemin vers le dossier de sprites
 	 */
 	public static final String DOSSIER_SPRITE = "resources/sprites/";
 	
 	/**
-	 * Constante pour récupérer facilement le chemin vers le dossier de maps
+	 * Constante pour rÃ©cupÃ©rer facilement le chemin vers le dossier de maps
 	 */
 	public static final String DOSSIER_MAP = "resources/map/";
 	
@@ -58,8 +58,8 @@ public class FileUtility implements Serializable {
 	
 	/**
 	 * Charge la map nomMap.
-	 * @param nomMap Le nom de la map à charger
-	 * @return Les informations de la map sous forme d'un tableau dynamique à deux dimensions contenant les ID des cases
+	 * @param nomMap Le nom de la map Ã  charger
+	 * @return Les informations de la map sous forme d'un tableau dynamique Ã  deux dimensions contenant les ID des cases
 	 */
 	public Vector< Vector<Integer> > loadMap(String nomMap) {
 		Vector < Vector<Integer> > tabMap = new Vector < Vector<Integer> >();
@@ -101,7 +101,7 @@ public class FileUtility implements Serializable {
 	
 	/**
 	 * Supprime la map ayant pour nom nomMap.
-	 * @param nomMap Le nom de la map à supprimer
+	 * @param nomMap Le nom de la map Ã  supprimer
 	 */
 	public void supprimer(String nomMap) {
 		File f = new File(DOSSIER_MAP + nomMap);
@@ -110,8 +110,8 @@ public class FileUtility implements Serializable {
 	
 	/**
 	 * Enregistre la map nomMap.
-	 * @param nomMap le nom de la map à enregistrer
-	 * @param tabMap Les informations de la map sous forme d'un tableau dynamique à deux dimensions contenant les ID des cases
+	 * @param nomMap le nom de la map Ã  enregistrer
+	 * @param tabMap Les informations de la map sous forme d'un tableau dynamique Ã  deux dimensions contenant les ID des cases
 	 */
 	public void saveMap(String nomMap, Vector< Vector<Integer> > tabMap) {
 		BufferedOutputStream bos;
@@ -147,7 +147,7 @@ public class FileUtility implements Serializable {
 	/**
 	 * Renvoie le nombre de colonnes et de lignes de la map nomMap.
 	 * @param nomMap Le nom de la map dont on veut le nombre de colonne et de ligne
-	 * @return Le nombre de colonnes et de lignes sous formes de coordonnées (nbColonnes, nbLignes)
+	 * @return Le nombre de colonnes et de lignes sous formes de coordonnÃ©es (nbColonnes, nbLignes)
 	 */
 	public Point getNbCasesMap(String nomMap) {
 		Point nbCases = new Point(0, 0);
@@ -195,9 +195,9 @@ public class FileUtility implements Serializable {
 	}
 	
 	/**
-	 * Réajuste le tableau à deux dimensions d'ID de cases de sorte à ce qu'il soit rectangle 
-	 * (toute les lignes contiendront le même nombre de cases c'est à dire nbCasesLigne cases).
-	 * @param tabMap Le tableau à rectangulariser
+	 * Rï¿½ajuste le tableau Ã  deux dimensions d'ID de cases de sorte Ã  ce qu'il soit rectangle
+	 * (toute les lignes contiendront le mï¿½me nombre de cases c'est Ã  dire nbCasesLigne cases).
+	 * @param tabMap Le tableau Ã  rectangulariser
 	 * @param nbCasesLigne Le nombre de cases que contiendra chaque ligne
 	 */
 	public void rendreTabMapRectangle(Vector < Vector<Integer> > tabMap, int nbCasesLigne) {
@@ -213,9 +213,9 @@ public class FileUtility implements Serializable {
 	}
 	
 	/**
-	 * Réajuste le tableau à deux dimensions d'ID de cases de sorte à ce qu'il soit rectangle 
-	 * (toute les lignes contiendront le même nombre de cases c'est à dire autant que la ligne qui contenait le plus de cases).
-	 * @param tabMap Le tableau à rectangulariser
+	 * Rï¿½ajuste le tableau Ã  deux dimensions d'ID de cases de sorte Ã  ce qu'il soit rectangle
+	 * (toute les lignes contiendront le mï¿½me nombre de cases c'est Ã  dire autant que la ligne qui contenait le plus de cases).
+	 * @param tabMap Le tableau Ã  rectangulariser
 	 */
 	public void rendreTabMapRectangle(Vector < Vector<Integer> > tabMap) {
 		int nbCasesLigneMax = 0;
@@ -228,8 +228,8 @@ public class FileUtility implements Serializable {
 	}
 	
 	/**
-	 * Affiche sur la console le tableau à deux dimensions d'ID de cases entré en paramètre (utile pour du débugage).
-	 * @param tabMap Le tableau à deux dimensions d'ID de cases
+	 * Affiche sur la console le tableau Ã  deux dimensions d'ID de cases entrÃ© en paramÃ¨tre (utile pour du dï¿½bugage).
+	 * @param tabMap Le tableau Ã  deux dimensions d'ID de cases
 	 */
 	public void printTabMap(Vector < Vector<Integer> > tabMap) {
 		for (Vector<Integer> ligneTab : tabMap) {

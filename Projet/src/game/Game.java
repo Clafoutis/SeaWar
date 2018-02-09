@@ -123,8 +123,8 @@ public class Game extends BasicGameState {
 
     /**
     * met à jour la fenêtre de partie
-    * @param _container représente la fenêtre contenant les éléments à afficher
-    * @param _game représente le jeu
+    * @param container représente la fenêtre contenant les éléments à afficher
+    * @param game représente le jeu
     * @param delta entier représentant l'état d'avancement dans les mises à jour de la fenêtre
     */
     @Override
@@ -150,8 +150,8 @@ public class Game extends BasicGameState {
 
     /**
     * Affiche la fenêtre de partie
-    * @param _container représente la fenêtre contenant les éléments à afficher
-    * @param _game représente le jeu
+    * @param container représente la fenêtre contenant les éléments à afficher
+    * @param game représente le jeu
     * @param graphics contient tous les éléments à afficher dans la fenêtre
     */
     @Override

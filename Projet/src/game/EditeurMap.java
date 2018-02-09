@@ -26,6 +26,9 @@ import utility.Music;
 
 import map.*;
 
+/**
+ * Element représentant la fenêtre d'éditeur de carte
+ */
 public class EditeurMap extends BasicGameState {
 	public static final int ID = 3;
 	private GameContainer container;
@@ -44,14 +47,19 @@ public class EditeurMap extends BasicGameState {
 	private TextField champNomMap;
 	private String nomMap;
 	private final String ENTREZ_NOM = "Entrez le nom de \nla nouvelle map :";
-	private final String NOM_EXISTANT = " Le nom entr� \nest d�j� pris !";
-	private final String NOM_INCORRECTE = "  Le nom entr� \nn'est pas valide !";
-	private final String NOM_ENREGISTRE = "  Modifications \n  enregistr�es !";
+	private final String NOM_EXISTANT = " Le nom entré \nest déjé pris !";
+	private final String NOM_INCORRECTE = "  Le nom entré \nn'est pas valide !";
+	private final String NOM_ENREGISTRE = "  Modifications \n  enregistrées !";
 	private String messageEnregistrement = ENTREZ_NOM;
 	private Point posMsgEnreg = new Point();
 	
 	private int idCour = 0;
-	
+
+	/**
+	 * Initialise la fenêtre de partie
+	 * @param _container représente la fenêtre contenant les éléments à afficher
+	 * @param _game représente le jeu
+	 */
 	@Override
 	public void init(GameContainer _container, StateBasedGame _game) throws SlickException {
 		SpriteSheet spriteSheet = new SpriteSheet("resources/images/backgroundEditeurMap.png", 1080, 810);
@@ -92,7 +100,11 @@ public class EditeurMap extends BasicGameState {
         });
         quitterArea.setMouseOverImage(quitterHover);
 	}
-	
+
+	/**
+	 * Lance l'édition d'une carte passée en paramètre
+	 * @param nomMap représente le nom de la carte à éditer
+	 */
 	public void startEditeur(String nomMap) {
 		this.nomMap = nomMap;
 		Map.getInstance().startEditeurMode();
@@ -104,12 +116,24 @@ public class EditeurMap extends BasicGameState {
 		Music.stopMusic();
 	}
 
+	/**
+	 * met à jour la fenêtre de l'éditeur de carte
+	 * @param container représente la fenêtre contenant les éléments à afficher
+	 * @param game représente le jeu
+	 * @param delta entier représentant l'état d'avancement dans les mises à jour de la fenêtre
+	 */
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		background.update(delta);
 		backgroundCases.update(delta);
 	}
 
+	/**
+	 * Affiche la fenêtre de l'éditeur de carte
+	 * @param container représente la fenêtre contenant les éléments à afficher
+	 * @param game représente le jeu
+	 * @param graphics contient tous les éléments à afficher dans la fenêtre
+	 */
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics graphics) throws SlickException {
 		graphics.drawAnimation(background, 0, 0);
@@ -158,7 +182,12 @@ public class EditeurMap extends BasicGameState {
 			break;
 		}
 	}
-	
+
+	/**
+	 * détecte le relâchement d'une touche du clavier
+	 * @param key représente la touche appuyée
+	 * @param c représente le caractère de la touche appuyée
+	 */
 	@Override
     public void keyReleased(int key, char c) {
 		switch (key) {
@@ -233,7 +262,13 @@ public class EditeurMap extends BasicGameState {
 				break;
 		}
     }
-	
+
+	/**
+	 * détecte l'appui sur la souris
+	 * @param button représente le numéro du bouton cliqué
+	 * @param x représente la position x de l'emplacement cliqué
+	 * @param y représente la position y de l'emplacement cliqué
+	 */
 	@Override
 	public void mousePressed(int button, int x, int y) {
         if(etat == EDITION){
@@ -254,11 +289,16 @@ public class EditeurMap extends BasicGameState {
             if (Map.getInstance().getRect().contains(x, y)) {
             	Map.getInstance().mettreCase(idCour, coordCaseCliquee);
             }
-        } else {
-
         }
     }
-	
+
+	/**
+	 * détecte un mouvement de la souris
+	 * @param oldx représente l'ancienne position x de la souris
+	 * @param oldy représente l'ancienne position y de la souris
+	 * @param newx représente la position x du nouvel emplacement
+	 * @param newy représente la position y du nouvel emplacement
+	 */
 	@Override
 	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
 		if(etat == EDITION) {
@@ -267,11 +307,16 @@ public class EditeurMap extends BasicGameState {
 	            Point coordCaseCliquee = Map.getInstance().coordMaillageToTab(coordMaillage);
 	            Map.getInstance().selectionnerCase(idCour, coordCaseCliquee);
 			}
-		} else {
-			
 		}
 	}
-	
+
+	/**
+	 * détecte un mouvement avec un click de la souris
+	 * @param oldx représente l'ancienne position x de la souris
+	 * @param oldy représente l'ancienne position y de la souris
+	 * @param newx représente la position x du nouvel emplacement
+	 * @param newy représente la position y du nouvel emplacement
+	 */
 	@Override
 	public void mouseDragged(int oldx, int oldy, int newx, int newy) {
 		if(etat == EDITION) {
@@ -281,11 +326,13 @@ public class EditeurMap extends BasicGameState {
 	            Map.getInstance().selectionnerCase(idCour, coordCaseCliquee);
 	            Map.getInstance().mettreCase(idCour, coordCaseCliquee);
 			}
-		} else {
-			
 		}
 	}
 
+	/**
+	 * retourne l'id de la fenêtre
+	 * @return l'id de la fenêtre
+	 */
 	@Override
 	public int getID() {
 		return ID;

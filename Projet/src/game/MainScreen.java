@@ -120,9 +120,9 @@ public class MainScreen extends BasicGameState {
 
     /**
     * met à jour la fenêtre du menu principal
-    * @param _container représente la fenêtre contenant les éléments à afficher
-    * @param _game représente le jeu
-    * @param delta entier représentant l'état d'avancement dans les mises à jour de la fenêtre
+    * @param container représente la fenêtre contenant les éléments à afficher
+    * @param game représente le jeu
+    * @param i entier représentant l'état d'avancement dans les mises à jour de la fenêtre
     */
     @Override
     public void update(GameContainer container, StateBasedGame game, int i) throws SlickException {

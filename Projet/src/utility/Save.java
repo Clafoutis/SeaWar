@@ -18,13 +18,13 @@ import map.Map;
 import org.newdawn.slick.SlickException;
 
 /**
- * Utilitaire permettant d'avoir une API simple pour l'enregistrement et le chargement de l'état d'une partie. Design pattern Singleton. <br> 
- * Pour enregistrer : on alimente l'instance de Save en faisant appel à des setteurs puis on appelle la fonction save() <br>
- * Pour charger : on fait appelle à la fonction load() puis on récupère les informations de la partie par les getteurs
+ * Utilitaire permettant d'avoir une API simple pour l'enregistrement et le chargement de l'Ã©tat d'une partie. Design pattern Singleton. <br>
+ * Pour enregistrer : on alimente l'instance de Save en faisant appel Ã  des setteurs puis on appelle la fonction save() <br>
+ * Pour charger : on fait appelle Ã  la fonction load() puis on rÃ©cupÃ¨re les informations de la partie par les getteurs
  */
 public class Save {
 	/**
-	 * Constante pour récupérer facilement le chemin vers le fichier de sauvegarde
+	 * Constante pour rÃ©cupÃ©rer facilement le chemin vers le fichier de sauvegarde
 	 */
 	public static final String FICHIER_SAVE = "resources/save";
 	
@@ -54,7 +54,7 @@ public class Save {
 	}
 	
 	/**
-	 * Initialise l'instance de Save, cette fonction doit être appelée en statique au tout début du programme 
+	 * Initialise l'instance de Save, cette fonction doit Ãªtre appelÃ©e en statique au tout dÃ©but du programme
 	 * (typiquement dans la fonction "initStatesList" qui initialise les vues de l'application).
 	 */
 	public static void initInstance() {
@@ -62,7 +62,7 @@ public class Save {
 	}
 	
 	/**
-	 * Charge les données de l'état de la partie enregistré. Ces données doivent ensuite être récupérées par les getteurs
+	 * Charge les donnÃ©es de l'Ã©tat de la partie enregistrÃ©". Ces donnÃ©es doivent ensuite Ãªtre rÃ©cupÃ©rÃ©es par les getteurs
 	 */
 	public void load() {
 		BufferedReader br;
@@ -101,7 +101,7 @@ public class Save {
 	}
 	
 	/**
-	 * Enregistre les données de l'état de la partie (à appeler après avoir alimenté l'instance de Save par les setteurs)
+	 * Enregistre les donnÃ©es de l'Ã©tat de la partie (Ã  appeler aprÃ¨s avoir alimentÃ© l'instance de Save par les setteurs)
 	 */
 	public void save() {
 		BufferedOutputStream bos;
@@ -134,7 +134,7 @@ public class Save {
 	}
 	
 	/**
-	 * Efface les données enregistrées de l'état de la partie
+	 * Efface les donnÃ©es enregistrÃ©es de l'Ã©tat de la partie
 	 */
 	public void effacerSauvegarde() {
 		sauvegardePresente = false;
@@ -171,16 +171,16 @@ public class Save {
 	}
 	
 	/**
-	 * Setteur pour alimenter l'instance de Save par des informations de l'état de la partie (à utiliser avant l'appelle à save()). <br>
-	 * Ce setteur récupère des données relatives à un navire particulier.
-	 * @param joueur Id du joueur courant à qui appartient le navire(0 ou 1)
+	 * Setteur pour alimenter l'instance de Save par des informations de l'Ã©tat de la partie (Ã  utiliser avant l'appelle Ã  save()). <br>
+	 * Ce setteur rÃ©cupÃ¨re des donnÃ©es relatives Ã  un navire particulier.
+	 * @param joueur Id du joueur courant Ã  qui appartient le navire(0 ou 1)
 	 * @param navire Id du navire (0 ou 1)
-	 * @param posTab Coordonnées dans le tableau du navire
+	 * @param posTab CoordonnÃ©es dans le tableau du navire
 	 * @param pv Nombre de pv du navire
 	 * @param nbTourRechargeCanonPrincipal Nombre de tour restant avant le rechargement du canon principal du navire
 	 * @param nbTourRechargeCanonSecondaire Nombre de tour restant avant le rechargement du canon secondaire du navire
 	 * @param direction Direction courante du navire
-	 * @param nbDeplacementsRestants Nombre de déplacements restant au navire
+	 * @param nbDeplacementsRestants Nombre de dÃ©placements restant au navire
 	 */
 	public void setNavireSave(int joueur, int navire, Point posTab, int pv, 
 			int nbTourRechargeCanonPrincipal, int nbTourRechargeCanonSecondaire,
@@ -189,15 +189,15 @@ public class Save {
 	}
 	
 	/**
-	 * Setteur pour alimenter l'instance de Save par des informations de l'état de la partie (à utiliser avant l'appelle à save()).
-	 * @param nomMap Le nom de la map chargé pour la partie en cours
+	 * Setteur pour alimenter l'instance de Save par des informations de l'Ã©tat de la partie (Ã  utiliser avant l'appelle Ã  save()).
+	 * @param nomMap Le nom de la map chargÃ© pour la partie en cours
 	 */
 	public void setNomMap(String nomMap) {
 		this.nomMap = nomMap;
 	}
 	
 	/**
-	 * Setteur pour alimenter l'instance de Save par des informations de l'état de la partie (à utiliser avant l'appelle à save()).
+	 * Setteur pour alimenter l'instance de Save par des informations de l'Ã©tat de la partie (Ã  utiliser avant l'appelle Ã  save()).
 	 * @param joueurCourant Le joueur pour qui c'est le tour dans la partie
 	 */
 	public void setJoueurCourant(int joueurCourant) {
@@ -205,70 +205,70 @@ public class Save {
 	}
 	
 	/**
-	 * Setteur pour alimenter l'instance de Save par des informations de l'état de la partie (à utiliser avant l'appelle à save()).
-	 * @param navireCourant Le navire sélectionné par le joueur pour qui c'est le tour dans la partie
+	 * Setteur pour alimenter l'instance de Save par des informations de l'Ã©tat de la partie (Ã  utiliser avant l'appelle Ã  save()).
+	 * @param navireCourant Le navire sÃ©lectionnÃ© par le joueur pour qui c'est le tour dans la partie
 	 */
 	public void setNavireCourant(int navireCourant) {
 		this.navireCourant = navireCourant;
 	}
 	
 	/**
-	 * Setteur pour alimenter l'instance de Save par des informations de l'état de la partie (à utiliser avant l'appelle à save()).
-	 * @param possessionPhares Un tableau contenant pour chaque indice (correspondant à un numéro de phare) l'id du joueur possédant le phare ou -1 si aucun joueur ne possède le phare 
-	 * (l'ordre croissant des numéros de phare part de gauche à droite puis de haut en bas de la map) <br>
-	 * Ce tableau est récupérable par l'appelle de Map.getInstance().getPossessionPhares()
+	 * Setteur pour alimenter l'instance de Save par des informations de l'Ã©tat de la partie (Ã  utiliser avant l'appelle Ã  save()).
+	 * @param possessionPhares Un tableau contenant pour chaque indice (correspondant Ã  un numÃ©ro de phare) l'id du joueur possÃ©dant le phare ou -1 si aucun joueur ne possÃ¨de le phare
+	 * (l'ordre croissant des numÃ©ros de phare part de gauche Ã  droite puis de haut en bas de la map) <br>
+	 * Ce tableau est rÃ©cupÃ©rable par l'appelle de Map.getInstance().getPossessionPhares()
 	 */
 	public void setPossessionPhares(Vector<Integer> possessionPhares) {
 		this.possessionPhares = possessionPhares;
 	}
 	
 	/**
-	 * Renvoie true si une sauvegarde de l'état de la partie est présente ou false sinon
-	 * @return True si une sauvegarde de l'état de la partie est présente ou false sinon
+	 * Renvoie true si une sauvegarde de l'Ã©tat de la partie est prÃ©sente ou false sinon
+	 * @return True si une sauvegarde de l'Ã©tat de la partie est prÃ©sente ou false sinon
 	 */
 	public boolean isSauvegardePresente() {
 		return sauvegardePresente;
 	}
 	
 	/**
-	 * Renvoie le nom de la map de la partie chargée
-	 * @return Le nom de la map de la partie chargée
+	 * Renvoie le nom de la map de la partie chargÃ©e
+	 * @return Le nom de la map de la partie chargÃ©e
 	 */
 	public String getNomMap() {
 		return nomMap;
 	}
 	
 	/**
-	 * Renvoie le joueur pour qui c'est le tour dans la partie chargée.
-	 * @return Le joueur pour qui c'est le tour dans la partie chargée
+	 * Renvoie le joueur pour qui c'est le tour dans la partie chargÃ©e.
+	 * @return Le joueur pour qui c'est le tour dans la partie chargÃ©e
 	 */
 	public int getJoueurCourant() {
 		return joueurCourant;
 	}
 	
 	/**
-	 * Renvoie le navire courant du joueur pour qui c'est le tour dans la partie chargée.
-	 * @return Le navire courant du joueur pour qui c'est le tour dans la partie chargée
+	 * Renvoie le navire courant du joueur pour qui c'est le tour dans la partie chargÃ©e.
+	 * @return Le navire courant du joueur pour qui c'est le tour dans la partie chargÃ©e
 	 */
 	public int getNavireCourant() {
 		return navireCourant;
 	}
 	
 	/**
-	 * Renvoie la coordonnée en X dans le tableau d'un navire voulu.
-	 * @param joueur L'id du Joueur à qui appartient le navire
+	 * Renvoie la coordonnÃ©e en X dans le tableau d'un navire voulu.
+	 * @param joueur L'id du Joueur Ã  qui appartient le navire
 	 * @param navire L'id du navire
-	 * @return La coordonnée en X dans le tableau d'un navire voulu
+	 * @return La coordonnÃ©e en X dans le tableau d'un navire voulu
 	 */
 	public int getPosTabX(int joueur, int navire) {
 		return navireSaves[joueur][navire].getPosTabX();
 	}
 	
 	/**
-	 * Renvoie la coordonnée en Y dans le tableau d'un navire voulu.
-	 * @param joueur L'id du Joueur à qui appartient le navire
+	 * Renvoie la coordonnÃ©e en Y dans le tableau d'un navire voulu.
+	 * @param joueur L'id du Joueur Ã  qui appartient le navire
 	 * @param navire L'id du navire
-	 * @return La coordonnée en Y dans le tableau d'un navire voulu
+	 * @return La coordonnÃ©e en Y dans le tableau d'un navire voulu
 	 */
 	public int getPosTabY(int joueur, int navire) {
 		return navireSaves[joueur][navire].getPosTabY();
@@ -276,7 +276,7 @@ public class Save {
 	
 	/**
 	 * Renvoie le nombre de pv du navire courant d'un navire voulu.
-	 * @param joueur L'id du Joueur à qui appartient le navire
+	 * @param joueur L'id du Joueur Ã  qui appartient le navire
 	 * @param navire L'id du navire
 	 * @return Le nombre de pv d'un navire voulu
 	 */
@@ -286,7 +286,7 @@ public class Save {
 	
 	/**
 	 * Renvoie le nombre de tours restants avant le rechargement du canon principal d'un navire voulu.
-	 * @param joueur L'id du Joueur à qui appartient le navire
+	 * @param joueur L'id du Joueur Ã  qui appartient le navire
 	 * @param navire L'id du navire
 	 * @return Le nombre de tours restants avant le rechargement du canon principal d'un navire voulu
 	 */
@@ -296,7 +296,7 @@ public class Save {
 	
 	/**
 	 * Renvoie le nombre de tours restants avant le rechargement du canon secondaire d'un navire voulu.
-	 * @param joueur L'id du Joueur à qui appartient le navire
+	 * @param joueur L'id du Joueur Ã  qui appartient le navire
 	 * @param navire L'id du navire
 	 * @return Le nombre de tours restants avant le rechargement du canon secondaire d'un navire voulu
 	 */
@@ -306,7 +306,7 @@ public class Save {
 	
 	/**
 	 * Renvoie la direction courante d'un navire voulu.
-	 * @param joueur L'id du Joueur à qui appartient le navire
+	 * @param joueur L'id du Joueur Ã  qui appartient le navire
 	 * @param navire L'id du navire
 	 * @return La direction courante d'un navire voulu
 	 */
@@ -315,10 +315,10 @@ public class Save {
 	}
 	
 	/**
-	 * Renvoie le nombre de déplacements restants d'un navire voulu.
-	 * @param joueur L'id du Joueur à qui appartient le navire
+	 * Renvoie le nombre de dÃ©placements restants d'un navire voulu.
+	 * @param joueur L'id du Joueur Ã  qui appartient le navire
 	 * @param navire L'id du navire
-	 * @return Le nombre de déplacements restants d'un navire voulu
+	 * @return Le nombre de dÃ©placements restants d'un navire voulu
 	 */
 	public int getNbDeplacementsRestants(int joueur, int navire) {
 		return navireSaves[joueur][navire].getNbDeplacementsRestants();
@@ -326,8 +326,8 @@ public class Save {
 
 	/**
 	 * Renvoie les informations relatives aux phares pris par les joueurs.
-	 * @return Un tableau contenant pour chaque indice (correspondant à un numéro de phare) l'id du joueur possédant le phare ou -1 si aucun joueur ne possède le phare 
-	 * (l'ordre croissant des numéros de phare part de gauche à droite puis de haut en bas de la map)
+	 * @return Un tableau contenant pour chaque indice (correspondant Ã  un numÃ©ro de phare) l'id du joueur possÃ©dant le phare ou -1 si aucun joueur ne possÃ©de le phare
+	 * (l'ordre croissant des numÃ©ros de phare part de gauche Ã  droite puis de haut en bas de la map)
 	 */
 	public Vector<Integer> getPossessionPhares() {
 		return possessionPhares;

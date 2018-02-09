@@ -7,19 +7,19 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
 
 /**
- * Classe abstraite qui représente le contenu d'un élément du maillage de la map. Un tableau de Case peut modéliser une map.
+ * Classe abstraite qui reprÃ©sente le contenu d'un Ã©lÃ©ment du maillage de la map. Un tableau de Case peut modÃ©liser une map.
  */
 public abstract class Case extends Animation {
 	private int id;
 	private Point position;
 	
 	/**
-	 * Créée une case ; les caractéristiques spécifiques de la case sont entrées en paramètre.
+	 * Crï¿½ï¿½e une case ; les caractÃ©ristiques spÃ©cifiques de la case sont entrÃ©es en paramÃ¨tre.
 	 * @param idCase l'identifiant de la case
-	 * @param nbFrames le nombre de frame de l'animation de la case si la case est animée (sinon, mettre la valeur 1)
-	 * @param dureeFrame le nombre de millisecondes à attendre avant de passer à la frame suivante 
-	 * (la valeur de ce paramètre n'a aucune importance si la case n'est pas animée)
-	 * @param _position la position de la Case relative à l'origine de la map dans la fenetre
+	 * @param nbFrames le nombre de frame de l'animation de la case si la case est animÃ©e (sinon, mettre la valeur 1)
+	 * @param dureeFrame le nombre de millisecondes Ã  attendre avant de passer Ã  la frame suivante
+	 * (la valeur de ce paramÃ¨tre n'a aucune importance si la case n'est pas animÃ©e)
+	 * @param _position la position de la Case relative Ã  l'origine de la map dans la fenetre
 	 */
 	public Case(int idCase, int nbFrames, int dureeFrame, Point _position) {
 		position = _position;
@@ -40,16 +40,16 @@ public abstract class Case extends Animation {
 	}
 	
 	/**
-	 * Renvoie la position de la Case par rapport à l'origine de la Map.
-	 * @return la position de la Case par rapport à l'origine de la Map
+	 * Renvoie la position de la Case par rapport Ã  l'origine de la Map.
+	 * @return la position de la Case par rapport Ã  l'origine de la Map
 	 */
 	public Point getPosition() {
 		return (Point) position.clone();
 	}
 	
 	/**
-	 * Modifie la position de la Case par rapport à l'origine de la Map.
-	 * @param _position la nouvelle position de la Case par rapport à l'origine de la Map
+	 * Modifie la position de la Case par rapport Ã  l'origine de la Map.
+	 * @param _position la nouvelle position de la Case par rapport Ã  l'origine de la Map
 	 */
 	public void setPosition(Point _position) {
 		position.x = _position.x;
@@ -67,9 +67,9 @@ public abstract class Case extends Animation {
 	}
 	
 	/**
-	 * Déplace la case dans la fenetre.
-	 * @param _x la coordonnée en x du déplacement de la case dans la fenetre
-	 * @param _y la coordonnée en y du déplacement de la case dans la fenetre
+	 * Dï¿½place la case dans la fenetre.
+	 * @param _x la coordonnÃ©e en x du dÃ©placement de la case dans la fenetre
+	 * @param _y la coordonnÃ©e en y du dÃ©placement de la case dans la fenetre
 	 */
 	public void move(int _x, int _y) {
 		position.x += _x;
@@ -77,7 +77,7 @@ public abstract class Case extends Animation {
 	}
 	
 	/**
-	 * Dessine la case sur la fenêtre, dans le référentiel de la map, en prenant en compte l'échelle
+	 * Dessine la case sur la fenÃªtre, dans le rÃ©fÃ©rentiel de la map, en prenant en compte l'Ã©chelle
 	 */
 	@Override
 	public void draw() {
@@ -88,7 +88,7 @@ public abstract class Case extends Animation {
 	}
 	
 	/**
-	 * Dessine la case sur la fenetre, dans le référentiel de la fenetre, sans prendre en compte l'échelle
+	 * Dessine la case sur la fenetre, dans le rÃ©fÃ©rentiel de la fenetre, sans prendre en compte l'Ã©chelle
 	 */
 	public void drawAbsolu() {
 		this.draw(position.x, position.y);
